@@ -201,8 +201,8 @@ canvas#wb{position:absolute;top:40px;left:0;right:0;bottom:60px;cursor:crosshair
 ::-webkit-scrollbar-thumb{background:#DDD6FE;border-radius:3px;}
 </style>
 </head>
-"){sessionStorage.setItem("ts_auth","yes");document.getElementById("login-overlay").style.display="none";}else{document.getElementById("le").textContent="Wrong password.";}};if(sessionStorage.getItem("ts_auth")==="yes"){document.getElementById("login-overlay").style.display="none";}</script>
-
+<body>
+<script>if(sessionStorage.getItem("ts_auth")!=="yes"){window.location.href="/login.html";}</script>
 <!-- SIDEBAR -->
 <div class="sidebar">
   <div class="logo"><div class="logo-icon">📚</div>TeachSmart</div>

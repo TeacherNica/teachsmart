@@ -1,17 +1,13 @@
 ﻿const fs = require('fs');
 let h = fs.readFileSync('index.html', 'utf8');
-h = h.replace(/^\uFEFF/, '');
 
-// Remove every login-related injection
-h = h.replace(/<div id="lo"[\s\S]*?<\/script>/g, '');
-h = h.replace(/<div id="login-overlay"[\s\S]*?<\/script>/g, '');
-h = h.replace(/teachnica2026/g, '');
-h = h.replace(/<script>if\(sessionStorage[\s\S]*?<\/script>/g, '');
+// Find </head> and everything after it that's broken
+const headEnd = h.indexOf('</head>');
+const sidebarStart = h.indexOf('<!-- SIDEBAR -->');
 
-// Add single clean redirect
-const redirect = '<script>if(sessionStorage.getItem("ts_auth")!=="yes"){window.location.href="/login.html";}<\/script>';
-h = h.replace('<body>', '<body>' + redirect);
+// Keep everything up to </head>, then add clean body tag, then sidebar onwards
+const fixed = h.substring(0, headEnd) + '</head>\n<body>\n<script>if(sessionStorage.getItem("ts_auth")!=="yes"){window.location.href="/login.html";}<\/script>\n' + h.substring(sidebarStart);
 
-fs.writeFileSync('index.html', h, 'utf8');
-console.log('teachnica remaining:', h.split('teachnica2026').length - 1);
-console.log('redirect added:', h.includes('login.html'));
+fs.writeFileSync('index.html', fixed, 'utf8');
+console.log('body:', fixed.includes('<body>'));
+console.log('sidebar:', fixed.includes('<!-- SIDEBAR -->'));
