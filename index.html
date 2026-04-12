@@ -850,7 +850,7 @@ function addClass(id){
   if(!s)return;
   s.classes++;
   s.total=Math.max(s.total,s.classes);
-  saveStudents();
+  saveData();
   renderStudents();
 }
 function deductClass(id){
@@ -858,13 +858,13 @@ function deductClass(id){
   if(!s)return;
   if(s.classes<=0){alert('No classes left!');return;}
   s.classes--;
-  saveStudents();
+  saveData();
   renderStudents();
 }
 function deleteStudent(id){
   if(!confirm('Delete this student?'))return;
   students=students.filter(x=>x.id!==id);
-  saveStudents();
+  saveData();
   renderStudents();
 }
 function isUpcoming(bday){
