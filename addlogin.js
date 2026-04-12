@@ -1,13 +1,43 @@
 ﻿const fs = require('fs');
 let h = fs.readFileSync('index.html', 'utf8');
 
-// Remove previous logout button if any
-h = h.replace(/<div style="padding:12px 16px;">[\s\S]*?<\/div>\n<!-- MAIN CONTENT -->/, '<!-- MAIN CONTENT -->');
+const oldFooter = `<button class="s-btn" style="background:#EFF6FF;color:#1D4ED8;" onclick="markDone(${s.id})">✅ Mark Done</button>
+        <button class="s-btn" style="background:#F3E8FF;color:#7C3AED;" onclick="openModal('report-modal')">📝 Report</button>
+        ${s.classes<=2?`;
 
-// Inject logout right after Bangkok, Thailand line
-const target = '🇹🇭 Bangkok, Thailand</div></div>';
-const replacement = '🇹🇭 Bangkok, Thailand</div></div><button onclick="sessionStorage.removeItem(\'ts_auth\');window.location.href=\'/login.html\';" style="margin:8px 12px 0;padding:6px 12px;border-radius:6px;border:none;background:#e94560;color:#fff;font-size:0.78rem;cursor:pointer;font-weight:bold;display:block;width:calc(100% - 24px)">&#128274; Logout</button>';
+const newFooter = `<button class="s-btn" style="background:#EFF6FF;color:#1D4ED8;" onclick="markDone(\${s.id})">✅ Mark Done</button>
+        <button class="s-btn" style="background:#F3E8FF;color:#7C3AED;" onclick="openModal('report-modal')">📝 Report</button>
+        <button class="s-btn" style="background:#DCFCE7;color:#15803D;" onclick="addClass(\${s.id})">➕ Add</button>
+        <button class="s-btn" style="background:#FEE2E2;color:#B91C1C;" onclick="deductClass(\${s.id})">➖ Deduct</button>
+        <button class="s-btn" style="background:#FEF3C7;color:#B45309;" onclick="deleteStudent(\${s.id})">🗑️ Delete</button>
+        \${s.classes<=2?`;
 
-h = h.replace(target, replacement);
+h = h.replace(oldFooter, newFooter);
+
+// Add the functions if not present
+if (!h.includes('function addClass')) {
+  const inject = `
+function addClass(id){
+  const s=students.find(x=>x.id===id);
+  if(!s)return;
+  s.classes++;
+  s.total=Math.max(s.total,s.classes);
+  saveStudents();renderStudents();
+}
+function deductClass(id){
+  const s=students.find(x=>x.id===id);
+  if(!s)return;
+  if(s.classes<=0){alert('No classes left!');return;}
+  s.classes--;
+  saveStudents();renderStudents();
+}
+function deleteStudent(id){
+  if(!confirm('Delete this student?'))return;
+  students=students.filter(x=>x.id!==id);
+  saveStudents();renderStudents();
+}`;
+  h = h.replace('function isUpcoming', inject + '\nfunction isUpcoming');
+}
+
 fs.writeFileSync('index.html', h, 'utf8');
-console.log('logout added:', h.includes('Logout'));
+console.log('done:', h.includes('addClass'));
