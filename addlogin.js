@@ -1,8 +1,12 @@
 ﻿const fs = require('fs');
 let h = fs.readFileSync('index.html', 'utf8');
 
+const start = h.indexOf('let students = JSON.parse(localStorage.getItem(\'ts-students\') || \'null\') || [');
+const end = h.indexOf('];', start) + 2;
+
+console.log('start:', start, 'end:', end);
+
 const newStudents = [
-  // Korean students
   {id:101,name:"K.Bella",nat:"🇰🇷 Korean",level:"Beginner",rate:30,classes:10,total:10,duration:"50 min",schedule:"",attendance:100,avatar:"👧",c1:"#A855F7",c2:"#6366F1",badges:[],paid:false,birthday:""},
   {id:102,name:"Jackie",nat:"🇰🇷 Korean",level:"Beginner",rate:25,classes:10,total:10,duration:"50 min",schedule:"",attendance:100,avatar:"👦",c1:"#3B82F6",c2:"#06B6D4",badges:[],paid:false,birthday:""},
   {id:103,name:"Lina",nat:"🇰🇷 Korean",level:"Beginner",rate:30,classes:10,total:10,duration:"50 min",schedule:"",attendance:100,avatar:"👧",c1:"#EC4899",c2:"#F97316",badges:[],paid:false,birthday:""},
@@ -10,7 +14,6 @@ const newStudents = [
   {id:105,name:"Sophia",nat:"🇰🇷 Korean",level:"Beginner",rate:35,classes:10,total:10,duration:"50 min",schedule:"",attendance:100,avatar:"👧",c1:"#F59E0B",c2:"#EF4444",badges:[],paid:false,birthday:""},
   {id:106,name:"Peter",nat:"🇰🇷 Korean",level:"Beginner",rate:35,classes:10,total:10,duration:"50 min",schedule:"",attendance:100,avatar:"👦",c1:"#8B5CF6",c2:"#EC4899",badges:[],paid:false,birthday:""},
   {id:107,name:"Seah",nat:"🇰🇷 Korean",level:"Beginner",rate:25,classes:10,total:10,duration:"50 min",schedule:"",attendance:100,avatar:"👧",c1:"#14B8A6",c2:"#6366F1",badges:[],paid:false,birthday:""},
-  // Chinese students
   {id:108,name:"Suri",nat:"🇨🇳 Chinese",level:"Beginner",rate:40,classes:10,total:10,duration:"50 min",schedule:"",attendance:100,avatar:"👧",c1:"#F97316",c2:"#EF4444",badges:[],paid:false,birthday:""},
   {id:109,name:"Bella",nat:"🇨🇳 Chinese",level:"Beginner",rate:30,classes:10,total:10,duration:"50 min",schedule:"",attendance:100,avatar:"👧",c1:"#EC4899",c2:"#A855F7",badges:[],paid:false,birthday:""},
   {id:110,name:"COCO-1",nat:"🇨🇳 Chinese",level:"Beginner",rate:35,classes:10,total:10,duration:"50 min",schedule:"",attendance:100,avatar:"👧",c1:"#F59E0B",c2:"#10B981",badges:[],paid:false,birthday:""},
@@ -22,14 +25,14 @@ const newStudents = [
   {id:116,name:"Koala",nat:"🇨🇳 Chinese",level:"Beginner",rate:30,classes:10,total:10,duration:"50 min",schedule:"",attendance:100,avatar:"🐨",c1:"#8B5CF6",c2:"#3B82F6",badges:[],paid:false,birthday:""},
   {id:117,name:"Owen",nat:"🇨🇳 Chinese",level:"Beginner",rate:35,classes:10,total:10,duration:"50 min",schedule:"",attendance:100,avatar:"👦",c1:"#14B8A6",c2:"#10B981",badges:[],paid:false,birthday:""},
   {id:118,name:"Rainy",nat:"🇨🇳 Chinese",level:"Beginner",rate:40,classes:10,total:10,duration:"50 min",schedule:"",attendance:100,avatar:"👧",c1:"#3B82F6",c2:"#06B6D4",badges:[],paid:false,birthday:""},
-  {id:119,name:"Shily",nat:"🇨🇳 Chinese",level:"Beginner",rate:40,classes:10,total:10,duration:"50 min",schedule:"",attendance:100,avatar:"👧",c1:"#EC4899",c2:"#F59E0B",badges:[],paid:false,birthday:""},
+  {id:119,name:"Shily",nat:"🇨🇳 Chinese",level:"Beginner",rate:40,classes:10,total:10,duration:"50 min",schedule:"",attendance:100,avatar:"👧",c1:"#EC4899",c2:"#F59E0B",badges:[],paid:false,birthday:""}
 ];
 
-// Find the default students array and replace it
-const start = h.indexOf('let students=[');
-const end = h.indexOf('];', start) + 2;
-const newArr = 'let students=' + JSON.stringify(newStudents) + ';';
+const newArr = "let students = JSON.parse(localStorage.getItem('ts-students') || 'null') || " + JSON.stringify(newStudents) + ";";
 h = h.substring(0, start) + newArr + h.substring(end);
 
+console.log('has script:', h.includes('<script>'));
+console.log('has body:', h.includes('<body>'));
+console.log('students:', newStudents.length);
+
 fs.writeFileSync('index.html', h, 'utf8');
-console.log('students added:', newStudents.length);
