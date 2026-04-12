@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>TeachSmart</title>
+  <style>
+    body {
+      background-color: #F0F4FF;
+      font-family: Arial, sans-serif;
+      padding: 40px;
+    }
+    h1 { color: #A855F7; }
+    .card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      width: 300px;
+    }
+    .name {
+      font-size: 18px;
+      font-weight: bold;
+      color: #1E1B4B;
+    }
+    .button {
+      background-color: #A855F7;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>TeachSmart 📚</h1>
+
+  <div class="card">
+    <p class="name">👧 Li Wei</p>
+    <p id="classes-liwei">Classes left: 8</p>
+    <button class="button" onclick="markClass('liwei', 'Li Wei')">
+      ✅ Mark Class Done
+    </button>
+  </div>
+
+  <div class="card">
+    <p class="name">👦 Park Jisoo</p>
+    <p id="classes-jisoo">Classes left: 5</p>
+    <button class="button" onclick="markClass('jisoo', 'Park Jisoo')">
+      ✅ Mark Class Done
+    </button>
+  </div>
+
+  <script>
+    function markClass(student, name) {
+      var box = document.getElementById('classes-' + student);
+      var current = parseInt(box.innerText.replace('Classes left: ', ''));
+
+      if (current <= 0) {
+        alert(name + ' has no classes left! Please renew.');
+        return;
+      }
+
+      current = current - 1;
+      box.innerText = 'Classes left: ' + current;
+      alert('✅ Done! ' + name + ' now has ' + current + ' classes left.');
+
+      if (current <= 2) {
+        alert('⚠️ Warning! ' + name + ' is running low. Time to renew!');
+      }
+    }
+  </script>
+
+</body>
+</html>

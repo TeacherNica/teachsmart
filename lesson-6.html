@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>TeachSmart</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #F0F4FF;
+    }
+    .navbar {
+      background-color: #1E1B4B;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .navbar-logo { color:white; font-size:22px; font-weight:bold; }
+    .nav-btn {
+      color: rgba(255,255,255,0.6);
+      background: none; border: none;
+      font-size: 15px; cursor: pointer;
+      padding: 8px 16px; border-radius: 10px;
+    }
+    .nav-btn:hover { background:rgba(255,255,255,0.1); color:white; }
+    .nav-btn.active { background:rgba(168,85,247,0.3); color:white; }
+    .page { display:none; padding:40px; }
+    .page.active { display:block; }
+    h1 { color:#1E1B4B; font-size:28px; margin-bottom:20px; }
+    .card {
+      background:white; padding:20px;
+      border-radius:16px; margin-bottom:16px;
+      width:320px; box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    }
+    .name { font-size:17px; font-weight:bold; color:#1E1B4B; margin-bottom:6px; }
+    .detail { font-size:14px; color:#6B7280; margin-bottom:4px; }
+    .button {
+      background-color:#A855F7; color:white;
+      padding:8px 18px; border:none;
+      border-radius:10px; font-size:13px;
+      cursor:pointer; margin-top:10px;
+      margin-right:8px;
+    }
+    .button:hover { background-color:#7C3AED; }
+    .btn-reset {
+      background-color:#F3F4F6; color:#6B7280;
+      padding:8px 18px; border:none;
+      border-radius:10px; font-size:13px;
+      cursor:pointer; margin-top:10px;
+    }
+    .low-warning {
+      color:#EF4444; font-size:12px;
+      font-weight:bold; margin-top:6px;
+    }
+    .saved-badge {
+      display:inline-block;
+      background:#F0FDF4; color:#15803D;
+      font-size:11px; font-weight:bold;
+      padding:2px 8px; border-radius:20px;
+      margin-left:8px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="navbar">
+    <div class="navbar-logo">📚 TeachSmart</div>
+    <button class="nav-btn active" onclick="showPage('students', this)">
+      👨‍🎓 Students
+    </button>
+    <button class="nav-btn" onclick="showPage('schedule', this)">
+      📅 Schedule
+    </button>
+  </div>
+
+  <!-- STUDENTS PAGE -->
+  <div class="page active" id="page-students">
+    <h1>👨‍🎓 My Students
+      <span class="saved-badge">💾 Auto-saved</span>
+    </h1>
+
+    <div class="card">
+      <p class="name">👧 Li Wei 🇨🇳</p>
+      <p class="detail">Level: Intermediate</p>
+      <p class="detail">Classes left:
+        <strong id="classes-liwei">8</strong>
+      </p>
+      <p class="low-warning" id="warn-liwei"></p>
+      <button class="button" onclick="markClass('liwei', 'Li Wei', 8)">
+        ✅ Mark Class Done
+      </button>
+      <button class="btn-reset" onclick="resetStudent('liwei', 8)">
+        🔄 Reset
+      </button>
+    </div>
+
+    <div class="card">
+      <p class="name">👦 Park Jisoo 🇰🇷</p>
+      <p class="detail">Level: Beginner</p>
+      <p class="detail">Classes left:
+        <strong id="classes-jisoo">5</strong>
+      </p>
+      <p class="low-warning" id="warn-jisoo"></p>
+      <button class="button" onclick="markClass('jisoo', 'Park Jisoo', 5)">
+        ✅ Mark Class Done
+      </button>
+      <button class="btn-reset" onclick="resetStudent('jisoo', 5)">
+        🔄 Reset
+      </button>
+    </div>
+
+    <div class="card">
+      <p class="name">👧 Chen Xiaoming 🇨🇳</p>
+      <p class="detail">Level: Advanced</p>
+      <p class="detail">Classes left:
+        <strong id="classes-xiaoming">12</strong>
+      </p>
+      <p class="low-warning" id="warn-xiaoming"></p>
+      <button class="button" onclick="markClass('xiaoming', 'Chen Xiaoming', 12)">
+        ✅ Mark Class Done
+      </button>
+      <button class="btn-reset" onclick="resetStudent('xiaoming', 12)">
+        🔄 Reset
+      </button>
+    </div>
+
+  </div>
+
+  <!-- SCHEDULE PAGE -->
+  <div class="page" id="page-schedule">
+    <h1>📅 Today's Schedule</h1>
+    <p style="color:#6B7280; margin-bottom:20px;">
+      Thailand time 🇹🇭 — Weekdays 5:30–9:00 PM
+    </p>
+
+    <div style="background:white; padding:16px 20px; border-radius:14px; margin-bottom:10px; display:flex; align-items:center; gap:16px; width:400px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <div style="font-size:18px; font-weight:bold; color:#A855F7; min-width:70px;">5:30 PM</div>
+      <div>
+        <div style="font-size:15px; font-weight:bold; color:#1E1B4B;">👧 Li Wei 🇨🇳</div>
+        <div style="font-size:13px; color:#6B7280;">Intermediate · 50 min</div>
+      </div>
+    </div>
+
+    <div style="background:white; padding:16px 20px; border-radius:14px; margin-bottom:10px; display:flex; align-items:center; gap:16px; width:400px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <div style="font-size:18px; font-weight:bold; color:#A855F7; min-width:70px;">6:30 PM</div>
+      <div>
+        <div style="font-size:15px; font-weight:bold; color:#1E1B4B;">👦 Park Jisoo 🇰🇷</div>
+        <div style="font-size:13px; color:#6B7280;">Beginner · 25 min</div>
+      </div>
+    </div>
+
+    <div style="background:white; padding:16px 20px; border-radius:14px; margin-bottom:10px; display:flex; align-items:center; gap:16px; width:400px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <div style="font-size:18px; font-weight:bold; color:#A855F7; min-width:70px;">7:30 PM</div>
+      <div>
+        <div style="font-size:15px; font-weight:bold; color:#1E1B4B;">👧 Chen Xiaoming 🇨🇳</div>
+        <div style="font-size:13px; color:#6B7280;">Advanced · 50 min</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+
+    // List of students with their starting classes
+    var students = {
+      liwei: 8,
+      jisoo: 5,
+      xiaoming: 12
+    };
+
+    // Load saved data when page opens
+    function loadData() {
+      for (var student in students) {
+        var saved = localStorage.getItem('classes-' + student);
+        if (saved !== null) {
+          document.getElementById('classes-' + student).innerText = saved;
+          checkWarning(student, parseInt(saved));
+        }
+      }
+    }
+
+    // Mark a class as done
+    function markClass(student, name, starting) {
+      var box = document.getElementById('classes-' + student);
+      var current = parseInt(box.innerText);
+
+      if (current <= 0) {
+        alert('⚠️ ' + name + ' has no classes left! Please renew the package.');
+        return;
+      }
+
+      current = current - 1;
+      box.innerText = current;
+
+      // SAVE to localStorage — this is the magic!
+      localStorage.setItem('classes-' + student, current);
+
+      alert('✅ Class marked! ' + name + ' now has ' + current + ' classes left.');
+      checkWarning(student, current);
+    }
+
+    // Reset a student back to starting number
+    function resetStudent(student, starting) {
+      document.getElementById('classes-' + student).innerText = starting;
+      localStorage.setItem('classes-' + student, starting);
+      document.getElementById('warn-' + student).innerText = '';
+      alert('🔄 Reset! Classes restored to ' + starting);
+    }
+
+    // Show a red warning if classes are low
+    function checkWarning(student, number) {
+      var warn = document.getElementById('warn-' + student);
+      if (number <= 2 && number > 0) {
+        warn.innerText = '⚠️ Only ' + number + ' class(es) left — time to renew!';
+      } else if (number === 0) {
+        warn.innerText = '🚫 No classes left! Package expired.';
+      } else {
+        warn.innerText = '';
+      }
+    }
+
+    // Navigation
+    function showPage(page, btn) {
+      document.querySelectorAll('.page').forEach(function(p) {
+        p.classList.remove('active');
+      });
+      document.querySelectorAll('.nav-btn').forEach(function(b) {
+        b.classList.remove('active');
+      });
+      document.getElementById('page-' + page).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // Load data when page opens
+    loadData();
+
+  </script>
+
+</body>
+</html>

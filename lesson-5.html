@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>TeachSmart</title>
+  <style>
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #F0F4FF;
+    }
+
+    /* TOP NAVIGATION BAR */
+    .navbar {
+      background-color: #1E1B4B;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .navbar-logo {
+      color: white;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .nav-btn {
+      color: rgba(255,255,255,0.6);
+      background: none;
+      border: none;
+      font-size: 15px;
+      cursor: pointer;
+      padding: 8px 16px;
+      border-radius: 10px;
+    }
+
+    .nav-btn:hover {
+      background-color: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    .nav-btn.active {
+      background-color: rgba(168,85,247,0.3);
+      color: white;
+    }
+
+    /* PAGE CONTENT */
+    .page {
+      display: none;
+      padding: 40px;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    h1 {
+      color: #1E1B4B;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    /* CARDS */
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      width: 320px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .name {
+      font-size: 17px;
+      font-weight: bold;
+      color: #1E1B4B;
+      margin-bottom: 6px;
+    }
+
+    .detail {
+      font-size: 14px;
+      color: #6B7280;
+      margin-bottom: 4px;
+    }
+
+    .button {
+      background-color: #A855F7;
+      color: white;
+      padding: 8px 18px;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .button:hover {
+      background-color: #7C3AED;
+    }
+
+    /* SCHEDULE */
+    .schedule-item {
+      background: white;
+      padding: 16px 20px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: 400px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .schedule-time {
+      font-size: 18px;
+      font-weight: bold;
+      color: #A855F7;
+      min-width: 70px;
+    }
+
+    .schedule-name {
+      font-size: 15px;
+      font-weight: bold;
+      color: #1E1B4B;
+    }
+
+    .schedule-detail {
+      font-size: 13px;
+      color: #6B7280;
+    }
+
+    /* PAYMENTS */
+    .payment-item {
+      background: white;
+      padding: 16px 20px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 400px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .paid {
+      background-color: #F0FDF4;
+      color: #15803D;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .pending {
+      background-color: #FFFBEB;
+      color: #B45309;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVIGATION BAR -->
+  <div class="navbar">
+    <div class="navbar-logo">📚 TeachSmart</div>
+    <button class="nav-btn active" onclick="showPage('students', this)">
+      👨‍🎓 Students
+    </button>
+    <button class="nav-btn" onclick="showPage('schedule', this)">
+      📅 Schedule
+    </button>
+    <button class="nav-btn" onclick="showPage('payments', this)">
+      💰 Payments
+    </button>
+  </div>
+
+  <!-- STUDENTS PAGE -->
+  <div class="page active" id="page-students">
+    <h1>👨‍🎓 My Students</h1>
+
+    <div class="card">
+      <p class="name">👧 Li Wei 🇨🇳</p>
+      <p class="detail">Level: Intermediate</p>
+      <p class="detail" id="classes-liwei">Classes left: 8</p>
+      <button class="button" onclick="markClass('liwei', 'Li Wei')">
+        ✅ Mark Class Done
+      </button>
+    </div>
+
+    <div class="card">
+      <p class="name">👦 Park Jisoo 🇰🇷</p>
+      <p class="detail">Level: Beginner</p>
+      <p class="detail" id="classes-jisoo">Classes left: 5</p>
+      <button class="button" onclick="markClass('jisoo', 'Park Jisoo')">
+        ✅ Mark Class Done
+      </button>
+    </div>
+
+    <div class="card">
+      <p class="name">👧 Chen Xiaoming 🇨🇳</p>
+      <p class="detail">Level: Advanced</p>
+      <p class="detail" id="classes-xiaoming">Classes left: 12</p>
+      <button class="button" onclick="markClass('xiaoming', 'Chen Xiaoming')">
+        ✅ Mark Class Done
+      </button>
+    </div>
+
+  </div>
+
+  <!-- SCHEDULE PAGE -->
+  <div class="page" id="page-schedule">
+    <h1>📅 Today's Schedule</h1>
+
+    <div class="schedule-item">
+      <div class="schedule-time">5:30 PM</div>
+      <div>
+        <div class="schedule-name">👧 Li Wei 🇨🇳</div>
+        <div class="schedule-detail">Intermediate · 50 min</div>
+      </div>
+    </div>
+
+    <div class="schedule-item">
+      <div class="schedule-time">6:30 PM</div>
+      <div>
+        <div class="schedule-name">👦 Park Jisoo 🇰🇷</div>
+        <div class="schedule-detail">Beginner · 25 min</div>
+      </div>
+    </div>
+
+    <div class="schedule-item">
+      <div class="schedule-time">7:30 PM</div>
+      <div>
+        <div class="schedule-name">👧 Chen Xiaoming 🇨🇳</div>
+        <div class="schedule-detail">Advanced · 50 min</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PAYMENTS PAGE -->
+  <div class="page" id="page-payments">
+    <h1>💰 Payments</h1>
+
+    <div class="payment-item">
+      <div>
+        <div class="schedule-name">👧 Li Wei 🇨🇳</div>
+        <div class="schedule-detail">Package: ₱2,500</div>
+      </div>
+      <span class="paid">✅ Paid</span>
+    </div>
+
+    <div class="payment-item">
+      <div>
+        <div class="schedule-name">👦 Park Jisoo 🇰🇷</div>
+        <div class="schedule-detail">Package: ₱2,000</div>
+      </div>
+      <span class="pending">⏳ Pending</span>
+    </div>
+
+    <div class="payment-item">
+      <div>
+        <div class="schedule-name">👧 Chen Xiaoming 🇨🇳</div>
+        <div class="schedule-detail">Package: ₱3,000</div>
+      </div>
+      <span class="paid">✅ Paid</span>
+    </div>
+
+  </div>
+
+  <script>
+    function showPage(page, btn) {
+
+      // Hide all pages
+      var pages = document.querySelectorAll('.page');
+      pages.forEach(function(p) {
+        p.classList.remove('active');
+      });
+
+      // Remove active from all nav buttons
+      var buttons = document.querySelectorAll('.nav-btn');
+      buttons.forEach(function(b) {
+        b.classList.remove('active');
+      });
+
+      // Show the selected page
+      document.getElementById('page-' + page).classList.add('active');
+
+      // Highlight the clicked button
+      btn.classList.add('active');
+    }
+
+    function markClass(student, name) {
+      var box = document.getElementById('classes-' + student);
+      var current = parseInt(box.innerText.replace('Classes left: ', ''));
+
+      if (current <= 0) {
+        alert(name + ' has no classes left! Please renew.');
+        return;
+      }
+
+      current = current - 1;
+      box.innerText = 'Classes left: ' + current;
+      alert('✅ Done! ' + name + ' now has ' + current + ' classes left.');
+
+      if (current <= 2) {
+        alert('⚠️ ' + name + ' is running low. Time to renew!');
+      }
+    }
+  </script>
+
+</body>
+</html>

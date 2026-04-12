@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>TeachSmart</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #F0F4FF;
+    }
+    .navbar {
+      background-color: #1E1B4B;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .navbar-logo { color:white; font-size:22px; font-weight:bold; }
+    .nav-btn {
+      color:rgba(255,255,255,0.6);
+      background:none; border:none;
+      font-size:15px; cursor:pointer;
+      padding:8px 16px; border-radius:10px;
+    }
+    .nav-btn:hover { background:rgba(255,255,255,0.1); color:white; }
+    .nav-btn.active { background:rgba(168,85,247,0.3); color:white; }
+    .page { display:none; padding:40px; }
+    .page.active { display:block; }
+    h1 { color:#1E1B4B; font-size:28px; margin-bottom:20px; }
+
+    /* STUDENT CARDS */
+    .students-list { display:flex; flex-wrap:wrap; gap:16px; }
+    .card {
+      background:white; padding:20px;
+      border-radius:16px; width:280px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    }
+    .name { font-size:17px; font-weight:bold; color:#1E1B4B; margin-bottom:6px; }
+    .detail { font-size:14px; color:#6B7280; margin-bottom:4px; }
+    .button {
+      background-color:#A855F7; color:white;
+      padding:8px 16px; border:none;
+      border-radius:10px; font-size:13px;
+      cursor:pointer; margin-top:8px;
+      margin-right:6px;
+    }
+    .button:hover { background-color:#7C3AED; }
+    .btn-delete {
+      background-color:#FFF1F2; color:#BE123C;
+      padding:8px 16px; border:none;
+      border-radius:10px; font-size:13px;
+      cursor:pointer; margin-top:8px;
+    }
+    .btn-delete:hover { background-color:#FFE4E6; }
+    .low-warning { color:#EF4444; font-size:12px; font-weight:bold; margin-top:6px; }
+
+    /* ADD STUDENT FORM */
+    .form-box {
+      background:white; padding:28px;
+      border-radius:20px; width:400px;
+      box-shadow:0 2px 16px rgba(0,0,0,0.08);
+    }
+    .form-title { font-size:20px; font-weight:bold; color:#1E1B4B; margin-bottom:20px; }
+    .form-label { font-size:12px; font-weight:700; color:#6B7280; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px; }
+    .form-input, .form-select {
+      width:100%; padding:12px 16px;
+      border:2px solid #E5E7EB;
+      border-radius:12px; font-size:14px;
+      font-family:Arial, sans-serif;
+      margin-bottom:16px; outline:none;
+    }
+    .form-input:focus, .form-select:focus { border-color:#A855F7; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .btn-save {
+      width:100%; padding:14px;
+      background:linear-gradient(135deg,#A855F7,#3B82F6);
+      color:white; border:none;
+      border-radius:14px; font-size:15px;
+      font-weight:bold; cursor:pointer;
+      margin-top:4px;
+    }
+    .btn-save:hover { opacity:0.9; }
+    .success-msg {
+      background:#F0FDF4; color:#15803D;
+      padding:12px 16px; border-radius:12px;
+      font-weight:bold; font-size:14px;
+      margin-bottom:16px; display:none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="navbar">
+    <div class="navbar-logo">📚 TeachSmart</div>
+    <button class="nav-btn active" onclick="showPage('students', this)">
+      👨‍🎓 Students
+    </button>
+    <button class="nav-btn" onclick="showPage('add', this)">
+      ➕ Add Student
+    </button>
+  </div>
+
+  <!-- STUDENTS PAGE -->
+  <div class="page active" id="page-students">
+    <h1>👨‍🎓 My Students</h1>
+    <div class="students-list" id="students-list">
+      <!-- Students will appear here automatically -->
+    </div>
+  </div>
+
+  <!-- ADD STUDENT PAGE -->
+  <div class="page" id="page-add">
+    <h1>➕ Add New Student</h1>
+
+    <div class="form-box">
+      <div class="form-title">Student Details</div>
+
+      <div class="success-msg" id="success-msg">
+        ✅ Student added successfully!
+      </div>
+
+      <label class="form-label">Full Name</label>
+      <input class="form-input" type="text" id="input-name" placeholder="e.g. Li Wei">
+
+      <div class="form-row">
+        <div>
+          <label class="form-label">Nationality</label>
+          <select class="form-select" id="input-nationality">
+            <option value="🇨🇳 Chinese">🇨🇳 Chinese</option>
+            <option value="🇰🇷 Korean">🇰🇷 Korean</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Level</label>
+          <select class="form-select" id="input-level">
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label class="form-label">Classes in Package</label>
+          <input class="form-input" type="number" id="input-classes" placeholder="e.g. 10" min="1">
+        </div>
+        <div>
+          <label class="form-label">Class Duration</label>
+          <select class="form-select" id="input-duration">
+            <option value="25 min">25 min</option>
+            <option value="50 min">50 min</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="form-label">Rate per Class (₱)</label>
+      <input class="form-input" type="number" id="input-rate" placeholder="e.g. 250">
+
+      <button class="btn-save" onclick="addStudent()">
+        💾 Save Student
+      </button>
+    </div>
+  </div>
+
+  <script>
+
+    // Load students from localStorage or start with defaults
+    function getStudents() {
+      var saved = localStorage.getItem('teachsmart-students');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+      // Default students if none saved yet
+      return [
+        { id:1, name:'Li Wei', nationality:'🇨🇳 Chinese', level:'Intermediate', classes:8, total:10, duration:'50 min', rate:250 },
+        { id:2, name:'Park Jisoo', nationality:'🇰🇷 Korean', level:'Beginner', classes:5, total:10, duration:'25 min', rate:200 },
+        { id:3, name:'Chen Xiaoming', nationality:'🇨🇳 Chinese', level:'Advanced', classes:12, total:15, duration:'50 min', rate:300 }
+      ];
+    }
+
+    // Save students to localStorage
+    function saveStudents(students) {
+      localStorage.setItem('teachsmart-students', JSON.stringify(students));
+    }
+
+    // Show all students on screen
+    function renderStudents() {
+      var students = getStudents();
+      var list = document.getElementById('students-list');
+      list.innerHTML = '';
+
+      if (students.length === 0) {
+        list.innerHTML = '<p style="color:#6B7280;">No students yet. Add your first student! 😊</p>';
+        return;
+      }
+
+      students.forEach(function(s) {
+        var isLow = s.classes <= 2;
+        var card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <p class="name">👤 ${s.name}</p>
+          <p class="detail">${s.nationality} · ${s.level}</p>
+          <p class="detail">⏱️ ${s.duration} per class</p>
+          <p class="detail">💰 ₱${s.rate} per class</p>
+          <p class="detail">Classes left: <strong id="cls-${s.id}">${s.classes}</strong> / ${s.total}</p>
+          ${isLow ? `<p class="low-warning">⚠️ Only ${s.classes} left — renew soon!</p>` : ''}
+          <button class="button" onclick="markClass(${s.id})">✅ Mark Done</button>
+          <button class="btn-delete" onclick="deleteStudent(${s.id})">🗑️ Delete</button>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    // Mark a class as done
+    function markClass(id) {
+      var students = getStudents();
+      var student = students.find(function(s) { return s.id === id; });
+
+      if (!student) return;
+
+      if (student.classes <= 0) {
+        alert('⚠️ ' + student.name + ' has no classes left! Please renew.');
+        return;
+      }
+
+      student.classes = student.classes - 1;
+      saveStudents(students);
+      renderStudents();
+
+      alert('✅ Done! ' + student.name + ' now has ' + student.classes + ' classes left.');
+
+      if (student.classes <= 2 && student.classes > 0) {
+        alert('⚠️ ' + student.name + ' is running low — only ' + student.classes + ' left!');
+      }
+    }
+
+    // Delete a student
+    function deleteStudent(id) {
+      var students = getStudents();
+      var student = students.find(function(s) { return s.id === id; });
+
+      if (confirm('Delete ' + student.name + '? This cannot be undone!')) {
+        students = students.filter(function(s) { return s.id !== id; });
+        saveStudents(students);
+        renderStudents();
+      }
+    }
+
+    // Add a new student
+    function addStudent() {
+      var name = document.getElementById('input-name').value.trim();
+      var nationality = document.getElementById('input-nationality').value;
+      var level = document.getElementById('input-level').value;
+      var classes = parseInt(document.getElementById('input-classes').value);
+      var duration = document.getElementById('input-duration').value;
+      var rate = parseInt(document.getElementById('input-rate').value);
+
+      // Check all fields are filled
+      if (!name || !classes || !rate) {
+        alert('Please fill in all fields!');
+        return;
+      }
+
+      var students = getStudents();
+
+      // Create new student
+      var newStudent = {
+        id: Date.now(),
+        name: name,
+        nationality: nationality,
+        level: level,
+        classes: classes,
+        total: classes,
+        duration: duration,
+        rate: rate
+      };
+
+      students.push(newStudent);
+      saveStudents(students);
+
+      // Clear the form
+      document.getElementById('input-name').value = '';
+      document.getElementById('input-classes').value = '';
+      document.getElementById('input-rate').value = '';
+
+      // Show success message
+      var msg = document.getElementById('success-msg');
+      msg.style.display = 'block';
+      setTimeout(function() { msg.style.display = 'none'; }, 3000);
+
+      // Go to students page
+      setTimeout(function() {
+        showPage('students', document.querySelectorAll('.nav-btn')[0]);
+        renderStudents();
+      }, 1000);
+    }
+
+    // Navigation
+    function showPage(page, btn) {
+      document.querySelectorAll('.page').forEach(function(p) {
+        p.classList.remove('active');
+      });
+      document.querySelectorAll('.nav-btn').forEach(function(b) {
+        b.classList.remove('active');
+      });
+      document.getElementById('page-' + page).classList.add('active');
+      btn.classList.add('active');
+      if (page === 'students') renderStudents();
+    }
+
+    // Load students when page opens
+    renderStudents();
+
+  </script>
+
+</body>
+</html>
