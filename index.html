@@ -836,6 +836,9 @@ function renderStudents(){
       <div class="s-card-footer">
         <button class="s-btn" style="background:#EFF6FF;color:#1D4ED8;" onclick="markDone(${s.id})">✅ Mark Done</button>
         <button class="s-btn" style="background:#F3E8FF;color:#7C3AED;" onclick="openModal('report-modal')">📝 Report</button>
+        <button class="s-btn" style="background:#DCFCE7;color:#15803D;" onclick="addClass(${s.id})">➕ Add</button>
+        <button class="s-btn" style="background:#FEE2E2;color:#B91C1C;" onclick="deductClass(${s.id})">➖ Deduct</button>
+        <button class="s-btn" style="background:#FEF3C7;color:#B45309;" onclick="deleteStudent(${s.id})">🗑️ Delete</button>
         ${s.classes<=2?`<button class="s-btn" style="background:#FFF1F2;color:#BE123C;">🔄 Renew</button>`:''}
       </div>
     </div>`;
