@@ -827,7 +827,7 @@ function renderStudents(){
         <div class="s-nat">${s.nat} · ${s.schedule||''}</div>
         <div class="s-stats">
           <div><div class="s-stat-val" style="color:${bar}">${s.classes}</div><div class="s-stat-lbl">Left</div></div>
-          <div><div class="s-stat-val" style="color:var(--purple)">¥${s.rate}</div><div class="s-stat-lbl">≈₱${RATE?Math.round(s.rate/RATE):'—'}</div></div>
+          <div><div class="s-stat-val" style="color:var(--purple)">¥${s.rate}</div><div class="s-stat-lbl">≈₱${RATE?Math.round(s.rate*RATE):'—'}</div></div>
           <div><div class="s-stat-val" style="color:var(--blue)">${s.attendance}%</div><div class="s-stat-lbl">Attend.</div></div>
         </div>
         <div class="pkg-bar"><div class="pkg-fill" style="width:${pct}%;background:${bar}"></div></div>
