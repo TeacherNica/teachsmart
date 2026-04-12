@@ -1,11 +1,10 @@
 ﻿const fs = require('fs');
 let h = fs.readFileSync('index.html', 'utf8');
 
-// Force clear localStorage on load and use the hardcoded students
-const oldLoad = "let students = JSON.parse(localStorage.getItem('ts-students') || 'null') || ";
-const newLoad = "localStorage.removeItem('ts-students'); let students = ";
+// Fix rate display: show RMB rate + live PHP equivalent
+const oldRate = '<div><div class="s-stat-val" style="color:var(--purple)">₱${s.rate}</div><div class="s-stat-lbl">Per Class</div></div>';
+const newRate = '<div><div class="s-stat-val" style="color:var(--purple)">¥${s.rate}</div><div class="s-stat-lbl">≈₱${RATE?Math.round(s.rate/RATE):\'—\'}</div></div>';
 
-h = h.replace(oldLoad, newLoad);
-
+h = h.replace(oldRate, newRate);
 fs.writeFileSync('index.html', h, 'utf8');
-console.log('done:', h.includes('localStorage.removeItem'));
+console.log('done:', h.includes('¥${s.rate}'));
