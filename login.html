@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>TeachSmart Login</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; }
+.box { background: #16213e; border-radius: 16px; padding: 40px; text-align: center; width: 320px; }
+h2 { color: #fff; margin-bottom: 8px; font-size: 1.5rem; }
+p { color: #aaa; margin-bottom: 24px; }
+input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #0f3460; color: #fff; font-size: 1rem; margin-bottom: 12px; }
+button { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #e94560; color: #fff; font-size: 1rem; cursor: pointer; font-weight: bold; }
+#err { color: #e94560; margin-top: 8px; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>🔐 TeachSmart</h2>
+  <p>Teacher access only</p>
+  <input id="pw" type="password" placeholder="Enter password" />
+  <button onclick="check()">LOGIN</button>
+  <p id="err"></p>
+</div>
+<script>
+function check() {
+  if (document.getElementById('pw').value === 'teachnica2026') {
+    sessionStorage.setItem('ts_auth', 'yes');
+    window.location.href = '/index.html';
+  } else {
+    document.getElementById('err').textContent = 'Wrong password.';
+  }
+}
+document.getElementById('pw').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') check();
+});
+if (sessionStorage.getItem('ts_auth') === 'yes') {
+  window.location.href = '/index.html';
+}
+</script>
+</body>
+</html>
