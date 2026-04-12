@@ -836,6 +836,7 @@ function renderStudents(){
       <div class="s-card-footer">
         <button class="s-btn" style="background:#EFF6FF;color:#1D4ED8;" onclick="markDone(${s.id})">✅ Mark Done</button>
         <button class="s-btn" style="background:#F3E8FF;color:#7C3AED;" onclick="openModal('report-modal')">📝 Report</button>
+        <button class="s-btn" style="background:#EDE9FE;color:#5B21B6;" onclick="openSchedule(${s.id})">📅 Schedule</button>
         <button class="s-btn" style="background:#DCFCE7;color:#15803D;" onclick="addClass(${s.id})">➕ Add</button>
         <button class="s-btn" style="background:#FEE2E2;color:#B91C1C;" onclick="deductClass(${s.id})">➖ Deduct</button>
         <button class="s-btn" style="background:#FEF3C7;color:#B45309;" onclick="deleteStudent(${s.id})">🗑️ Delete</button>
@@ -866,6 +867,38 @@ function deleteStudent(id){
   students=students.filter(x=>x.id!==id);
   saveData();
   renderStudents();
+}
+
+let currentSchedId = null;
+function openSchedule(id){
+  const s = students.find(x=>x.id===id);
+  if(!s) return;
+  currentSchedId = id;
+  document.getElementById('sched-student-name').textContent = s.name;
+  const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const sched = s.weekSchedule || {};
+  days.forEach(day=>{
+    document.getElementById('sched-'+day+'-start').value = sched[day]?.start || '';
+    document.getElementById('sched-'+day+'-end').value = sched[day]?.end || '';
+  });
+  document.getElementById('sched-notes').value = s.schedNotes || '';
+  openModal('schedule-modal');
+}
+function saveSchedule(){
+  const s = students.find(x=>x.id===currentSchedId);
+  if(!s) return;
+  const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  s.weekSchedule = {};
+  days.forEach(day=>{
+    const start = document.getElementById('sched-'+day+'-start').value;
+    const end = document.getElementById('sched-'+day+'-end').value;
+    if(start||end) s.weekSchedule[day] = {start,end};
+  });
+  s.schedNotes = document.getElementById('sched-notes').value;
+  saveData();
+  closeModal('schedule-modal');
+  renderStudents();
+  alert('Schedule saved!');
 }
 function isUpcoming(bday){
   const d=new Date(bday);const today=new Date();
@@ -1048,5 +1081,67 @@ renderStudents();
 // Currency converter shortcut on dashboard
 document.getElementById('php-in')?.addEventListener('input',convertCurr);
 </script>
+
+<div id="schedule-modal" class="modal-overlay">
+  <div class="modal" style="max-width:480px;width:95%">
+    <div class="modal-header">
+      <div class="modal-title">📅 Weekly Schedule</div>
+      <button class="modal-close" onclick="closeModal('schedule-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="sched-student-name" style="font-weight:700;font-size:1.1rem;margin-bottom:16px;color:var(--purple)"></div>
+      <div style="display:grid;gap:10px;" id="sched-days">
+        
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:90px;font-weight:600;font-size:0.85rem;">Monday</div>
+          <input type="time" id="sched-Monday-start" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+          <span style="font-size:0.8rem;color:#888;">to</span>
+          <input type="time" id="sched-Monday-end" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:90px;font-weight:600;font-size:0.85rem;">Tuesday</div>
+          <input type="time" id="sched-Tuesday-start" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+          <span style="font-size:0.8rem;color:#888;">to</span>
+          <input type="time" id="sched-Tuesday-end" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:90px;font-weight:600;font-size:0.85rem;">Wednesday</div>
+          <input type="time" id="sched-Wednesday-start" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+          <span style="font-size:0.8rem;color:#888;">to</span>
+          <input type="time" id="sched-Wednesday-end" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:90px;font-weight:600;font-size:0.85rem;">Thursday</div>
+          <input type="time" id="sched-Thursday-start" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+          <span style="font-size:0.8rem;color:#888;">to</span>
+          <input type="time" id="sched-Thursday-end" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:90px;font-weight:600;font-size:0.85rem;">Friday</div>
+          <input type="time" id="sched-Friday-start" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+          <span style="font-size:0.8rem;color:#888;">to</span>
+          <input type="time" id="sched-Friday-end" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:90px;font-weight:600;font-size:0.85rem;">Saturday</div>
+          <input type="time" id="sched-Saturday-start" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+          <span style="font-size:0.8rem;color:#888;">to</span>
+          <input type="time" id="sched-Saturday-end" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:90px;font-weight:600;font-size:0.85rem;">Sunday</div>
+          <input type="time" id="sched-Sunday-start" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+          <span style="font-size:0.8rem;color:#888;">to</span>
+          <input type="time" id="sched-Sunday-end" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <label style="font-weight:600;font-size:0.85rem;">Notes</label>
+        <textarea id="sched-notes" rows="2" style="width:100%;padding:8px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;margin-top:4px;box-sizing:border-box;"></textarea>
+      </div>
+      <button onclick="saveSchedule()" class="btn btn-primary" style="width:100%;margin-top:16px;">💾 Save Schedule</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
