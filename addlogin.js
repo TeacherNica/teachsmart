@@ -1,9 +1,31 @@
 ﻿const fs = require('fs');
 let h = fs.readFileSync('index.html', 'utf8');
 
-const oldBtn = "Report</button>\r\n        ${s.classes<=2?";
-const newBtn = "Report</button>\r\n        <button class=\"s-btn\" style=\"background:#DCFCE7;color:#15803D;\" onclick=\"addClass(${s.id})\">➕ Add</button>\r\n        <button class=\"s-btn\" style=\"background:#FEE2E2;color:#B91C1C;\" onclick=\"deductClass(${s.id})\">➖ Deduct</button>\r\n        <button class=\"s-btn\" style=\"background:#FEF3C7;color:#B45309;\" onclick=\"deleteStudent(${s.id})\">🗑️ Delete</button>\r\n        ${s.classes<=2?";
+const inject = `
+function addClass(id){
+  const s=students.find(x=>x.id===id);
+  if(!s)return;
+  s.classes++;
+  s.total=Math.max(s.total,s.classes);
+  saveStudents();
+  renderStudents();
+}
+function deductClass(id){
+  const s=students.find(x=>x.id===id);
+  if(!s)return;
+  if(s.classes<=0){alert('No classes left!');return;}
+  s.classes--;
+  saveStudents();
+  renderStudents();
+}
+function deleteStudent(id){
+  if(!confirm('Delete this student?'))return;
+  students=students.filter(x=>x.id!==id);
+  saveStudents();
+  renderStudents();
+}`;
 
-h = h.replace(oldBtn, newBtn);
+h = h.replace('function isUpcoming', inject + '\nfunction isUpcoming');
 fs.writeFileSync('index.html', h, 'utf8');
-console.log('done:', h.includes('deductClass'));
+console.log('addClass:', h.includes('function addClass'));
+console.log('deleteStudent:', h.includes('function deleteStudent'));

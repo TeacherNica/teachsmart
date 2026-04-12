@@ -844,6 +844,29 @@ function renderStudents(){
     </div>`;
   }).join('');
 }
+
+function addClass(id){
+  const s=students.find(x=>x.id===id);
+  if(!s)return;
+  s.classes++;
+  s.total=Math.max(s.total,s.classes);
+  saveStudents();
+  renderStudents();
+}
+function deductClass(id){
+  const s=students.find(x=>x.id===id);
+  if(!s)return;
+  if(s.classes<=0){alert('No classes left!');return;}
+  s.classes--;
+  saveStudents();
+  renderStudents();
+}
+function deleteStudent(id){
+  if(!confirm('Delete this student?'))return;
+  students=students.filter(x=>x.id!==id);
+  saveStudents();
+  renderStudents();
+}
 function isUpcoming(bday){
   const d=new Date(bday);const today=new Date();
   const next=new Date(today.getFullYear(),d.getMonth(),d.getDate());
