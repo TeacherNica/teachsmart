@@ -1430,26 +1430,26 @@ function renderScheduleGrid(){
   const body=document.getElementById('sched-body');
   if(!body)return;
   const PASTEL={
-    'K.Bella':   {flag:'🇰🇷',bg:'#FCE4EC',text:'#880E4F'},
-    'Jackie':    {flag:'🇰🇷',bg:'#EDE7F6',text:'#4A148C'},
-    'Lina':      {flag:'🇰🇷',bg:'#E8EAF6',text:'#1A237E'},
-    'Aiden':     {flag:'🇰🇷',bg:'#E0F2F1',text:'#004D40'},
-    'Sophia':    {flag:'🇰🇷',bg:'#E1F5FE',text:'#01579B'},
-    'Peter':     {flag:'🇰🇷',bg:'#FFF8E1',text:'#E65100'},
-    'Seah':      {flag:'🇰🇷',bg:'#F3E5F5',text:'#4A148C'},
-    'Suri':      {flag:'🇨🇳',bg:'#FFF3E0',text:'#BF360C'},
-    'Bella':     {flag:'🇨🇳',bg:'#FCE4EC',text:'#880E4F'},
-    'COCO-1':    {flag:'🇨🇳',bg:'#FFFDE7',text:'#F57F17'},
-    'Harry':     {flag:'🇨🇳',bg:'#E3F2FD',text:'#0D47A1'},
-    'Kelly-Adult':{flag:'🇨🇳',bg:'#E8F5E9',text:'#1B5E20'},
-    'KAREN':     {flag:'🇨🇳',bg:'#E0F7FA',text:'#006064'},
-    'Mollie-Adult & Steven':{flag:'🇨🇳',bg:'#FFF9C4',text:'#827717'},
-    'Coco-2':    {flag:'🇨🇳',bg:'#FFFDE7',text:'#F57F17'},
-    'Koala':     {flag:'🇨🇳',bg:'#F3E5F5',text:'#4A148C'},
-    'Owen':      {flag:'🇨🇳',bg:'#E8F5E9',text:'#1B5E20'},
-    'Rainy':     {flag:'🇨🇳',bg:'#E3F2FD',text:'#0D47A1'},
-    'Shily':     {flag:'🇨🇳',bg:'#FCE4EC',text:'#880E4F'},
-    'Carl':      {flag:'🇨🇳',bg:'#FFF8E1',text:'#E65100'},
+    'K.Bella':   {flag:'<img src=https://flagcdn.com/16x12/kr.png style=vertical-align:middle;margin-right:3px;>',bg:'#FCE4EC',text:'#880E4F'},
+    'Jackie':    {flag:'<img src=https://flagcdn.com/16x12/kr.png style=vertical-align:middle;margin-right:3px;>',bg:'#EDE7F6',text:'#4A148C'},
+    'Lina':      {flag:'<img src=https://flagcdn.com/16x12/kr.png style=vertical-align:middle;margin-right:3px;>',bg:'#E8EAF6',text:'#1A237E'},
+    'Aiden':     {flag:'<img src=https://flagcdn.com/16x12/kr.png style=vertical-align:middle;margin-right:3px;>',bg:'#E0F2F1',text:'#004D40'},
+    'Sophia':    {flag:'<img src=https://flagcdn.com/16x12/kr.png style=vertical-align:middle;margin-right:3px;>',bg:'#E1F5FE',text:'#01579B'},
+    'Peter':     {flag:'<img src=https://flagcdn.com/16x12/kr.png style=vertical-align:middle;margin-right:3px;>',bg:'#FFF8E1',text:'#E65100'},
+    'Seah':      {flag:'<img src=https://flagcdn.com/16x12/kr.png style=vertical-align:middle;margin-right:3px;>',bg:'#F3E5F5',text:'#4A148C'},
+    'Suri':      {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#FFF3E0',text:'#BF360C'},
+    'Bella':     {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#FCE4EC',text:'#880E4F'},
+    'COCO-1':    {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#FFFDE7',text:'#F57F17'},
+    'Harry':     {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#E3F2FD',text:'#0D47A1'},
+    'Kelly-Adult':{flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#E8F5E9',text:'#1B5E20'},
+    'KAREN':     {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#E0F7FA',text:'#006064'},
+    'Mollie-Adult & Steven':{flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#FFF9C4',text:'#827717'},
+    'Coco-2':    {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#FFFDE7',text:'#F57F17'},
+    'Koala':     {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#F3E5F5',text:'#4A148C'},
+    'Owen':      {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#E8F5E9',text:'#1B5E20'},
+    'Rainy':     {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#E3F2FD',text:'#0D47A1'},
+    'Shily':     {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#FCE4EC',text:'#880E4F'},
+    'Carl':      {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#FFF8E1',text:'#E65100'},
   };
   function cell(name,bg){
     if(!name)return '<td style="background:#EF4444;color:#fff;text-align:center;padding:7px 4px;border:1px solid #ddd;font-weight:600;font-size:0.78rem;">Close</td>';
@@ -1457,7 +1457,7 @@ function renderScheduleGrid(){
     const s=students.find(x=>x.name===name||x.name.startsWith(name));
     const meta=PASTEL[name]||{flag:'',bg:'#E8EAF6',text:'#1E1B4B'};
     const onclick=s?"nav(\'students\',document.querySelectorAll(\'.nav-item\')[1])":'';
-    return '<td style="background:'+meta.bg+';color:'+meta.text+';text-align:center;padding:7px 4px;border:1px solid #ddd;font-weight:700;font-size:0.78rem;cursor:pointer;" onclick="'+onclick+'">'+(meta.flag?meta.flag+' ':'')+name+'</td>';
+    return '<td style="background:'+meta.bg+';color:'+meta.text+';text-align:center;padding:7px 4px;border:1px solid #ddd;font-weight:700;font-size:0.78rem;cursor:pointer;" onclick="'+onclick+'">'+(meta.flag?meta.flag:'')+name+'</td>';
   }
   function sectionCell(label,rows,bg){
     return '<td rowspan="'+rows+'" style="background:'+bg+';color:#fff;font-weight:800;text-align:center;padding:6px 4px;border:1px solid #ddd;writing-mode:vertical-lr;letter-spacing:3px;">'+label+'</td>';
