@@ -1028,19 +1028,7 @@ function getTodaySlots(offset){
   });
 }
 
-function getTodaySlots(){
-  const dayIdx=new Date().getDay()===0?6:new Date().getDay()-1;
-  if(typeof WEEKLY_SCHEDULE==='undefined')return[];
-  return (WEEKLY_SCHEDULE[dayIdx]||[]).map(slot=>{
-    const s=students.find(x=>x.name===slot.student)||{name:slot.student,nat:'',level:'',duration:slot.duration+' min',c1:'#A855F7',c2:'#6366F1'};
-    const nowMins=new Date().getHours()*60+new Date().getMinutes();
-    const t=slot.time.split(' ');const hm=t[0].split(':');let hr=parseInt(hm[0]);const mn=parseInt(hm[1]);
-    if(t[1]==='PM'&&hr!==12)hr+=12;if(t[1]==='AM'&&hr===12)hr=0;
-    const slotMins=hr*60+mn;
-    const status=nowMins>slotMins+slot.duration?'done':nowMins>=slotMins?'now':'upcoming';
-    return {time:slot.time, s:{...s,duration:slot.duration+' min'}, status};
-  });
-}
+
 function isUpcoming(bday){
   const d=new Date(bday);const today=new Date();
   const next=new Date(today.getFullYear(),d.getMonth(),d.getDate());
