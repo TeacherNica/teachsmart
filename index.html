@@ -1132,6 +1132,29 @@ function renderScheduleGrid(){
     html+='</tr>';
   });
   body.innerHTML=html;
+
+  try{
+    var _rss=JSON.parse(localStorage.getItem('ts-slots')||'{}');
+    var _KRN=['K.Bella','Jackie','Lina','Aiden','Sophia','Peter','Seah'];
+    var _PC={'K.Bella':{bg:'#FCE4EC',text:'#880E4F'},'Jackie':{bg:'#EDE7F6',text:'#4A148C'},'Lina':{bg:'#E8EAF6',text:'#1A237E'},'Aiden':{bg:'#E0F2F1',text:'#004D40'},'Sophia':{bg:'#E1F5FE',text:'#01579B'},'Peter':{bg:'#FFF8E1',text:'#E65100'},'Seah':{bg:'#F3E5F5',text:'#4A148C'},'Suri':{bg:'#FFF3E0',text:'#BF360C'},'Bella':{bg:'#FCE4EC',text:'#880E4F'},'COCO-1':{bg:'#FFFDE7',text:'#F57F17'},'Harry':{bg:'#E3F2FD',text:'#0D47A1'},'Kelly-Adult':{bg:'#E8F5E9',text:'#1B5E20'},'KAREN':{bg:'#E0F7FA',text:'#006064'},'Mollie-Adult & Steven':{bg:'#FFF9C4',text:'#827717'},'Coco-2':{bg:'#FFFDE7',text:'#F57F17'},'Koala':{bg:'#F3E5F5',text:'#4A148C'},'Owen':{bg:'#E8F5E9',text:'#1B5E20'},'Rainy':{bg:'#E3F2FD',text:'#0D47A1'},'Shily':{bg:'#FCE4EC',text:'#880E4F'},'Carl':{bg:'#FFF8E1',text:'#E65100'}};
+    Object.keys(_rss).forEach(function(key){
+      var parts=key.split('|');var time=parts[0];var colIdx=parseInt(parts[1]);var slot=_rss[key];
+      document.querySelectorAll('#sched-body tr').forEach(function(row){
+        if(row.cells[0]&&row.cells[0].textContent.trim()===time&&row.cells[colIdx]){
+          var td=row.cells[colIdx];
+          if(slot.type==='student'){
+            var isKR=_KRN.indexOf(slot.name)>=0;
+            var meta=_PC[slot.name]||{bg:'#E8EAF6',text:'#1E1B4B'};
+            td.innerHTML='<img src="https://flagcdn.com/16x12/'+(isKR?'kr':'cn')+'.png" style="vertical-align:middle;margin-right:3px;">'+slot.name;
+            td.style.background=meta.bg;td.style.color=meta.text;td.style.cursor='default';td.onclick=null;
+          } else if(slot.type==='avail'){
+            td.textContent='Available';td.style.background='#EAB308';td.style.color='#000';td.style.cursor='pointer';
+            td.onclick=function(){openSlotEditor(this,'avail');};
+          }
+        }
+      });
+    });
+  }catch(e){}
 }
 function isUpcoming(bday){
   const d=new Date(bday);const today=new Date();
@@ -1541,18 +1564,24 @@ function applySlot(action){
     _slotTd.style.color=meta.text;
     _slotTd.style.cursor="default";
     _slotTd.onclick=null;
+    var _k=_slotTd.closest('tr').cells[0].textContent.trim()+'|'+_slotTd.cellIndex;
+    var _ss=JSON.parse(localStorage.getItem('ts-slots')||'{}');_ss[_k]={type:'student',name:name};localStorage.setItem('ts-slots',JSON.stringify(_ss));
   } else if(action==="avail"){
     _slotTd.textContent="Available";
     _slotTd.style.background="#EAB308";
     _slotTd.style.color="#000";
     _slotTd.style.cursor="pointer";
     _slotTd.onclick=function(){openSlotEditor(this,"avail");};
+    var _k2=_slotTd.closest('tr').cells[0].textContent.trim()+'|'+_slotTd.cellIndex;
+    var _ss2=JSON.parse(localStorage.getItem('ts-slots')||'{}');_ss2[_k2]={type:'avail'};localStorage.setItem('ts-slots',JSON.stringify(_ss2));
   } else if(action==="close"){
     _slotTd.textContent="Close";
     _slotTd.style.background="#EF4444";
     _slotTd.style.color="#fff";
     _slotTd.style.cursor="pointer";
     _slotTd.onclick=function(){openSlotEditor(this,"close");};
+    var _k3=_slotTd.closest('tr').cells[0].textContent.trim()+'|'+_slotTd.cellIndex;
+    var _ss3=JSON.parse(localStorage.getItem('ts-slots')||'{}');_ss3[_k3]={type:'close'};localStorage.setItem('ts-slots',JSON.stringify(_ss3));
   }
   closeSlotEditor();
 }
