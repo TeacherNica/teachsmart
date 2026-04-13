@@ -795,33 +795,36 @@ function renderDashboard(){
   const low=students.filter(s=>s.classes<=2).length;
   document.getElementById('dash-total').textContent=students.length;
   document.getElementById('dash-low').textContent=low;
+  // Today's classes
   const today=document.getElementById('today-classes');
-  const now=new Date();
-  const dayIdx=now.getDay()===0?6:now.getDay()-1;
-  const todaySlots=(typeof WEEKLY_SCHEDULE!=='undefined'?WEEKLY_SCHEDULE[dayIdx]:[]))||[];
-  const currentHour=now.getHours();
-  const currentMin=now.getMinutes();
-  function timeToMins(t){const [hm,ampm]=t.split(' ');let [hr,mn]=hm.split(':').map(Number);if(ampm==='PM'&&hr!==12)hr+=12;if(ampm==='AM'&&hr===12)hr=0;return hr*60+mn;}
-  const nowMins=currentHour*60+currentMin;
+  const sched=[
+    {time:'5:30 PM',s:students[0],status:'done'},
+    {time:'6:30 PM',s:students[1],status:'now'},
+    {time:'7:30 PM',s:students[2],status:'upcoming'},
+    {time:'8:30 PM',s:students[3],status:'upcoming'},
+  ];
   const statusMap={done:{bg:'#F0FDF4',color:'#15803D',label:'✓ Done'},now:{bg:'#FFF7ED',color:'#F97316',label:'🔴 Now'},upcoming:{bg:'#EFF6FF',color:'#3B82F6',label:'Upcoming'}};
-  today.innerHTML=todaySlots.length?todaySlots.map(slot=>{
-    const s=students.find(x=>x.name===slot.student);
-    const slotMins=timeToMins(slot.time);
-    const status=nowMins>slotMins+slot.duration?'done':nowMins>=slotMins?'now':'upcoming';
+  today.innerHTML=sched.map(({time,s,status})=>{
     const st=statusMap[status];
-    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F3F4F6;">'
-      +'<div style="font-weight:800;color:var(--purple);min-width:75px;">'+slot.time+'</div>'
-      +'<div style="flex:1;"><div style="font-weight:700;">'+(s?s.name:slot.student)+'</div>'
-      +'<div style="font-size:0.78rem;color:#888;">'+(s?s.nat:'')+' · '+slot.duration+' min</div></div>'
-      +'<div style="font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:20px;background:'+st.bg+';color:'+st.color+';">'+st.label+'</div>'
-      +'</div>';
-  }).join(''):'<div style="color:#aaa;padding:20px;text-align:center;">No classes today</div>';
-  const low2=students.filter(s=>s.classes<=2);
+    return `<div class="schedule-item">
+      <div class="sched-time" style="color:var(--purple)">${time}</div>
+      <div class="sched-bar" style="background:${s.c1}"></div>
+      <div style="flex:1;"><div class="sched-name">${s.name}</div><div class="sched-detail">${s.nat} · ${s.level} · ${s.duration}</div></div>
+      <div class="sched-badge" style="background:${st.bg};color:${st.color};">${st.label}</div>
+    </div>`;
+  }).join('');
+  // Alerts
   const alerts=document.getElementById('dashboard-alerts');
+  const lowStudents=students.filter(s=>s.classes<=2);
   let html='';
-  low2.forEach(s=>{html+='<div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #F3F4F6;"><div style="font-size:1.2rem;">⚠️</div><div><div style="font-weight:700;">'+s.name+' — '+s.classes+' class'+(s.classes!==1?'es':'')+' left</div><div style="font-size:0.78rem;color:#888;">Package renewal needed</div></div></div>';});
-  if(alerts)alerts.innerHTML=html||'<div style="color:#aaa;font-size:0.85rem;">No alerts</div>';
+  lowStudents.forEach(s=>{html+=`<div class="alert-item" style="background:#FFFBEB;border:1px solid #FDE68A;"><div class="alert-icon">⚠️</div><div><div class="alert-title">${s.name} — ${s.classes} class${s.classes!==1?'es':''} left</div><div class="alert-sub">Package renewal needed</div></div></div>`;});
+  html+=`<div class="alert-item" style="background:#FFF0F7;border:1px solid #FBCFE8;"><div class="alert-icon">🎂</div><div><div class="alert-title">Li Wei's Birthday in 3 days!</div><div class="alert-sub">April 15 — send a greeting!</div></div></div>`;
+  html+=`<div class="alert-item" style="background:#F0F9FF;border:1px solid #BAE6FD;"><div class="alert-icon">🏮</div><div><div class="alert-title">Labour Day Coming</div><div class="alert-sub">May 1–5 · Expect cancellations</div></div></div>`;
+  alerts.innerHTML=html;
 }
+
+// ─── STUDENTS ───
+let currentFilter='all';
 function setFilter(f,btn){
   currentFilter=f;
   document.querySelectorAll('[id^="f-"]').forEach(b=>{b.style.background='white';b.style.border='1px solid #E5E7EB';b.style.color='';});
@@ -994,26 +997,26 @@ function markDone(id){
 function renderSchedule(){
   const list=document.getElementById('schedule-list');
   if(!list)return;
-  const dayIdx=new Date().getDay()===0?6:new Date().getDay()-1;
-  const todaySlots=(typeof WEEKLY_SCHEDULE!=='undefined'?WEEKLY_SCHEDULE[dayIdx]:[])||[];
-  const now=new Date();
-  const nowMins=now.getHours()*60+now.getMinutes();
-  function timeToMins(t){const [hm,ampm]=t.split(' ');let [hr,mn]=hm.split(':').map(Number);if(ampm==='PM'&&hr!==12)hr+=12;if(ampm==='AM'&&hr===12)hr=0;return hr*60+mn;}
+  const sched=[
+    {time:'5:30 PM',s:students[0],status:'done'},
+    {time:'6:30 PM',s:students[1],status:'now'},
+    {time:'7:30 PM',s:students[2],status:'upcoming'},
+    {time:'8:30 PM',s:students[3],status:'upcoming'},
+  ];
   const statusMap={done:{bg:'#F0FDF4',color:'#15803D',label:'✓ Done'},now:{bg:'#FFF7ED',color:'#F97316',label:'🔴 Now'},upcoming:{bg:'#EFF6FF',color:'#3B82F6',label:'Upcoming'}};
-  list.innerHTML=todaySlots.length?todaySlots.map(slot=>{
-    const s=students.find(x=>x.name===slot.student);
-    const slotMins=timeToMins(slot.time);
-    const status=nowMins>slotMins+slot.duration?'done':nowMins>=slotMins?'now':'upcoming';
+  list.innerHTML=sched.map(({time,s,status})=>{
     const st=statusMap[status];
-    return '<div style="display:flex;align-items:center;gap:12px;padding:12px;background:white;border-radius:12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">'
-      +'<div style="font-weight:800;color:var(--purple);min-width:75px;">'+slot.time+'</div>'
-      +'<div style="font-size:1.4rem;">'+(s?s.avatar:'👤')+'</div>'
-      +'<div style="flex:1;"><div style="font-weight:700;">'+(s?s.name:slot.student)+'</div>'
-      +'<div style="font-size:0.78rem;color:#888;">'+(s?s.nat:'')+' · '+slot.duration+' min</div></div>'
-      +'<div style="font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:20px;background:'+st.bg+';color:'+st.color+';">'+st.label+'</div>'
-      +'</div>';
-  }).join(''):'<div style="color:#aaa;padding:20px;text-align:center;">No classes today</div>';
+    return `<div class="schedule-item">
+      <div class="sched-time" style="color:var(--purple)">${time}</div>
+      <div class="sched-bar" style="background:${s.c1}"></div>
+      <div style="flex:1;"><div class="sched-name">${s.name} <span style="font-size:11px;">${s.nat.split(' ')[0]}</span></div><div class="sched-detail">${s.level} · ${s.duration}</div></div>
+      <div class="sched-badge" style="background:${st.bg};color:${st.color};">${st.label}</div>
+    </div>`;
+  }).join('');
 }
+
+// ─── PAYMENTS ───
+let payF='all';
 function payFilter(f,btn){payF=f;document.querySelectorAll('[onclick^="payFilter"]').forEach(b=>{b.style.background='white';b.style.border='1px solid #E5E7EB';b.style.color='';});btn.style.background='linear-gradient(135deg,var(--purple),var(--blue))';btn.style.color='white';btn.style.border='none';renderPayments();}
 function renderPayments(){
   let list=students;

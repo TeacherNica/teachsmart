@@ -1,92 +1,53 @@
 ﻿const fs = require('fs');
 let h = fs.readFileSync('index.html', 'utf8');
 
-const oldDashboard = `function renderDashboard(){
-  const low=students.filter(s=>s.classes<=2).length;
-  document.getElementById('dash-total').textContent=students.length;
-  document.getElementById('dash-low').textContent=low;
-  // Today's classes
-  const today=document.getElementById('today-classes');
-  const sched=[
-    {time:'5:30 PM',s:students[0],status:'done'},
-    {time:'6:30 PM',s:students[1],status:'now'},
-    {time:'7:30 PM',s:students[2],status:'upcoming'},
-    {time:'8:30 PM',s:students[3],status:'upcoming'},
-  ];
-  const statusMap={done:{bg:'#F0FDF4',color:'#15803D',label:'✓ Done'},now:{bg:'#FFF7ED',color:'#F97316',label:'🔴 Now'},upcoming:{bg:'#EFF6FF',color:'#3B82F6',label:'Upcoming'}};
-  today.innerHTML=sched.map(({time,s,status})=>{
-    const st=statusMap[status];
-    return \`<di`;
+// Find page-students and everything until page-header, replace with clean version
+const pageStart = h.indexOf('page-students">');
+const pageHeaderStart = h.indexOf('<div class="page-header">', pageStart);
 
-// Find full renderDashboard and replace
-const dashStart = h.indexOf('function renderDashboard()');
-const dashEnd = h.indexOf('\nfunction ', dashStart + 10);
-const oldDash = h.substring(dashStart, dashEnd);
+// Get the junk between page-students and page-header
+const junk = h.substring(pageStart + 'page-students">'.length, pageHeaderStart);
+console.log('junk to remove:', JSON.stringify(junk.substring(0, 100)));
 
-const newDash = `function renderDashboard(){
-  const low=students.filter(s=>s.classes<=2).length;
-  document.getElementById('dash-total').textContent=students.length;
-  document.getElementById('dash-low').textContent=low;
-  const today=document.getElementById('today-classes');
-  const now=new Date();
-  const dayIdx=now.getDay()===0?6:now.getDay()-1;
-  const todaySlots=(typeof WEEKLY_SCHEDULE!=='undefined'?WEEKLY_SCHEDULE[dayIdx]:[]))||[];
-  const currentHour=now.getHours();
-  const currentMin=now.getMinutes();
-  function timeToMins(t){const [hm,ampm]=t.split(' ');let [hr,mn]=hm.split(':').map(Number);if(ampm==='PM'&&hr!==12)hr+=12;if(ampm==='AM'&&hr===12)hr=0;return hr*60+mn;}
-  const nowMins=currentHour*60+currentMin;
-  const statusMap={done:{bg:'#F0FDF4',color:'#15803D',label:'✓ Done'},now:{bg:'#FFF7ED',color:'#F97316',label:'🔴 Now'},upcoming:{bg:'#EFF6FF',color:'#3B82F6',label:'Upcoming'}};
-  today.innerHTML=todaySlots.length?todaySlots.map(slot=>{
-    const s=students.find(x=>x.name===slot.student);
-    const slotMins=timeToMins(slot.time);
-    const status=nowMins>slotMins+slot.duration?'done':nowMins>=slotMins?'now':'upcoming';
-    const st=statusMap[status];
-    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F3F4F6;">'
-      +'<div style="font-weight:800;color:var(--purple);min-width:75px;">'+slot.time+'</div>'
-      +'<div style="flex:1;"><div style="font-weight:700;">'+(s?s.name:slot.student)+'</div>'
-      +'<div style="font-size:0.78rem;color:#888;">'+(s?s.nat:'')+' · '+slot.duration+' min</div></div>'
-      +'<div style="font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:20px;background:'+st.bg+';color:'+st.color+';">'+st.label+'</div>'
-      +'</div>';
-  }).join(''):'<div style="color:#aaa;padding:20px;text-align:center;">No classes today</div>';
-  const low2=students.filter(s=>s.classes<=2);
-  const alerts=document.getElementById('dashboard-alerts');
-  let html='';
-  low2.forEach(s=>{html+='<div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #F3F4F6;"><div style="font-size:1.2rem;">⚠️</div><div><div style="font-weight:700;">'+s.name+' — '+s.classes+' class'+(s.classes!==1?'es':'')+' left</div><div style="font-size:0.78rem;color:#888;">Package renewal needed</div></div></div>';});
-  if(alerts)alerts.innerHTML=html||'<div style="color:#aaa;font-size:0.85rem;">No alerts</div>';
-}`;
+const scheduleBar = `
+<div id="weekly-schedule-bar" style="margin-bottom:20px;">
+  <div style="background:linear-gradient(135deg,#1E1B4B,#312E81);border-radius:14px;padding:16px 20px;margin-bottom:12px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div style="display:flex;gap:24px;">
+        <div style="text-align:center;">
+          <div style="font-size:0.7rem;font-weight:700;color:#A5B4FC;letter-spacing:1px;">&#127481;&#127469; THAILAND</div>
+          <div id="stu-th-clock" style="font-size:1.3rem;font-weight:800;color:#fff;"></div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:0.7rem;font-weight:700;color:#A5B4FC;letter-spacing:1px;">&#127464;&#127475; CHINA</div>
+          <div id="stu-cn-clock" style="font-size:1.3rem;font-weight:800;color:#fff;"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span style="color:#A5B4FC;font-size:0.8rem;font-weight:600;">Timer:</span>
+        <button onclick="startClassTimer(25)" style="padding:6px 12px;border-radius:8px;border:none;background:#6366F1;color:#fff;font-weight:700;cursor:pointer;font-size:0.82rem;">25 min</button>
+        <button onclick="startClassTimer(50)" style="padding:6px 12px;border-radius:8px;border:none;background:#A855F7;color:#fff;font-weight:700;cursor:pointer;font-size:0.82rem;">50 min</button>
+        <div id="stu-timer-display" style="font-size:1.2rem;font-weight:800;color:#FCD34D;min-width:55px;text-align:center;">--:--</div>
+        <button onclick="stopClassTimer()" style="padding:6px 10px;border-radius:8px;border:none;background:#EF4444;color:#fff;font-weight:700;cursor:pointer;">&#9632;</button>
+      </div>
+    </div>
+  </div>
+  <div style="font-weight:800;font-size:1rem;margin-bottom:10px;color:var(--dark);">&#128197; Today's Schedule</div>
+  <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+    <button id="day-btn-0" onclick="showDay(0)" style="padding:6px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.82rem;border:1px solid #E5E7EB;background:white;color:#333;">Mon</button>
+    <button id="day-btn-1" onclick="showDay(1)" style="padding:6px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.82rem;border:1px solid #E5E7EB;background:white;color:#333;">Tue</button>
+    <button id="day-btn-2" onclick="showDay(2)" style="padding:6px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.82rem;border:1px solid #E5E7EB;background:white;color:#333;">Wed</button>
+    <button id="day-btn-3" onclick="showDay(3)" style="padding:6px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.82rem;border:1px solid #E5E7EB;background:white;color:#333;">Thu</button>
+    <button id="day-btn-4" onclick="showDay(4)" style="padding:6px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.82rem;border:1px solid #E5E7EB;background:white;color:#333;">Fri</button>
+    <button id="day-btn-5" onclick="showDay(5)" style="padding:6px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.82rem;border:1px solid #E5E7EB;background:white;color:#333;">Sat</button>
+    <button id="day-btn-6" onclick="showDay(6)" style="padding:6px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.82rem;border:1px solid #E5E7EB;background:white;color:#333;">Sun</button>
+  </div>
+  <div id="day-schedule" style="display:grid;gap:8px;"></div>
+</div>
+`;
 
-h = h.substring(0, dashStart) + newDash + h.substring(dashEnd);
-
-// Fix renderSchedule
-const schedStart = h.indexOf('function renderSchedule()');
-const schedEnd = h.indexOf('\nfunction ', schedStart + 10);
-
-const newSched = `function renderSchedule(){
-  const list=document.getElementById('schedule-list');
-  if(!list)return;
-  const dayIdx=new Date().getDay()===0?6:new Date().getDay()-1;
-  const todaySlots=(typeof WEEKLY_SCHEDULE!=='undefined'?WEEKLY_SCHEDULE[dayIdx]:[])||[];
-  const now=new Date();
-  const nowMins=now.getHours()*60+now.getMinutes();
-  function timeToMins(t){const [hm,ampm]=t.split(' ');let [hr,mn]=hm.split(':').map(Number);if(ampm==='PM'&&hr!==12)hr+=12;if(ampm==='AM'&&hr===12)hr=0;return hr*60+mn;}
-  const statusMap={done:{bg:'#F0FDF4',color:'#15803D',label:'✓ Done'},now:{bg:'#FFF7ED',color:'#F97316',label:'🔴 Now'},upcoming:{bg:'#EFF6FF',color:'#3B82F6',label:'Upcoming'}};
-  list.innerHTML=todaySlots.length?todaySlots.map(slot=>{
-    const s=students.find(x=>x.name===slot.student);
-    const slotMins=timeToMins(slot.time);
-    const status=nowMins>slotMins+slot.duration?'done':nowMins>=slotMins?'now':'upcoming';
-    const st=statusMap[status];
-    return '<div style="display:flex;align-items:center;gap:12px;padding:12px;background:white;border-radius:12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">'
-      +'<div style="font-weight:800;color:var(--purple);min-width:75px;">'+slot.time+'</div>'
-      +'<div style="font-size:1.4rem;">'+(s?s.avatar:'👤')+'</div>'
-      +'<div style="flex:1;"><div style="font-weight:700;">'+(s?s.name:slot.student)+'</div>'
-      +'<div style="font-size:0.78rem;color:#888;">'+(s?s.nat:'')+' · '+slot.duration+' min</div></div>'
-      +'<div style="font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:20px;background:'+st.bg+';color:'+st.color+';">'+st.label+'</div>'
-      +'</div>';
-  }).join(''):'<div style="color:#aaa;padding:20px;text-align:center;">No classes today</div>';
-}`;
-
-h = h.substring(0, schedStart) + newSched + h.substring(schedEnd);
+h = h.substring(0, pageStart + 'page-students">'.length) + '\n' + scheduleBar + '\n' + h.substring(pageHeaderStart);
 
 fs.writeFileSync('index.html', h, 'utf8');
-console.log('dashboard fixed:', h.includes('WEEKLY_SCHEDULE'));
-console.log('schedule fixed:', h.includes('todaySlots'));
+console.log('bar:', h.includes('weekly-schedule-bar'));
+console.log('day-btn:', h.includes('day-btn-0'));
