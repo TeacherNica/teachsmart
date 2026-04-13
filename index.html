@@ -837,6 +837,7 @@ function renderDashboard(){
     +'</div>';
   const statusMap={done:{bg:'#F0FDF4',color:'#15803D',label:'✓ Done'},now:{bg:'#FFF7ED',color:'#F97316',label:'🔴 Now'},upcoming:{bg:'#EFF6FF',color:'#3B82F6',label:'Upcoming'}};
   today.innerHTML=sched.map(({time,s,status})=>{
+    if(!isToday) status='upcoming';
     const st=statusMap[status];
     return `<div class="schedule-item">
       <div class="sched-time" style="color:var(--purple)">${time}</div>
