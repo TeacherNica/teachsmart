@@ -844,7 +844,7 @@ function renderDashboard(){
       <div class="sched-time" style="color:var(--purple)">${time}</div>
       <div class="sched-bar" style="background:${s.c1}"></div>
       <div style="flex:1;"><div class="sched-name">${s.name}</div><div class="sched-detail">${s.nat} · ${s.level} · ${s.duration}</div></div>
-      <div class="sched-badge" style="background:${st.bg};color:${st.color};">${st.label}</div>
+      <div class="sched-badge" style="background:${st.bg};color:${st.color};">${st.label}</div>${isToday&&status!=="done"?"<button onclick=\"markAttendance('"+s.name+"','present')\" style=\"padding:4px 8px;border-radius:6px;border:none;background:#22C55E;color:#fff;font-size:0.72rem;cursor:pointer;font-weight:700;margin-left:4px;\">✅ Present</button><button onclick=\"markAttendance('"+s.name+"','absent')\" style=\"padding:4px 8px;border-radius:6px;border:none;background:#EF4444;color:#fff;font-size:0.72rem;cursor:pointer;font-weight:700;margin-left:3px;\">❌ Absent</button>":s.attendance_today==="present"?"<span style=\"background:#DCFCE7;color:#15803D;padding:3px 8px;border-radius:20px;font-size:0.72rem;font-weight:700;margin-left:4px;\">✅ Present</span>":s.attendance_today==="absent"?"<span style=\"background:#FEE2E2;color:#B91C1C;padding:3px 8px;border-radius:20px;font-size:0.72rem;font-weight:700;margin-left:4px;\">❌ Absent</span>":""}
     </div>`;
   }).join('');
   // Alerts
@@ -1031,6 +1031,21 @@ function getTodaySlots(offset){
 }
 
 
+function markAttendance(name,type){
+  const s=students.find(x=>x.name===name);
+  if(!s)return;
+  if(type==="present"){
+    if(s.classes<=0){alert(s.name+" has no classes left!");return;}
+    s.classes--;
+    s.attendance_today="present";
+    saveData();renderDashboard();renderStudents();
+    alert("Present! "+s.classes+" left.");
+  }else{
+    s.attendance_today="absent";
+    saveData();renderDashboard();
+    alert("Absent noted.");
+  }
+}
 function isUpcoming(bday){
   const d=new Date(bday);const today=new Date();
   const next=new Date(today.getFullYear(),d.getMonth(),d.getDate());
