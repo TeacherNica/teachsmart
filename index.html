@@ -202,7 +202,96 @@ canvas#wb{position:absolute;top:40px;left:0;right:0;bottom:60px;cursor:crosshair
 </style>
 </head>
 <body>
-<script>if(sessionStorage.getItem("ts_auth")!=="yes"){window.location.href="/login.html";}</script>
+<script>
+  // // __SCHEDULE_COLORS_INJECTED__
+  const studentNationality = {
+    'Suri':          { flag: '🇨🇳', color: '#FFE4E1' },   // misty rose
+    'Bella':         { flag: '🇨🇳', color: '#FFE4E1' },
+    'COCO-1':        { flag: '🇨🇳', color: '#FFF0E0' },   // peach
+    'Harry':         { flag: '🇨🇳', color: '#FFF0E0' },
+    'Kelly':         { flag: '🇨🇳', color: '#E8F5E9' },   // mint
+    'Kelly-Adult':   { flag: '🇨🇳', color: '#E8F5E9' },
+    'KAREN':         { flag: '🇨🇳', color: '#E8F5E9' },
+    'Mollie-Adult':  { flag: '🇨🇳', color: '#FFF9C4' },   // lemon
+    'Steven':        { flag: '🇨🇳', color: '#FFF9C4' },
+    'Coco-2':        { flag: '🇨🇳', color: '#FFF0E0' },
+    'Koala':         { flag: '🇨🇳', color: '#E3F2FD' },   // sky blue
+    'Owen':          { flag: '🇨🇳', color: '#E3F2FD' },
+    'Rainy':         { flag: '🇨🇳', color: '#F3E5F5' },   // lavender
+    'Shily':         { flag: '🇨🇳', color: '#F3E5F5' },
+    'Carl':          { flag: '🇨🇳', color: '#FAFAFA' },
+    'K.Bella':       { flag: '🇰🇷', color: '#FCE4EC' },   // rose pink
+    'Jackie':        { flag: '🇰🇷', color: '#FCE4EC' },
+    'Lina':          { flag: '🇰🇷', color: '#EDE7F6' },   // soft purple
+    'Aiden':         { flag: '🇰🇷', color: '#EDE7F6' },
+    'Sophia':        { flag: '🇰🇷', color: '#E0F7FA' },   // aqua
+    'Peter':         { flag: '🇰🇷', color: '#E0F7FA' },
+    'Seah':          { flag: '🇰🇷', color: '#FFF8E1' },   // butter
+  };
+
+  function getStudentMeta(name) {
+    // Try exact match first, then partial
+    if (studentNationality[name]) return studentNationality[name];
+    const key = Object.keys(studentNationality).find(k =>
+      name.toLowerCase().includes(k.toLowerCase()) ||
+      k.toLowerCase().includes(name.toLowerCase())
+    );
+    return key ? studentNationality[key] : { flag: '', color: '#F5F5F5' };
+  }
+
+  // __SCHEDULE_COLORS_POST_PROCESS__
+  function applyScheduleColors() {
+    // Find all schedule cells in the grid and apply pastel colors + flags
+    const cells = document.querySelectorAll(
+      '.schedule-cell, .sched-cell, .sched-item, .grid-cell, [data-student]'
+    );
+    cells.forEach(cell => {
+      const nameEl = cell.querySelector('.student-name, .cell-name, strong, b') || cell;
+      const rawText = nameEl.textContent.trim();
+      if (!rawText) return;
+
+      // Skip if already colored
+      if (cell.dataset.colorized) return;
+      cell.dataset.colorized = 'true';
+
+      const meta = getStudentMeta(rawText);
+      cell.style.backgroundColor = meta.color;
+      cell.style.borderRadius = '6px';
+      cell.style.cursor = 'pointer';
+
+      // Add flag if not already there
+      if (meta.flag && !nameEl.textContent.includes(meta.flag)) {
+        nameEl.textContent = meta.flag + ' ' + nameEl.textContent.trim();
+      }
+
+      // Make name clickable → navigate to Students tab and highlight
+      cell.addEventListener('click', function(e) {
+        e.stopPropagation();
+        // Switch to students tab
+        const studentsTab = document.querySelector('[data-tab="students"], [onclick*="students"], #nav-students');
+        if (studentsTab) studentsTab.click();
+        // After tab switch, scroll to matching student card
+        setTimeout(() => {
+          const cards = document.querySelectorAll('.student-card, .student-item, [data-name]');
+          for (const card of cards) {
+            const cardText = card.textContent || card.dataset.name || '';
+            if (cardText.toLowerCase().includes(rawText.toLowerCase().replace(/^[🇨🇳🇰🇷] /, ''))) {
+              card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              card.style.outline = '3px solid #6366f1';
+              card.style.transition = 'outline 0.3s';
+              setTimeout(() => { card.style.outline = ''; }, 2000);
+              break;
+            }
+          }
+        }, 300);
+      });
+    });
+  }
+
+  // Re-apply colors whenever the schedule tab is shown or navigation changes
+  const _origApplyScheduleColors = window.applyScheduleColors;
+  window.applyScheduleColors = applyScheduleColors;
+if(sessionStorage.getItem("ts_auth")!=="yes"){window.location.href="/login.html";}</script>
 <!-- SIDEBAR -->
 <div class="sidebar">
   <div class="logo"><div class="logo-icon">📚</div>TeachSmart</div>
@@ -1828,5 +1917,40 @@ document.getElementById('php-in')?.addEventListener('input',convertCurr);
     </div>
   </div>
 </div>
+
+<script>
+
+    // Hook schedule color application
+    document.addEventListener('click', function(e) {
+      const target = e.target;
+      if (
+        (target.dataset && target.dataset.tab === 'schedule') ||
+        (target.id && target.id.includes('schedule')) ||
+        (target.className && typeof target.className === 'string' && target.className.includes('schedule'))
+      ) {
+        setTimeout(applyScheduleColors, 100);
+        setTimeout(applyScheduleColors, 600);
+      }
+    }, true);
+
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(applyScheduleColors, 500);
+      setTimeout(applyScheduleColors, 1500);
+      // Observe DOM changes in schedule section
+      const observer = new MutationObserver(function(mutations) {
+        const inSchedule = mutations.some(m =>
+          m.target.closest && (
+            m.target.closest('#schedule') ||
+            m.target.closest('[data-tab="schedule"]') ||
+            m.target.closest('.schedule-grid') ||
+            m.target.closest('.weekly-grid')
+          )
+        );
+        if (inSchedule) applyScheduleColors();
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    });
+
+</script>
 </body>
 </html>
