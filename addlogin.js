@@ -1,20 +1,19 @@
 ﻿const fs = require('fs');
 let h = fs.readFileSync('index.html', 'utf8');
 
-// Move WEEKLY_SCHEDULE before the INIT section
-const wsStart = h.indexOf('const WEEKLY_SCHEDULE');
-const wsEnd = h.indexOf('};', wsStart) + 2;
-const wsBlock = h.substring(wsStart, wsEnd);
+// Find WEEKLY_SCHEDULE block
+const wsStart = h.indexOf('const WEEKLY_SCHEDULE = {');
+const wsEnd = h.indexOf('\nfunction showDay', wsStart);
+const wsBlock = h.substring(wsStart, wsEnd).trim();
 
-// Remove it from current location
+// Remove from current location
 h = h.substring(0, wsStart) + h.substring(wsEnd);
 
-// Insert it before renderDashboard()
+// Insert before // ─── INIT ───
 h = h.replace('// ─── INIT ───', wsBlock + '\n// ─── INIT ───');
 
-fs.writeFileSync('index.html', h, 'utf8');
-
-// Verify
 const a = h.indexOf('const WEEKLY_SCHEDULE');
-const b = h.indexOf('renderDashboard()');
-console.log('WEEKLY before render:', a < b);
+const b = h.indexOf('renderDashboard();\nrenderStudents()');
+console.log('WEEKLY at:', a, 'INIT at:', b, 'before:', a < b);
+
+fs.writeFileSync('index.html', h, 'utf8');
