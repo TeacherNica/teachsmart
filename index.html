@@ -839,7 +839,8 @@ function renderDashboard(){
   today.innerHTML=sched.map(({time,s,status})=>{
     if(!isToday) status='upcoming';
     const st=statusMap[status];
-    return `<div class="schedule-item">
+    const s_obj = sched.find ? s : s;
+    return `<div class="schedule-item" style="position:relative;">
       <div class="sched-time" style="color:var(--purple)">${time}</div>
       <div class="sched-bar" style="background:${s.c1}"></div>
       <div style="flex:1;"><div class="sched-name">${s.name}</div><div class="sched-detail">${s.nat} · ${s.level} · ${s.duration}</div></div>
