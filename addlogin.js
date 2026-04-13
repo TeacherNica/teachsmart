@@ -1,20 +1,10 @@
 ﻿const fs = require('fs');
 let h = fs.readFileSync('index.html', 'utf8');
 
-// Move WEEKLY_SCHEDULE before the INIT section
-const wsStart = h.indexOf('const WEEKLY_SCHEDULE');
-const wsEnd = h.indexOf('};', wsStart) + 2;
-const wsBlock = h.substring(wsStart, wsEnd);
+// Just add a deferred renderDashboard call after page loads
+const oldInit = '// ─── INIT ───\nrenderDashboard();\nrenderStudents();';
+const newInit = '// ─── INIT ───\nrenderDashboard();\nrenderStudents();\nsetTimeout(()=>{renderDashboard();showDay&&showDay(new Date().getDay()===0?6:new Date().getDay()-1);},100);';
 
-// Remove it from current location
-h = h.substring(0, wsStart) + h.substring(wsEnd);
-
-// Insert it before renderDashboard()
-h = h.replace('// ─── INIT ───', wsBlock + '\n// ─── INIT ───');
-
+h = h.replace(oldInit, newInit);
 fs.writeFileSync('index.html', h, 'utf8');
-
-// Verify
-const a = h.indexOf('const WEEKLY_SCHEDULE');
-const b = h.indexOf('renderDashboard()');
-console.log('WEEKLY before render:', a < b);
+console.log('done:', h.includes('setTimeout(()=>{renderDashboard'));
