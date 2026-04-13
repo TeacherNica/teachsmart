@@ -1146,7 +1146,7 @@ function renderScheduleGrid(){
             var isKR=_KRN.indexOf(slot.name)>=0;
             var meta=_PC[slot.name]||{bg:'#E8EAF6',text:'#1E1B4B'};
             td.innerHTML='<img src="https://flagcdn.com/16x12/'+(isKR?'kr':'cn')+'.png" style="vertical-align:middle;margin-right:3px;">'+slot.name;
-            td.style.background=meta.bg;td.style.color=meta.text;td.style.cursor='default';td.onclick=null;
+            td.style.background=meta.bg;td.style.color=meta.text;td.style.cursor='pointer';td.onclick=function(){openSlotEditor(this,'student');};
           } else if(slot.type==='avail'){
             td.textContent='Available';td.style.background='#EAB308';td.style.color='#000';td.style.cursor='pointer';
             td.onclick=function(){openSlotEditor(this,'avail');};
@@ -1520,10 +1520,12 @@ document.getElementById('php-in')?.addEventListener('input',convertCurr);
   <div style="background:white;border-radius:22px;padding:26px;width:360px;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
     <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;margin-bottom:6px;">Edit Slot</div>
     <div id="slot-info" style="font-size:12px;color:#6B7280;margin-bottom:18px;"></div>
-    <label style="font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Assign Student</label>
+    <div id="slot-move-wrap" style="display:none;margin-bottom:14px;"><label style="font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Move to Another Slot</label><select id="slot-move-time" style="width:100%;padding:10px 14px;border:2px solid #E5E7EB;border-radius:12px;font-family:'Quicksand',sans-serif;font-weight:600;font-size:13px;outline:none;margin-bottom:8px;"><option value="">-- Select time --</option><option>5:30 PM</option><option>6:00 PM</option><option>6:30 PM</option><option>7:00 PM</option><option>7:30 PM</option><option>8:00 PM</option><option>8:30 PM</option><option>10:00 AM</option><option>10:30 AM</option><option>11:00 AM</option><option>11:30 AM</option><option>12:00 PM</option><option>12:30 PM</option></select><select id="slot-move-day" style="width:100%;padding:10px 14px;border:2px solid #E5E7EB;border-radius:12px;font-family:'Quicksand',sans-serif;font-weight:600;font-size:13px;outline:none;"><option value="">-- Select day --</option><option>Mon</option><option>Tue</option><option>Wed</option><option>Thu</option><option>Fri</option><option>Sat</option><option>Sun</option></select></div>
+    <label id="slot-assign-label" style="font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Assign Student</label>
     <select id="slot-select" style="width:100%;padding:10px 14px;border:2px solid #E5E7EB;border-radius:12px;font-family:'Quicksand',sans-serif;font-weight:600;font-size:13px;outline:none;margin-bottom:14px;"><option value="">-- Select student --</option></select>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <button onclick="applySlot('assign')" style="padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#A855F7,#3B82F6);color:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Assign Student</button>
+      <button id="slot-move-btn" onclick="applySlot('move')" style="display:none;padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#10B981,#3B82F6);color:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Move to Selected Slot</button>
+      <button id="slot-assign-btn" onclick="applySlot('assign')" style="padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#A855F7,#3B82F6);color:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Assign Student</button>
       <button id="slot-avail-btn" onclick="applySlot('avail')" style="padding:11px;border-radius:12px;border:none;background:#EAB308;color:#000;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Mark as Available</button>
       <button id="slot-close-btn" onclick="applySlot('close')" style="padding:11px;border-radius:12px;border:none;background:#EF4444;color:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Close Slot</button>
       <button onclick="closeSlotEditor()" style="padding:11px;border-radius:12px;border:2px solid #E5E7EB;background:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;color:#6B7280;">Cancel</button>
@@ -1541,8 +1543,13 @@ function openSlotEditor(td,type){
   var days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
   var day=td.cellIndex>=2?days[td.cellIndex-2]:"";
   document.getElementById("slot-info").textContent=time+" Thailand - "+day+" - Currently: "+(type==="close"?"Closed":"Available");
-  document.getElementById("slot-avail-btn").style.display=type==="close"?"block":"none";
-  document.getElementById("slot-close-btn").style.display=type==="avail"?"block":"none";
+  document.getElementById("slot-avail-btn").style.display=type==="close"||type==="student"?"block":"none";
+  document.getElementById("slot-close-btn").style.display=type==="avail"||type==="student"?"block":"none";
+  document.getElementById("slot-assign-btn").style.display=type==="student"?"none":"block";
+  document.getElementById("slot-assign-label").style.display=type==="student"?"none":"block";
+  document.getElementById("slot-select").style.display=type==="student"?"none":"block";
+  document.getElementById("slot-move-wrap").style.display=type==="student"?"block":"none";
+  document.getElementById("slot-move-btn").style.display=type==="student"?"block":"none";
   var sel=document.getElementById("slot-select");
   sel.innerHTML="<option value=\"\">-- Select student --</option>"+students.map(function(s){return "<option value=\""+s.name+"\">"+s.name+" "+s.nat.split(" ")[0]+"</option>";}).join("");
   document.getElementById("slot-editor-overlay").style.display="flex";
@@ -1553,6 +1560,32 @@ function closeSlotEditor(){
 }
 function applySlot(action){
   if(!_slotTd)return;
+  if(action==="move"){
+    var mTime=document.getElementById("slot-move-time").value;
+    var mDay=document.getElementById("slot-move-day").value;
+    if(!mTime||!mDay){alert("Please select a time and day!");return;}
+    var dIdx=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].indexOf(mDay)+2;
+    var rows=document.querySelectorAll("#sched-body tr");
+    var tTd=null;
+    rows.forEach(function(r){if(r.cells[0]&&r.cells[0].textContent.trim()===mTime&&r.cells[dIdx])tTd=r.cells[dIdx];});
+    if(!tTd){alert("Slot not found!");return;}
+    var tText=tTd.textContent.trim();
+    if(tText!=="Close"&&tText!=="Available"){alert("That slot is already occupied!");return;}
+    var curName=_slotTd.textContent.replace(/[^\w\s\-&]/g,"").trim();
+    var oldKey=_slotTd.closest("tr").cells[0].textContent.trim()+"|"+_slotTd.cellIndex;
+    _slotTd.textContent="Close";_slotTd.style.background="#EF4444";_slotTd.style.color="#fff";_slotTd.style.cursor="pointer";
+    _slotTd.onclick=function(){openSlotEditor(this,"close");};
+    var ss=JSON.parse(localStorage.getItem("ts-slots")||"{}");ss[oldKey]={type:"close"};localStorage.setItem("ts-slots",JSON.stringify(ss));
+    var isKR=KR_NAMES.indexOf(curName)>=0;
+    var meta=PC[curName]||{bg:"#E8EAF6",text:"#1E1B4B"};
+    tTd.innerHTML='<img src="https://flagcdn.com/16x12/'+(isKR?"kr":"cn")+'.png" style="vertical-align:middle;margin-right:3px;">'+curName;
+    tTd.style.background=meta.bg;tTd.style.color=meta.text;tTd.style.cursor="pointer";
+    tTd.onclick=function(){openSlotEditor(this,"student");};
+    var newKey=tTd.closest("tr").cells[0].textContent.trim()+"|"+tTd.cellIndex;
+    ss[newKey]={type:"student",name:curName};localStorage.setItem("ts-slots",JSON.stringify(ss));
+    closeSlotEditor();alert("Moved to "+mTime+" ("+mDay+")!");
+    return;
+  }
   if(action==="assign"){
     var name=document.getElementById("slot-select").value;
     if(!name){alert("Please select a student!");return;}
@@ -1562,8 +1595,8 @@ function applySlot(action){
     _slotTd.innerHTML=flagImg+name;
     _slotTd.style.background=meta.bg;
     _slotTd.style.color=meta.text;
-    _slotTd.style.cursor="default";
-    _slotTd.onclick=null;
+    _slotTd.style.cursor="pointer";
+    _slotTd.onclick=function(){openSlotEditor(this,"student");};
     var _k=_slotTd.closest('tr').cells[0].textContent.trim()+'|'+_slotTd.cellIndex;
     var _ss=JSON.parse(localStorage.getItem('ts-slots')||'{}');_ss[_k]={type:'student',name:name};localStorage.setItem('ts-slots',JSON.stringify(_ss));
   } else if(action==="avail"){
