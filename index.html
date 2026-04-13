@@ -1004,7 +1004,7 @@ function toggleDuration(id,e){
 }
 
 function getTodaySlots(){
-  const dayIdx=new Date().getDay()===0?6:new Date().getDay()-1;
+  const d=new Date().getDay();const dayIdx=d===0?6:d-1;
   if(typeof WEEKLY_SCHEDULE==='undefined')return[];
   return (WEEKLY_SCHEDULE[dayIdx]||[]).map(slot=>{
     const s=students.find(x=>x.name===slot.student)||{name:slot.student,nat:'',level:'',duration:slot.duration+' min',c1:'#A855F7',c2:'#6366F1'};
