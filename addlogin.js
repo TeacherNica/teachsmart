@@ -1,72 +1,56 @@
 ﻿const fs = require('fs');
 let h = fs.readFileSync('index.html', 'utf8');
 
-const oldHeader = '<div class="page-header">\n    <div><div class="page-title">👨‍🎓 Students</div><div class="page-sub">Taap any card to view full profile</div></div>\n    <button class="btn btn-primary" onclick="openModal(\'add-student-modal\')">＋ Add Student</button>\n  </div>';
-
-const newHeader = `<div class="page-header">
-    <div><div class="page-title">👨‍🎓 Students</div><div class="page-sub">Tap any card to view full profile</div></div>
-    <button class="btn btn-primary" onclick="openModal('add-student-modal')">＋ Add Student</button>
-  </div>
+// 1. Inject clock+timer bar into students page after page-students div opens
+const target = 'id="page-students">';
+const clockBar = `id="page-students">
   <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center;background:linear-gradient(135deg,#1E1B4B,#312E81);border-radius:14px;padding:14px 20px;">
     <div style="display:flex;gap:24px;flex:1;">
       <div style="text-align:center;">
-        <div style="font-size:0.7rem;font-weight:700;color:#A5B4FC;letter-spacing:1px;">🇹🇭 THAILAND</div>
+        <div style="font-size:0.7rem;font-weight:700;color:#A5B4FC;letter-spacing:1px;">&#127481;&#127469; THAILAND</div>
         <div id="stu-th-clock" style="font-size:1.4rem;font-weight:800;color:#fff;"></div>
       </div>
       <div style="text-align:center;">
-        <div style="font-size:0.7rem;font-weight:700;color:#A5B4FC;letter-spacing:1px;">🇨🇳 CHINA</div>
+        <div style="font-size:0.7rem;font-weight:700;color:#A5B4FC;letter-spacing:1px;">&#127464;&#127475; CHINA</div>
         <div id="stu-cn-clock" style="font-size:1.4rem;font-weight:800;color:#fff;"></div>
       </div>
     </div>
-    <div style="display:flex;gap:8px;align-items:center;">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
       <div style="color:#A5B4FC;font-size:0.8rem;font-weight:600;">Class timer:</div>
-      <button onclick="startClassTimer(25)" style="padding:6px 14px;border-radius:8px;border:none;background:#6366F1;color:#fff;font-weight:700;cursor:pointer;font-size:0.85rem;">⏱ 25 min</button>
-      <button onclick="startClassTimer(50)" style="padding:6px 14px;border-radius:8px;border:none;background:#A855F7;color:#fff;font-weight:700;cursor:pointer;font-size:0.85rem;">⏱ 50 min</button>
+      <button onclick="startClassTimer(25)" style="padding:6px 14px;border-radius:8px;border:none;background:#6366F1;color:#fff;font-weight:700;cursor:pointer;font-size:0.85rem;">25 min</button>
+      <button onclick="startClassTimer(50)" style="padding:6px 14px;border-radius:8px;border:none;background:#A855F7;color:#fff;font-weight:700;cursor:pointer;font-size:0.85rem;">50 min</button>
       <div id="stu-timer-display" style="font-size:1.2rem;font-weight:800;color:#FCD34D;min-width:60px;text-align:center;">--:--</div>
-      <button onclick="stopClassTimer()" style="padding:6px 10px;border-radius:8px;border:none;background:#EF4444;color:#fff;font-weight:700;cursor:pointer;font-size:0.85rem;">■</button>
+      <button onclick="stopClassTimer()" style="padding:6px 10px;border-radius:8px;border:none;background:#EF4444;color:#fff;font-weight:700;cursor:pointer;">&#9632;</button>
     </div>
   </div>`;
 
-h = h.replace(oldHeader, newHeader);
+h = h.replace(target, clockBar);
 
-// Add clock + timer functions
-const timerFuncs = `
-function updateStudentClocks(){
-  const fmt=tz=>new Intl.DateTimeFormat('en-US',{hour:'numeric',minute:'2-digit',second:'2-digit',hour12:true,timeZone:tz}).format(new Date());
-  const th=document.getElementById('stu-th-clock');
-  const cn=document.getElementById('stu-cn-clock');
-  if(th)th.textContent=fmt('Asia/Bangkok');
-  if(cn)cn.textContent=fmt('Asia/Shanghai');
-}
-setInterval(updateStudentClocks,1000);
-updateStudentClocks();
+// 2. Make duration clickable toggle on card
+h = h.replace(
+  '⏱️ ${s.duration}',
+  '⏱️ <span onclick="toggleDuration(${s.id},event)" style="cursor:pointer;text-decoration:underline dotted;">${s.duration}</span>'
+);
 
-let classTimerInterval=null;
-let classTimerEnd=null;
-function startClassTimer(mins){
-  if(classTimerInterval)clearInterval(classTimerInterval);
-  classTimerEnd=new Date(Date.now()+mins*60*1000);
-  classTimerInterval=setInterval(()=>{
-    const left=classTimerEnd-Date.now();
-    if(left<=0){
-      clearInterval(classTimerInterval);
-      document.getElementById('stu-timer-display').textContent='Done!';
-      alert('⏰ Class time is up!');
-      return;
-    }
-    const m=String(Math.floor(left/60000)).padStart(2,'0');
-    const s=String(Math.floor((left%60000)/1000)).padStart(2,'0');
-    document.getElementById('stu-timer-display').textContent=m+':'+s;
-  },1000);
-}
-function stopClassTimer(){
-  if(classTimerInterval)clearInterval(classTimerInterval);
-  const el=document.getElementById('stu-timer-display');
-  if(el)el.textContent='--:--';
+// 3. Show schedule on card if set
+const oldNat = '${s.nat} · ${s.schedule||\'\'}`';
+const newNat = `\${s.nat}\${s.schedule?' · '+s.schedule:''}\${s.weekSchedule&&Object.keys(s.weekSchedule).length>0?' · <span style="color:var(--purple);font-size:11px;">📅 '+Object.entries(s.weekSchedule).filter(([,v])=>v.start).map(([d,v])=>d.substring(0,3)+' '+v.start).join(', ')+'</span>':''}\``;
+
+h = h.replace(oldNat, newNat);
+
+// 4. Add toggleDuration function
+const toggleFunc = `
+function toggleDuration(id,e){
+  e.stopPropagation();
+  const s=students.find(x=>x.id===id);
+  if(!s)return;
+  s.duration=s.duration==='50 min'?'25 min':'50 min';
+  saveData();renderStudents();
 }`;
 
-h = h.replace('function isUpcoming', timerFuncs + '\nfunction isUpcoming');
+h = h.replace('function isUpcoming', toggleFunc + '\nfunction isUpcoming');
 
 fs.writeFileSync('index.html', h, 'utf8');
-console.log('clocks:', h.includes('stu-th-clock'));
-console.log('timer:', h.includes('startClassTimer'));
+console.log('clockbar:', h.includes('stu-th-clock') && h.includes('stu-cn-clock'));
+console.log('toggle:', h.includes('toggleDuration'));
+console.log('schedule on card:', h.includes('weekSchedule'));

@@ -302,6 +302,25 @@ canvas#wb{position:absolute;top:40px;left:0;right:0;bottom:60px;cursor:crosshair
 
 <!-- ─── STUDENTS ─── -->
 <div class="page" id="page-students">
+  <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center;background:linear-gradient(135deg,#1E1B4B,#312E81);border-radius:14px;padding:14px 20px;">
+    <div style="display:flex;gap:24px;flex:1;">
+      <div style="text-align:center;">
+        <div style="font-size:0.7rem;font-weight:700;color:#A5B4FC;letter-spacing:1px;">&#127481;&#127469; THAILAND</div>
+        <div id="stu-th-clock" style="font-size:1.4rem;font-weight:800;color:#fff;"></div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:0.7rem;font-weight:700;color:#A5B4FC;letter-spacing:1px;">&#127464;&#127475; CHINA</div>
+        <div id="stu-cn-clock" style="font-size:1.4rem;font-weight:800;color:#fff;"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <div style="color:#A5B4FC;font-size:0.8rem;font-weight:600;">Class timer:</div>
+      <button onclick="startClassTimer(25)" style="padding:6px 14px;border-radius:8px;border:none;background:#6366F1;color:#fff;font-weight:700;cursor:pointer;font-size:0.85rem;">25 min</button>
+      <button onclick="startClassTimer(50)" style="padding:6px 14px;border-radius:8px;border:none;background:#A855F7;color:#fff;font-weight:700;cursor:pointer;font-size:0.85rem;">50 min</button>
+      <div id="stu-timer-display" style="font-size:1.2rem;font-weight:800;color:#FCD34D;min-width:60px;text-align:center;">--:--</div>
+      <button onclick="stopClassTimer()" style="padding:6px 10px;border-radius:8px;border:none;background:#EF4444;color:#fff;font-weight:700;cursor:pointer;">&#9632;</button>
+    </div>
+  </div>
   <div class="page-header">
     <div><div class="page-title">👨‍🎓 Students</div><div class="page-sub">Tap any card to view full profile</div></div>
     <button class="btn btn-primary" onclick="openModal('add-student-modal')">＋ Add Student</button>
@@ -819,7 +838,7 @@ function renderStudents(){
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
           <div class="level-tag" style="background:${lvs.bg};color:${lvs.color};">${s.level}</div>
           ${s.classes<=2?'<div class="low-tag">⚠️ Low</div>':''}
-          <div style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;background:${s.duration==='50 min'?'#EDE9FE':'#DCFCE7'};color:${s.duration==='50 min'?'#5B21B6':'#15803D'};">⏱️ ${s.duration}</div>
+          <div style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;background:${s.duration==='50 min'?'#EDE9FE':'#DCFCE7'};color:${s.duration==='50 min'?'#5B21B6':'#15803D'};">⏱️ <span onclick="toggleDuration(${s.id},event)" style="cursor:pointer;text-decoration:underline dotted;">${s.duration}</span></div>
         </div>
       </div>
       <div class="s-card-body">
@@ -933,6 +952,14 @@ function stopClassTimer(){
   if(classTimerInterval)clearInterval(classTimerInterval);
   const el=document.getElementById('stu-timer-display');
   if(el)el.textContent='--:--';
+}
+
+function toggleDuration(id,e){
+  e.stopPropagation();
+  const s=students.find(x=>x.id===id);
+  if(!s)return;
+  s.duration=s.duration==='50 min'?'25 min':'50 min';
+  saveData();renderStudents();
 }
 function isUpcoming(bday){
   const d=new Date(bday);const today=new Date();
