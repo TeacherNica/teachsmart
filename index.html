@@ -368,6 +368,25 @@ canvas#wb{position:absolute;top:40px;left:0;right:0;bottom:60px;cursor:crosshair
     <div class="tz-item"><div class="tz-flag">🇰🇷</div><div><div class="tz-label">Korea</div><div class="tz-time" id="tz-kr2">--:--</div></div></div>
     <div style="margin-left:auto;text-align:right;"><div style="font-size:9px;color:rgba(255,255,255,0.5);font-weight:700;text-transform:uppercase;">Working Hours</div><div style="color:white;font-weight:700;font-size:12px;margin-top:2px;">Weekdays 5:30–9PM 🇹🇭 · Weekends 10AM–12PM 🇹🇭</div></div>
   </div>
+  <div style="overflow-x:auto;margin-bottom:20px;">
+    <table id="sched-table" style="width:100%;border-collapse:collapse;font-size:0.82rem;min-width:750px;">
+      <thead>
+        <tr>
+          <th style="background:#1E1B4B;color:#A5B4FC;padding:10px 8px;border:1px solid #312E81;white-space:nowrap;">🇹🇭 Thai Time</th>
+          <th style="background:#1E1B4B;color:#FCD34D;padding:10px 8px;border:1px solid #312E81;white-space:nowrap;">🇨🇳 China Time</th>
+          <th style="background:#166534;color:#fff;padding:10px 8px;border:1px solid #312E81;">Monday</th>
+          <th style="background:#1D4ED8;color:#fff;padding:10px 8px;border:1px solid #312E81;">Tuesday</th>
+          <th style="background:#065F46;color:#fff;padding:10px 8px;border:1px solid #312E81;">Wednesday</th>
+          <th style="background:#1E1B4B;color:#A5B4FC;padding:10px 8px;border:1px solid #312E81;">Thursday</th>
+          <th style="background:#4C1D95;color:#fff;padding:10px 8px;border:1px solid #312E81;">Friday</th>
+          <th style="background:#7C2D12;color:#fff;padding:10px 8px;border:1px solid #312E81;">Saturday</th>
+          <th style="background:#14532D;color:#fff;padding:10px 8px;border:1px solid #312E81;">Sunday</th>
+          <th style="background:#1E1B4B;color:#A5B4FC;padding:10px 8px;border:1px solid #312E81;">Section</th>
+        </tr>
+      </thead>
+      <tbody id="sched-body"></tbody>
+    </table>
+  </div>
   <div class="grid-main">
     <div>
       <div class="card">
