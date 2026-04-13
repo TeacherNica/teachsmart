@@ -260,7 +260,7 @@ canvas#wb{position:absolute;top:40px;left:0;right:0;bottom:60px;cursor:crosshair
   <div class="grid-main">
     <div>
       <div class="card" style="margin-bottom:14px;">
-        <div class="card-title">🗓️ Today's Classes</div>
+        <div class="card-title" id="today-classes-header" style="display:flex;justify-content:space-between;align-items:center;">🗓️ Today's Classes</div>
         <div id="today-classes"></div>
       </div>
       <div class="card">
@@ -821,7 +821,20 @@ function renderDashboard(){
   document.getElementById('dash-low').textContent=low;
   // Today's classes
   const today=document.getElementById('today-classes');
-  const sched=getTodaySlots();
+  const sched=getTodaySlots(dashDayOffset);
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const d=new Date().getDay();
+  const baseIdx=d===0?6:d-1;
+  const showIdx=(baseIdx+dashDayOffset+7)%7;
+  const isToday=dashDayOffset===0;
+  const dayLabel=isToday?'Today ('+days[showIdx]+')':days[showIdx];
+  const todayHeader=document.getElementById('today-classes-header');
+  if(todayHeader)todayHeader.innerHTML='<span>📅 '+dayLabel+'</span>'
+    +'<div style="display:flex;gap:6px;">'
+    +'<button onclick="dashDayOffset--;renderDashboard();" style="padding:4px 10px;border-radius:6px;border:1px solid #E5E7EB;background:white;cursor:pointer;font-weight:700;">◀</button>'
+    +'<button onclick="dashDayOffset=0;renderDashboard();" style="padding:4px 10px;border-radius:6px;border:none;background:var(--purple);color:white;cursor:pointer;font-weight:700;font-size:0.78rem;">Today</button>'
+    +'<button onclick="dashDayOffset++;renderDashboard();" style="padding:4px 10px;border-radius:6px;border:1px solid #E5E7EB;background:white;cursor:pointer;font-weight:700;">▶</button>'
+    +'</div>';
   const statusMap={done:{bg:'#F0FDF4',color:'#15803D',label:'✓ Done'},now:{bg:'#FFF7ED',color:'#F97316',label:'🔴 Now'},upcoming:{bg:'#EFF6FF',color:'#3B82F6',label:'Upcoming'}};
   today.innerHTML=sched.map(({time,s,status})=>{
     const st=statusMap[status];
@@ -998,8 +1011,11 @@ function toggleDuration(id,e){
   saveData();renderStudents();
 }
 
-function getTodaySlots(){
-  const d=new Date().getDay();const dayIdx=d===0?6:d-1;
+let dashDayOffset=0;
+function getTodaySlots(offset){
+  const d=new Date().getDay();
+  let dayIdx=(d===0?6:d-1);
+  dayIdx=(dayIdx+(offset||0)+7)%7;
   if(typeof WEEKLY_SCHEDULE==='undefined')return[];
   return (WEEKLY_SCHEDULE[dayIdx]||[]).map(slot=>{
     const s=students.find(x=>x.name===slot.student)||{name:slot.student,nat:'',level:'',duration:slot.duration+' min',c1:'#A855F7',c2:'#6366F1'};
@@ -1044,7 +1060,20 @@ function markDone(id){
 function renderSchedule(){
   const list=document.getElementById('schedule-list');
   if(!list)return;
-  const sched=getTodaySlots();
+  const sched=getTodaySlots(dashDayOffset);
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const d=new Date().getDay();
+  const baseIdx=d===0?6:d-1;
+  const showIdx=(baseIdx+dashDayOffset+7)%7;
+  const isToday=dashDayOffset===0;
+  const dayLabel=isToday?'Today ('+days[showIdx]+')':days[showIdx];
+  const todayHeader=document.getElementById('today-classes-header');
+  if(todayHeader)todayHeader.innerHTML='<span>📅 '+dayLabel+'</span>'
+    +'<div style="display:flex;gap:6px;">'
+    +'<button onclick="dashDayOffset--;renderDashboard();" style="padding:4px 10px;border-radius:6px;border:1px solid #E5E7EB;background:white;cursor:pointer;font-weight:700;">◀</button>'
+    +'<button onclick="dashDayOffset=0;renderDashboard();" style="padding:4px 10px;border-radius:6px;border:none;background:var(--purple);color:white;cursor:pointer;font-weight:700;font-size:0.78rem;">Today</button>'
+    +'<button onclick="dashDayOffset++;renderDashboard();" style="padding:4px 10px;border-radius:6px;border:1px solid #E5E7EB;background:white;cursor:pointer;font-weight:700;">▶</button>'
+    +'</div>';
   const statusMap={done:{bg:'#F0FDF4',color:'#15803D',label:'✓ Done'},now:{bg:'#FFF7ED',color:'#F97316',label:'🔴 Now'},upcoming:{bg:'#EFF6FF',color:'#3B82F6',label:'Upcoming'}};
   list.innerHTML=sched.map(({time,s,status})=>{
     const st=statusMap[status];
