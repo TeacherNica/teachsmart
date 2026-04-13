@@ -1,35 +1,48 @@
 ﻿const fs = require('fs');
 let h = fs.readFileSync('index.html', 'utf8');
 
-const autoSave = `
-// ─── AUTO SAVE ───
-function saveData(){
-  localStorage.setItem('ts-students', JSON.stringify(students));
-  localStorage.setItem('ts-save-time', new Date().toISOString());
-}
-function showSaveIndicator(){
-  let el = document.getElementById('save-indicator');
-  if(!el){
-    el = document.createElement('div');
-    el.id = 'save-indicator';
-    el.style = 'position:fixed;bottom:16px;right:16px;background:#22C55E;color:#fff;padding:8px 16px;border-radius:8px;font-size:0.8rem;font-weight:700;z-index:9999;opacity:0;transition:opacity 0.3s;';
-    document.body.appendChild(el);
-  }
-  el.textContent = '✅ Saved ' + new Date().toLocaleTimeString();
-  el.style.opacity = '1';
-  setTimeout(()=>el.style.opacity='0', 2000);
-}
-function saveData(){
-  localStorage.setItem('ts-students', JSON.stringify(students));
-  localStorage.setItem('ts-save-time', new Date().toISOString());
-  showSaveIndicator();
-}
-setInterval(()=>{ saveData(); }, 30000);
-`;
+// Helper: get today's slots from WEEKLY_SCHEDULE
+const helperFn = `
+function getTodaySlots(){
+  const dayIdx=new Date().getDay()===0?6:new Date().getDay()-1;
+  if(typeof WEEKLY_SCHEDULE==='undefined')return[];
+  return (WEEKLY_SCHEDULE[dayIdx]||[]).map(slot=>{
+    const s=students.find(x=>x.name===slot.student)||{name:slot.student,nat:'',level:'',duration:slot.duration+' min',c1:'#A855F7',c2:'#6366F1'};
+    const nowMins=new Date().getHours()*60+new Date().getMinutes();
+    const t=slot.time.split(' ');const hm=t[0].split(':');let hr=parseInt(hm[0]);const mn=parseInt(hm[1]);
+    if(t[1]==='PM'&&hr!==12)hr+=12;if(t[1]==='AM'&&hr===12)hr=0;
+    const slotMins=hr*60+mn;
+    const status=nowMins>slotMins+slot.duration?'done':nowMins>=slotMins?'now':'upcoming';
+    return {time:slot.time, s:{...s,duration:slot.duration+' min'}, status};
+  });
+}`;
 
-// Replace old saveData with new auto-save version
-h = h.replace('function saveData(){localStorage.setItem(\'ts-students\',JSON.stringify(students));}', autoSave);
+h = h.replace('function isUpcoming', helperFn + '\nfunction isUpcoming');
+
+// Replace hardcoded sched in renderDashboard
+const oldDashSched = `  const sched=[
+    {time:'5:30 PM',s:students[0],status:'done'},
+    {time:'6:30 PM',s:students[1],status:'now'},
+    {time:'7:30 PM',s:students[2],status:'upcoming'},
+    {time:'8:30 PM',s:students[3],status:'upcoming'},
+  ];`;
+
+const newDashSched = `  const sched=getTodaySlots();`;
+
+h = h.replace(oldDashSched, newDashSched);
+
+// Replace hardcoded sched in renderSchedule
+const oldSchedSched = `  const sched=[
+    {time:'5:30 PM',s:students[0],status:'done'},
+    {time:'6:30 PM',s:students[1],status:'now'},
+    {time:'7:30 PM',s:students[2],status:'upcoming'},
+    {time:'8:30 PM',s:students[3],status:'upcoming'},
+  ];`;
+
+const newSchedSched = `  const sched=getTodaySlots();`;
+
+h = h.replace(oldSchedSched, newSchedSched);
 
 fs.writeFileSync('index.html', h, 'utf8');
-console.log('autosave:', h.includes('AUTO SAVE'));
-console.log('indicator:', h.includes('save-indicator'));
+console.log('helper:', h.includes('getTodaySlots'));
+console.log('dash fixed:', h.split('getTodaySlots').length >= 3);
