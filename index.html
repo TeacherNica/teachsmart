@@ -929,7 +929,7 @@ function renderStudents(){
         <button class="s-btn" style="background:#DCFCE7;color:#15803D;" onclick="addClass(${s.id})">➕ Add</button>
         <button class="s-btn" style="background:#FEE2E2;color:#B91C1C;" onclick="deductClass(${s.id})">➖ Deduct</button>
         <button class="s-btn" style="background:#FEF3C7;color:#B45309;" onclick="deleteStudent(${s.id})">🗑️ Delete</button>
-        <button class="s-btn" style="background:#E0F2FE;color:#0369A1;" onclick="openSetPackage(${s.id},event)">📦 Set Package</button>
+        <button class="s-btn" style="background:#E0F2FE;color:#0369A1;" onclick="event.stopPropagation();openSetPackage(${s.id})" >📦 Set Package</button>
         ${s.classes<=2?`<button class="s-btn" style="background:#FFF1F2;color:#BE123C;">🔄 Renew</button>`:''}
       </div>
     </div>`;
