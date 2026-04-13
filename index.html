@@ -1045,6 +1045,7 @@ function getTodaySlots(offset){
     if(t[1]==='PM'&&hr!==12)hr+=12;if(t[1]==='AM'&&hr===12)hr=0;
     const slotMins=hr*60+mn;
     const status=nowMins>slotMins+slot.duration?'done':nowMins>=slotMins?'now':'upcoming';
+    if(status==='done'){const dk='auto_done_'+slot.student+'_'+new Date().toDateString();if(!localStorage.getItem(dk)){const ds=students.find(x=>x.name===slot.student);if(ds&&ds.classes>0){ds.classes--;saveData();}localStorage.setItem(dk,'1');}}
     return {time:slot.time, s:{...s,duration:slot.duration+' min'}, status};
   });
 }
