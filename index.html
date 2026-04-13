@@ -1151,6 +1151,9 @@ function renderScheduleGrid(){
           } else if(slot.type==='avail'){
             td.textContent='Available';td.style.background='#EAB308';td.style.color='#000';td.style.cursor='pointer';
             td.onclick=function(){openSlotEditor(this,'avail');};
+          } else if(slot.type==='close'){
+            td.textContent='Close';td.style.background='#EF4444';td.style.color='#fff';td.style.cursor='pointer';
+            td.onclick=function(){openSlotEditor(this,'close');};
           }
         }
       });
