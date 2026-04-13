@@ -1224,6 +1224,33 @@ function endClass(){if(confirm('End this class session?\nClass will be marked Co
 function sendChat(){const inp=document.getElementById('chat-input');const t=inp.value.trim();if(!t)return;const msgs=document.getElementById('chat-msgs');const d=document.createElement('div');d.className='msg me';d.innerHTML=`<div class="msg-bubble">${t}</div>`;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;inp.value='';}
 
 
+
+
+function showDay(dayIdx){
+  document.querySelectorAll('[id^="day-btn-"]').forEach((b,i)=>{
+    b.style.background=i===dayIdx?'linear-gradient(135deg,var(--purple),var(--blue))':'white';
+    b.style.color=i===dayIdx?'#fff':'#333';
+  });
+  const slots=WEEKLY_SCHEDULE[dayIdx]||[];
+  const el=document.getElementById('day-schedule');
+  if(!el)return;
+  if(!slots.length){el.innerHTML='<div style="color:#aaa;padding:20px;text-align:center;">No classes scheduled</div>';return;}
+  el.innerHTML=slots.map(slot=>{
+    const s=students.find(x=>x.name===slot.student);
+    const id=s?s.id:null;
+    const color=s?s.c1:'#ccc';
+    const left=s?s.classes:'-';
+    const bar=s?(s.classes<=2?'#EF4444':s.classes<=4?'#F97316':'#22C55E'):'#ccc';
+    return '<div style="display:flex;align-items:center;gap:12px;background:white;border-radius:12px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);">'
+      +'<div style="font-weight:800;color:var(--purple);min-width:75px;">'+slot.time+'</div>'
+      +'<div style="width:10px;height:10px;border-radius:50%;background:'+color+';flex-shrink:0;"></div>'
+      +'<div style="flex:1;font-weight:700;">'+slot.student+'</div>'
+      +'<div style="font-size:0.8rem;background:#F3E8FF;color:#7C3AED;padding:2px 8px;border-radius:20px;font-weight:600;">'+slot.duration+' min</div>'
+      +'<div style="font-size:0.8rem;font-weight:700;color:'+bar+';">'+left+' left</div>'
+      +(id?'<button onclick="startClassTimer('+slot.duration+')" style="padding:4px 10px;border-radius:6px;border:none;background:#6366F1;color:#fff;font-size:0.75rem;cursor:pointer;">Start</button>':'')
+      +'</div>';
+  }).join('');
+}
 const WEEKLY_SCHEDULE = {
   0: [
     {time:'5:30 PM', student:'Suri', duration:25},
@@ -1277,32 +1304,6 @@ const WEEKLY_SCHEDULE = {
     {time:'8:00 PM', student:'Carl', duration:25},
   ],
 };
-
-function showDay(dayIdx){
-  document.querySelectorAll('[id^="day-btn-"]').forEach((b,i)=>{
-    b.style.background=i===dayIdx?'linear-gradient(135deg,var(--purple),var(--blue))':'white';
-    b.style.color=i===dayIdx?'#fff':'#333';
-  });
-  const slots=WEEKLY_SCHEDULE[dayIdx]||[];
-  const el=document.getElementById('day-schedule');
-  if(!el)return;
-  if(!slots.length){el.innerHTML='<div style="color:#aaa;padding:20px;text-align:center;">No classes scheduled</div>';return;}
-  el.innerHTML=slots.map(slot=>{
-    const s=students.find(x=>x.name===slot.student);
-    const id=s?s.id:null;
-    const color=s?s.c1:'#ccc';
-    const left=s?s.classes:'-';
-    const bar=s?(s.classes<=2?'#EF4444':s.classes<=4?'#F97316':'#22C55E'):'#ccc';
-    return '<div style="display:flex;align-items:center;gap:12px;background:white;border-radius:12px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);">'
-      +'<div style="font-weight:800;color:var(--purple);min-width:75px;">'+slot.time+'</div>'
-      +'<div style="width:10px;height:10px;border-radius:50%;background:'+color+';flex-shrink:0;"></div>'
-      +'<div style="flex:1;font-weight:700;">'+slot.student+'</div>'
-      +'<div style="font-size:0.8rem;background:#F3E8FF;color:#7C3AED;padding:2px 8px;border-radius:20px;font-weight:600;">'+slot.duration+' min</div>'
-      +'<div style="font-size:0.8rem;font-weight:700;color:'+bar+';">'+left+' left</div>'
-      +(id?'<button onclick="startClassTimer('+slot.duration+')" style="padding:4px 10px;border-radius:6px;border:none;background:#6366F1;color:#fff;font-size:0.75rem;cursor:pointer;">Start</button>':'')
-      +'</div>';
-  }).join('');
-}
 // ─── INIT ───
 renderDashboard();
 renderStudents();
