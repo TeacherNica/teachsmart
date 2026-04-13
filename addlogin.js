@@ -1,79 +1,72 @@
 ﻿const fs = require('fs');
 let h = fs.readFileSync('index.html', 'utf8');
 
-// Add schedule modal HTML before </body>
-const scheduleModal = `
-<div id="schedule-modal" class="modal-overlay">
-  <div class="modal" style="max-width:480px;width:95%">
-    <div class="modal-header">
-      <div class="modal-title">📅 Weekly Schedule</div>
-      <button class="modal-close" onclick="closeModal('schedule-modal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div id="sched-student-name" style="font-weight:700;font-size:1.1rem;margin-bottom:16px;color:var(--purple)"></div>
-      <div style="display:grid;gap:10px;" id="sched-days">
-        ${['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(day=>`
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="width:90px;font-weight:600;font-size:0.85rem;">${day}</div>
-          <input type="time" id="sched-${day}-start" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
-          <span style="font-size:0.8rem;color:#888;">to</span>
-          <input type="time" id="sched-${day}-end" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
-        </div>`).join('')}
-      </div>
-      <div style="margin-top:16px;">
-        <label style="font-weight:600;font-size:0.85rem;">Notes</label>
-        <textarea id="sched-notes" rows="2" style="width:100%;padding:8px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;margin-top:4px;box-sizing:border-box;"></textarea>
-      </div>
-      <button onclick="saveSchedule()" class="btn btn-primary" style="width:100%;margin-top:16px;">💾 Save Schedule</button>
-    </div>
+const oldHeader = '<div class="page-header">\n    <div><div class="page-title">👨‍🎓 Students</div><div class="page-sub">Taap any card to view full profile</div></div>\n    <button class="btn btn-primary" onclick="openModal(\'add-student-modal\')">＋ Add Student</button>\n  </div>';
+
+const newHeader = `<div class="page-header">
+    <div><div class="page-title">👨‍🎓 Students</div><div class="page-sub">Tap any card to view full profile</div></div>
+    <button class="btn btn-primary" onclick="openModal('add-student-modal')">＋ Add Student</button>
   </div>
-</div>`;
+  <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center;background:linear-gradient(135deg,#1E1B4B,#312E81);border-radius:14px;padding:14px 20px;">
+    <div style="display:flex;gap:24px;flex:1;">
+      <div style="text-align:center;">
+        <div style="font-size:0.7rem;font-weight:700;color:#A5B4FC;letter-spacing:1px;">🇹🇭 THAILAND</div>
+        <div id="stu-th-clock" style="font-size:1.4rem;font-weight:800;color:#fff;"></div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:0.7rem;font-weight:700;color:#A5B4FC;letter-spacing:1px;">🇨🇳 CHINA</div>
+        <div id="stu-cn-clock" style="font-size:1.4rem;font-weight:800;color:#fff;"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div style="color:#A5B4FC;font-size:0.8rem;font-weight:600;">Class timer:</div>
+      <button onclick="startClassTimer(25)" style="padding:6px 14px;border-radius:8px;border:none;background:#6366F1;color:#fff;font-weight:700;cursor:pointer;font-size:0.85rem;">⏱ 25 min</button>
+      <button onclick="startClassTimer(50)" style="padding:6px 14px;border-radius:8px;border:none;background:#A855F7;color:#fff;font-weight:700;cursor:pointer;font-size:0.85rem;">⏱ 50 min</button>
+      <div id="stu-timer-display" style="font-size:1.2rem;font-weight:800;color:#FCD34D;min-width:60px;text-align:center;">--:--</div>
+      <button onclick="stopClassTimer()" style="padding:6px 10px;border-radius:8px;border:none;background:#EF4444;color:#fff;font-weight:700;cursor:pointer;font-size:0.85rem;">■</button>
+    </div>
+  </div>`;
 
-h = h.replace('</body>', scheduleModal + '\n</body>');
+h = h.replace(oldHeader, newHeader);
 
-// Add openSchedule and saveSchedule functions
-const schedFunctions = `
-let currentSchedId = null;
-function openSchedule(id){
-  const s = students.find(x=>x.id===id);
-  if(!s) return;
-  currentSchedId = id;
-  document.getElementById('sched-student-name').textContent = s.name;
-  const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  const sched = s.weekSchedule || {};
-  days.forEach(day=>{
-    document.getElementById('sched-'+day+'-start').value = sched[day]?.start || '';
-    document.getElementById('sched-'+day+'-end').value = sched[day]?.end || '';
-  });
-  document.getElementById('sched-notes').value = s.schedNotes || '';
-  openModal('schedule-modal');
+// Add clock + timer functions
+const timerFuncs = `
+function updateStudentClocks(){
+  const fmt=tz=>new Intl.DateTimeFormat('en-US',{hour:'numeric',minute:'2-digit',second:'2-digit',hour12:true,timeZone:tz}).format(new Date());
+  const th=document.getElementById('stu-th-clock');
+  const cn=document.getElementById('stu-cn-clock');
+  if(th)th.textContent=fmt('Asia/Bangkok');
+  if(cn)cn.textContent=fmt('Asia/Shanghai');
 }
-function saveSchedule(){
-  const s = students.find(x=>x.id===currentSchedId);
-  if(!s) return;
-  const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  s.weekSchedule = {};
-  days.forEach(day=>{
-    const start = document.getElementById('sched-'+day+'-start').value;
-    const end = document.getElementById('sched-'+day+'-end').value;
-    if(start||end) s.weekSchedule[day] = {start,end};
-  });
-  s.schedNotes = document.getElementById('sched-notes').value;
-  saveData();
-  closeModal('schedule-modal');
-  renderStudents();
-  alert('Schedule saved!');
+setInterval(updateStudentClocks,1000);
+updateStudentClocks();
+
+let classTimerInterval=null;
+let classTimerEnd=null;
+function startClassTimer(mins){
+  if(classTimerInterval)clearInterval(classTimerInterval);
+  classTimerEnd=new Date(Date.now()+mins*60*1000);
+  classTimerInterval=setInterval(()=>{
+    const left=classTimerEnd-Date.now();
+    if(left<=0){
+      clearInterval(classTimerInterval);
+      document.getElementById('stu-timer-display').textContent='Done!';
+      alert('⏰ Class time is up!');
+      return;
+    }
+    const m=String(Math.floor(left/60000)).padStart(2,'0');
+    const s=String(Math.floor((left%60000)/1000)).padStart(2,'0');
+    document.getElementById('stu-timer-display').textContent=m+':'+s;
+  },1000);
+}
+function stopClassTimer(){
+  if(classTimerInterval)clearInterval(classTimerInterval);
+  const el=document.getElementById('stu-timer-display');
+  if(el)el.textContent='--:--';
 }`;
 
-h = h.replace('function isUpcoming', schedFunctions + '\nfunction isUpcoming');
-
-// Add schedule button to each student card
-const oldBtn = "Report</button>\r\n        <button class=\"s-btn\" style=\"background:#DCFCE7";
-const newBtn = "Report</button>\r\n        <button class=\"s-btn\" style=\"background:#EDE9FE;color:#5B21B6;\" onclick=\"openSchedule(${s.id})\">📅 Schedule</button>\r\n        <button class=\"s-btn\" style=\"background:#DCFCE7";
-
-h = h.replace(oldBtn, newBtn);
+h = h.replace('function isUpcoming', timerFuncs + '\nfunction isUpcoming');
 
 fs.writeFileSync('index.html', h, 'utf8');
-console.log('modal:', h.includes('schedule-modal'));
-console.log('functions:', h.includes('openSchedule'));
-console.log('button:', h.includes('📅 Schedule'));
+console.log('clocks:', h.includes('stu-th-clock'));
+console.log('timer:', h.includes('startClassTimer'));

@@ -900,6 +900,40 @@ function saveSchedule(){
   renderStudents();
   alert('Schedule saved!');
 }
+
+function updateStudentClocks(){
+  const fmt=tz=>new Intl.DateTimeFormat('en-US',{hour:'numeric',minute:'2-digit',second:'2-digit',hour12:true,timeZone:tz}).format(new Date());
+  const th=document.getElementById('stu-th-clock');
+  const cn=document.getElementById('stu-cn-clock');
+  if(th)th.textContent=fmt('Asia/Bangkok');
+  if(cn)cn.textContent=fmt('Asia/Shanghai');
+}
+setInterval(updateStudentClocks,1000);
+updateStudentClocks();
+
+let classTimerInterval=null;
+let classTimerEnd=null;
+function startClassTimer(mins){
+  if(classTimerInterval)clearInterval(classTimerInterval);
+  classTimerEnd=new Date(Date.now()+mins*60*1000);
+  classTimerInterval=setInterval(()=>{
+    const left=classTimerEnd-Date.now();
+    if(left<=0){
+      clearInterval(classTimerInterval);
+      document.getElementById('stu-timer-display').textContent='Done!';
+      alert('⏰ Class time is up!');
+      return;
+    }
+    const m=String(Math.floor(left/60000)).padStart(2,'0');
+    const s=String(Math.floor((left%60000)/1000)).padStart(2,'0');
+    document.getElementById('stu-timer-display').textContent=m+':'+s;
+  },1000);
+}
+function stopClassTimer(){
+  if(classTimerInterval)clearInterval(classTimerInterval);
+  const el=document.getElementById('stu-timer-display');
+  if(el)el.textContent='--:--';
+}
 function isUpcoming(bday){
   const d=new Date(bday);const today=new Date();
   const next=new Date(today.getFullYear(),d.getMonth(),d.getDate());
