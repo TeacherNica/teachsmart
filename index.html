@@ -819,6 +819,8 @@ setInterval(()=>{
 
 // ─── NAVIGATION ───
 function nav(page,btn){
+  localStorage.setItem('ts-last-page', page);
+  localStorage.setItem('ts-last-page', page);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
@@ -1453,6 +1455,11 @@ const WEEKLY_SCHEDULE = {
 // ─── INIT ───
 renderDashboard();
 renderStudents();
+const lastPage = localStorage.getItem('ts-last-page');
+if(lastPage && lastPage !== 'dashboard'){
+  const navBtn = document.querySelector('[onclick*="nav(\''+lastPage+'\'"]');
+  if(navBtn) nav(lastPage, navBtn);
+}
 
 
 // Currency converter shortcut on dashboard
