@@ -907,7 +907,6 @@ function nav(page,btn){
   if(page==='hof')renderHOF();
   if(page==='schedule'){renderScheduleGrid();}
   if(page==='earnings'){renderEarnings();renderPDFRecords();}
-  if(page==='reports')renderReports();
   if(page==='classroom')initWB();
 }
 
@@ -2350,57 +2349,7 @@ function savePDFReports(reports){
   localStorage.setItem('ts-pdf-reports', JSON.stringify(reports));
 }
 
-function renderReports(){
-  var reports = getPDFReports();
-  var container = document.getElementById('reports-list');
-  if(!container) return;
-
-  if(reports.length === 0){
-    container.innerHTML = '<div style="text-align:center;color:#9CA3AF;padding:60px 0;font-size:0.9rem;">No PDF reports yet.<br>Click "Upload PDFs" to get started.</div>';
-    return;
-  }
-
-  // Group by month
-  var grouped = {};
-  reports.forEach(function(r){
-    if(!grouped[r.month]) grouped[r.month] = [];
-    grouped[r.month].push(r);
-  });
-
-  // Sort months newest first
-  var months = Object.keys(grouped).sort(function(a,b){
-    return new Date('01 '+b) - new Date('01 '+a);
-  });
-
-  container.innerHTML = months.map(function(month){
-    var files = grouped[month];
-    return '<div style="background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.07);">'+
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">'+
-        '<div style="display:flex;align-items:center;gap:10px;">'+
-          '<span style="font-size:1.3rem;">📁</span>'+
-          '<div>'+
-            '<div style="font-weight:700;font-size:1rem;">'+month+'</div>'+
-            '<div style="font-size:0.75rem;color:#9CA3AF;">'+files.length+' file'+(files.length===1?'':'s')+'</div>'+
-          '</div>'+
-        '</div>'+
-      '</div>'+
-      '<div style="display:flex;flex-direction:column;gap:8px;">'+
-        files.map(function(f){
-          return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#F5F3FF;border-radius:10px;">'+
-            '<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">'+
-              '<span style="font-size:1.1rem;">📄</span>'+
-              '<span style="font-size:0.85rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+f.name+'</span>'+
-            '</div>'+
-            '<div style="display:flex;gap:8px;flex-shrink:0;">'+
-              '<button onclick="viewPDF("+f.id+")" style="padding:5px 10px;background:#A855F7;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:600;">View</button>'+
-              '<button onclick="deletePDF("+f.id+")" style="padding:5px 10px;background:#FEE2E2;color:#EF4444;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:600;">Delete</button>'+
-            '</div>'+
-          '</div>';
-        }).join('')+
-      '</div>'+
-    '</div>';
-  }).join('');
-}
+// [PDF renderReports removed - duplicate]
 
 function openUploadModal(){
   document.getElementById('pdf-file-count').textContent = '';
