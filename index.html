@@ -2385,8 +2385,8 @@ function renderReports(){
               '<span style="font-size:0.85rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+f.name+'</span>'+
             '</div>'+
             '<div style="display:flex;gap:8px;flex-shrink:0;">'+
-              '<button onclick="viewPDF(''+f.id+'')" style="padding:5px 10px;background:#A855F7;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:600;">View</button>'+
-              '<button onclick="deletePDF(''+f.id+'')" style="padding:5px 10px;background:#FEE2E2;color:#EF4444;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:600;">Delete</button>'+
+              '<button onclick="viewPDF("+f.id+")" style="padding:5px 10px;background:#A855F7;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:600;">View</button>'+
+              '<button onclick="deletePDF("+f.id+")" style="padding:5px 10px;background:#FEE2E2;color:#EF4444;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:600;">Delete</button>'+
             '</div>'+
           '</div>';
         }).join('')+
