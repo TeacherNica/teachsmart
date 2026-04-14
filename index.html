@@ -515,1031 +515,137 @@ canvas#wb{position:absolute;top:40px;left:0;right:0;bottom:60px;cursor:crosshair
 </div>
 
 <!-- ─── PAYMENTS ─── -->
-<div class="page" id="page-payments">
-  <div class="page-header">
-    <div><div class="page-title">💰 Packages & Payments</div><div class="page-sub">Track all student packages and payments</div></div>
-    <button class="btn btn-primary" onclick="openModal('add-student-modal')">＋ Add Package</button>
-  </div>
-  <div class="grid-4" style="margin-bottom:20px;">
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#FFE4EE,#FFB3CD)">📦</div><div class="stat-val" style="color:var(--pink)" id="pay-total">0</div><div class="stat-label">Active Packages</div></div>
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#F0FDF4,#DCFCE7)">✅</div><div class="stat-val" style="color:var(--green)" id="pay-paid">0</div><div class="stat-label">Paid</div></div>
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#FFFBEB,#FDE68A)">⏳</div><div class="stat-val" style="color:var(--orange)" id="pay-pending">0</div><div class="stat-label">Pending</div></div>
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#FFF1F2,#FECDD3)">⚠️</div><div class="stat-val" style="color:var(--red)" id="pay-low">0</div><div class="stat-label">Low — Renew Soon</div></div>
-  </div>
-  <div class="currency-bar">
-    <div><div class="curr-label">PHP → RMB Rate</div><div class="curr-val">₱1 = ¥0.1247</div><div class="curr-sub">Live · Google Finance</div></div>
-    <div class="curr-div"></div>
-    <div style="display:flex;align-items:center;gap:12px;">
-      <div><div class="curr-label">Enter PHP</div><input class="curr-input" type="number" placeholder="2500" id="php-in" oninput="convertCurr()"></div>
-      <div style="color:rgba(255,255,255,0.5);font-size:18px;">→</div>
-      <div><div class="curr-label">Parents pay RMB</div><div class="curr-result" id="rmb-out">¥311.75</div></div>
-    </div>
-  </div>
-  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-    <button class="btn btn-sm" style="background:linear-gradient(135deg,var(--purple),var(--blue));color:white;" onclick="payFilter('all',this)">All</button>
-    <button class="btn btn-sm" style="background:white;border:1px solid #E5E7EB;" onclick="payFilter('low',this)">⚠️ Low</button>
-    <button class="btn btn-sm" style="background:white;border:1px solid #E5E7EB;" onclick="payFilter('pending',this)">⏳ Pending</button>
-    <button class="btn btn-sm" style="background:white;border:1px solid #E5E7EB;" onclick="payFilter('paid',this)">✅ Paid</button>
-  </div>
-  <div class="card"><div id="payments-list"></div></div>
-</div>
+<!-- PAYMENT PAGE -->
+  <div class="page" id="page-payments">
+    <div style="max-width:800px;margin:0 auto;padding:24px 16px;">
 
-<!-- ─── EARNINGS ─── -->
-<div class="page" id="page-earnings">
-  <div class="page-header">
-    <div><div class="page-title">📊 Earnings Summary</div><div class="page-sub">Your business at a glance</div></div>
-    <button class="btn btn-primary btn-sm">📄 Export PDF</button>
-  </div>
-  <div class="grid-4">
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#F3E8FF,#DDD6FE)">📅</div><div class="stat-val" style="color:var(--purple)">₱42,500</div><div class="stat-label">This Month</div></div>
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5)">📈</div><div class="stat-val" style="color:var(--green)">₱168,200</div><div class="stat-label">This Year (2026)</div></div>
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#FEF9C3,#FDE68A)">⬆️</div><div class="stat-val" style="color:var(--yellow)">+8%</div><div class="stat-label">vs Last Month</div></div>
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">👨‍🎓</div><div class="stat-val" style="color:var(--blue)" id="earn-students">0</div><div class="stat-label">Active Students</div></div>
-  </div>
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-title">📅 Monthly Breakdown</div>
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <div style="display:flex;align-items:center;gap:10px;"><div style="font-size:13px;font-weight:700;min-width:32px;">Apr</div><div style="flex:1;height:24px;background:#F3F4F6;border-radius:6px;overflow:hidden;"><div style="height:100%;width:85%;background:linear-gradient(135deg,var(--purple),var(--blue));border-radius:6px;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:700;color:white;">₱42,500</div></div></div>
-        <div style="display:flex;align-items:center;gap:10px;"><div style="font-size:13px;font-weight:700;min-width:32px;">Mar</div><div style="flex:1;height:24px;background:#F3F4F6;border-radius:6px;overflow:hidden;"><div style="height:100%;width:78%;background:linear-gradient(135deg,var(--teal),var(--blue));border-radius:6px;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:700;color:white;">₱39,300</div></div></div>
-        <div style="display:flex;align-items:center;gap:10px;"><div style="font-size:13px;font-weight:700;min-width:32px;">Feb</div><div style="flex:1;height:24px;background:#F3F4F6;border-radius:6px;overflow:hidden;"><div style="height:100%;width:70%;background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:6px;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:700;color:white;">₱35,200</div></div></div>
-        <div style="display:flex;align-items:center;gap:10px;"><div style="font-size:13px;font-weight:700;min-width:32px;">Jan</div><div style="flex:1;height:24px;background:#F3F4F6;border-radius:6px;overflow:hidden;"><div style="height:100%;width:65%;background:linear-gradient(135deg,var(--orange),var(--yellow));border-radius:6px;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:700;color:white;">₱32,000</div></div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">🏆 Most Active Students</div>
-      <div id="top-students"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ─── MATERIALS ─── -->
-<div class="page" id="page-materials">
-  <div class="page-header">
-    <div><div class="page-title">📁 Materials Library</div><div class="page-sub">PDFs, worksheets, and textbooks</div></div>
-    <button class="btn btn-primary">⬆️ Upload File</button>
-  </div>
-  <div class="grid-3">
-    <div class="card" style="cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='none'"><div style="font-size:32px;margin-bottom:10px;">📘</div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;margin-bottom:4px;">English Textbook Ch.5</div><div style="font-size:11px;color:var(--muted);">PDF · 12 pages · All students</div><div style="margin-top:10px;display:flex;gap:6px;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#EFF6FF;color:#1D4ED8;">Intermediate</span></div></div>
-    <div class="card" style="cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='none'"><div style="font-size:32px;margin-bottom:10px;">📄</div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;margin-bottom:4px;">Vocabulary Worksheet Set 3</div><div style="font-size:11px;color:var(--muted);">PDF · 2 pages · All students</div><div style="margin-top:10px;display:flex;gap:6px;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#ECFDF5;color:#15803D;">Beginner</span></div></div>
-    <div class="card" style="cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='none'"><div style="font-size:32px;margin-bottom:10px;">📝</div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;margin-bottom:4px;">Grammar Exercise Set 3</div><div style="font-size:11px;color:var(--muted);">PDF · 4 pages · Advanced only</div><div style="margin-top:10px;display:flex;gap:6px;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#F3E8FF;color:#7C3AED;">Advanced</span></div></div>
-    <div class="card" style="cursor:pointer;transition:all 0.2s;border:2px dashed #E5E7EB;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:120px;color:var(--muted);" onmouseover="this.style.borderColor='var(--purple)';this.style.color='var(--purple)'" onmouseout="this.style.borderColor='#E5E7EB';this.style.color='var(--muted)'"><div style="font-size:28px;margin-bottom:8px;">＋</div><div style="font-weight:700;font-size:13px;">Upload New Material</div></div>
-  </div>
-</div>
-
-<!-- ─── PROGRESS REPORTS ─── -->
-<div class="page" id="page-reports">
-  <div class="page-header">
-    <div><div class="page-title">📝 Progress Reports</div><div class="page-sub">Auto-drafted — you review and publish</div></div>
-    <button class="btn btn-primary" onclick="openModal('report-modal')">＋ New Report</button>
-  </div>
-  <div class="grid-4" style="margin-bottom:20px;">
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#F3E8FF,#DDD6FE)">📝</div><div class="stat-val" style="color:var(--purple)">8</div><div class="stat-label">Total Reports</div></div>
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#F0FDF4,#DCFCE7)">✅</div><div class="stat-val" style="color:var(--green)">5</div><div class="stat-label">Published</div></div>
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#FFFBEB,#FDE68A)">✏️</div><div class="stat-val" style="color:var(--orange)">2</div><div class="stat-label">Drafts</div></div>
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">⏳</div><div class="stat-val" style="color:var(--blue)">3</div><div class="stat-label">Due Soon</div></div>
-  </div>
-  <div id="reports-list"></div>
-</div>
-
-<!-- ─── HALL OF FAME ─── -->
-<div class="page" id="page-hof">
-  <div class="page-header">
-    <div><div class="page-title">⭐ Hall of Fame</div><div class="page-sub">Award badges to your students</div></div>
-    <button class="btn btn-primary">＋ Award Badge</button>
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;" id="hof-grid"></div>
-</div>
-
-<!-- ─── ABSENCE LOG ─── -->
-<div class="page" id="page-absences">
-  <div class="page-header">
-    <div><div class="page-title">📋 Absence Log</div><div class="page-sub">Private — parents cannot see your absence count</div></div>
-    <button class="btn btn-primary" onclick="openModal('absence-modal')">＋ Log Absence</button>
-  </div>
-  <div class="grid-4" style="margin-bottom:20px;">
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#FFF1F2,#FECDD3)">📅</div><div class="stat-val" style="color:var(--red)">3</div><div class="stat-label">This Month</div></div>
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#FFF7ED,#FDE68A40)">📆</div><div class="stat-val" style="color:var(--orange)">8</div><div class="stat-label">This Year</div></div>
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#F0FDF4,#DCFCE7)">✅</div><div class="stat-val" style="color:var(--green)">2</div><div class="stat-label">Parents Notified</div></div>
-    <div class="stat"><div class="stat-icon" style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE)">🔄</div><div class="stat-val" style="color:var(--blue)">1</div><div class="stat-label">Pending Reschedule</div></div>
-  </div>
-  <div class="card">
-    <div class="card-title">📋 Absence History</div>
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:#F9FAFB;border-radius:12px;"><span style="font-size:20px;">🤒</span><div style="flex:1;"><div style="font-weight:700;font-size:13px;">Apr 8, 2026 — Sick leave</div><div style="font-size:11px;color:var(--muted);">Affected: Li Wei, Park Jisoo · Parents notified ✅</div></div><span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#F0FDF4;color:#15803D;">Rescheduled</span></div>
-      <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:#F9FAFB;border-radius:12px;"><span style="font-size:20px;">🚨</span><div style="flex:1;"><div style="font-weight:700;font-size:13px;">Apr 3, 2026 — Emergency</div><div style="font-size:11px;color:var(--muted);">Affected: Chen Xiaoming · Parents notified ✅</div></div><span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#FFFBEB;color:#B45309;">Pending Reschedule</span></div>
-      <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:#F9FAFB;border-radius:12px;"><span style="font-size:20px;">🏖️</span><div style="flex:1;"><div style="font-weight:700;font-size:13px;">Mar 28, 2026 — Personal leave</div><div style="font-size:11px;color:var(--muted);">Affected: Kim Minjun · Parents notified ✅</div></div><span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#F0FDF4;color:#15803D;">Rescheduled</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- ─── SETTINGS ─── -->
-<div class="page" id="page-settings">
-  <div class="page-header"><div><div class="page-title">⚙️ Settings</div><div class="page-sub">Configure your TeachSmart app</div></div></div>
-  <div class="grid-2">
-    <div class="card"><div class="card-title">👩‍🏫 Teacher Profile</div>
-      <div class="form-group"><label class="form-label">Name</label><input class="form-input" value="Teacher Nica"></div>
-      <div class="form-group"><label class="form-label">Email</label><input class="form-input" value="nica081598@gmail.com"></div>
-      <div class="form-group"><label class="form-label">Location</label><input class="form-input" value="Bangkok, Thailand 🇹🇭"></div>
-      <button class="btn btn-primary btn-sm">💾 Save Profile</button>
-    </div>
-    <div class="card"><div class="card-title">⏰ Working Hours</div>
-      <div class="form-group"><label class="form-label">Weekday Start (Thailand)</label><input class="form-input" value="5:30 PM"></div>
-      <div class="form-group"><label class="form-label">Weekday End (Thailand)</label><input class="form-input" value="9:00 PM"></div>
-      <div class="form-group"><label class="form-label">Weekend Start (Thailand)</label><input class="form-input" value="10:00 AM"></div>
-      <div class="form-group"><label class="form-label">VooV Default Meeting ID</label><input class="form-input" value="892-456-123"></div>
-      <button class="btn btn-primary btn-sm">💾 Save Hours</button>
-    </div>
-    <div class="card" style="border:2px solid #FEE2E2;">
-      <div class="card-title" style="color:var(--red);">⚠️ Danger Zone</div>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">This will delete ALL students and reset the app to a blank slate. Use this to remove the fake test students and start fresh with your real students.</p>
-      <button class="btn" style="background:linear-gradient(135deg,var(--red),#DC2626);color:white;" onclick="clearAllStudents()">🗑️ Clear All Students & Start Fresh</button>
-    </div>
-  </div>
-</div>
-
-</div><!-- end .main -->
-
-<!-- ─── MODALS ─── -->
-
-<!-- ADD STUDENT MODAL -->
-<div class="modal-overlay" id="add-student-modal">
-  <div class="modal">
-    <div class="modal-title">👨‍🎓 Add New Student</div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="in-name" placeholder="e.g. Li Wei"></div><div class="form-group"><label class="form-label">Nickname</label><input class="form-input" id="in-nick" placeholder="e.g. Lily"></div></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Nationality</label><select class="form-select" id="in-nat"><option value="🇨🇳 Chinese">🇨🇳 Chinese</option><option value="🇰🇷 Korean">🇰🇷 Korean (in China)</option></select></div><div class="form-group"><label class="form-label">Level</label><select class="form-select" id="in-level"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></div></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Classes in Package</label><input class="form-input" id="in-classes" type="number" placeholder="e.g. 10"></div><div class="form-group"><label class="form-label">Rate per Class (₱)</label><input class="form-input" id="in-rate" type="number" placeholder="e.g. 250"></div></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Class Duration</label><select class="form-select" id="in-duration"><option value="25 min">25 min</option><option value="50 min">50 min</option></select></div><div class="form-group"><label class="form-label">Birthday</label><input class="form-input" id="in-bday" type="date"></div></div>
-    <div class="form-group"><label class="form-label">Regular Schedule</label><input class="form-input" id="in-sched" placeholder="e.g. Mon & Wed · 5:30 PM Thailand"></div>
-    <div class="form-group"><label class="form-label">Parent WeChat ID</label><input class="form-input" id="in-wechat" placeholder="e.g. parent_wechat_123"></div>
-    <div class="form-group"><label class="form-label">Notes</label><input class="form-input" id="in-notes" placeholder="e.g. Shy student, prefers reading"></div>
-    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('add-student-modal')">Cancel</button><button class="btn-save" onclick="saveStudent()">💾 Save Student</button></div>
-  </div>
-</div>
-
-<!-- ABSENCE MODAL -->
-<div class="modal-overlay" id="absence-modal">
-  <div class="modal">
-    <div class="modal-title">📋 Log My Absence</div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Private — parents will NOT see your absence count</div>
-    <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date"></div>
-    <div class="form-group"><label class="form-label">Reason</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="reason-btns">
-        <button onclick="selectReason(this)" style="padding:10px;border-radius:11px;border:2px solid #E5E7EB;background:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">🤒 Sick</button>
-        <button onclick="selectReason(this)" style="padding:10px;border-radius:11px;border:2px solid #E5E7EB;background:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">🚨 Emergency</button>
-        <button onclick="selectReason(this)" style="padding:10px;border-radius:11px;border:2px solid #E5E7EB;background:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">🏖️ Personal Leave</button>
-        <button onclick="selectReason(this)" style="padding:10px;border-radius:11px;border:2px solid #E5E7EB;background:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">✈️ Travel</button>
-      </div>
-    </div>
-    <div class="form-group"><label class="form-label">Message to Parents</label><textarea style="width:100%;padding:11px 14px;border:2px solid #E5E7EB;border-radius:12px;font-family:'Quicksand',sans-serif;font-weight:600;font-size:12px;outline:none;resize:vertical;min-height:80px;line-height:1.6;">Dear Parent, I'm sorry to inform you that today's class will need to be rescheduled. I sincerely apologise for the inconvenience and will confirm a new schedule shortly. Thank you! 🙏</textarea></div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('absence-modal')">Cancel</button>
-      <button style="flex:1;padding:11px;border-radius:12px;border:2px solid var(--purple);background:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;color:var(--purple);" onclick="closeModal('absence-modal');alert('💾 Absence logged privately.')">Log Only</button>
-      <button class="btn-save" onclick="closeModal('absence-modal');alert('📨 Absence logged & message sent to parents!')">Log & Notify</button>
-    </div>
-  </div>
-</div>
-
-<!-- SCHEDULE MODAL -->
-<div class="modal-overlay" id="sched-modal">
-  <div class="modal">
-    <div class="modal-title">📅 Schedule / Move a Class</div>
-    <div class="form-group"><label class="form-label">Student</label><select class="form-select" id="sched-student"><option>Select student...</option></select></div>
-    <div class="form-row"><div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date"></div><div class="form-group"><label class="form-label">Time (Thailand)</label><select class="form-select"><option>5:30 PM</option><option>6:00 PM</option><option>6:30 PM</option><option>7:00 PM</option><option>7:30 PM</option><option>8:00 PM</option><option>8:30 PM</option><option>10:00 AM (Weekend)</option><option>11:00 AM (Weekend)</option></select></div></div>
-    <div style="background:#F3E8FF;border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;justify-content:space-between;">
-      <div><div style="font-size:10px;color:#7C3AED;font-weight:700;">🇨🇳 China / 🇰🇷 Korea</div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;color:#5B21B6;">+1 hr / +2 hrs</div></div>
-      <div><div style="font-size:10px;color:#7C3AED;font-weight:700;">🇵🇭 Philippines</div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;color:#5B21B6;">+1 hr</div></div>
-    </div>
-    <div class="form-group"><label class="form-label">VooV Meeting ID</label><input class="form-input" placeholder="e.g. 892-456-123" value="892-456-123"></div>
-    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('sched-modal')">Cancel</button><button class="btn-save" onclick="closeModal('sched-modal');alert('✅ Class scheduled!')">💾 Save Class</button></div>
-  </div>
-</div>
-
-<!-- REPORT MODAL -->
-<div class="modal-overlay" id="report-modal">
-  <div class="modal">
-    <div class="modal-title">📝 Write Progress Report</div>
-    <div style="background:linear-gradient(135deg,#F3E8FF,#EDE9FE);border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;border:1px solid #DDD6FE;"><span style="font-size:22px;">🤖</span><div><div style="font-weight:700;font-size:13px;color:#5B21B6;">AI Draft Ready</div><div style="font-size:11px;color:#7C3AED;">Auto-generated from attendance & class data</div></div><button style="margin-left:auto;padding:6px 13px;border-radius:9px;border:none;background:linear-gradient(135deg,var(--purple),var(--blue));color:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:11px;cursor:pointer;">↻ Regenerate</button></div>
-    <div class="form-group"><label class="form-label">Student</label><select class="form-select"><option>Select student...</option></select></div>
-    <div class="form-group"><label class="form-label">Overall Rating</label>
-      <div style="display:flex;gap:7px;">
-        <button style="flex:1;padding:8px;border-radius:10px;border:2px solid #E5E7EB;background:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:12px;cursor:pointer;" onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.style.borderColor='#E5E7EB');this.style.borderColor='var(--purple)'">😞 Needs Work</button>
-        <button style="flex:1;padding:8px;border-radius:10px;border:2px solid #E5E7EB;background:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:12px;cursor:pointer;" onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.style.borderColor='#E5E7EB');this.style.borderColor='var(--purple)'">🙂 Developing</button>
-        <button style="flex:1;padding:8px;border-radius:10px;border:2px solid var(--purple);background:#F3E8FF;font-family:'Quicksand',sans-serif;font-weight:700;font-size:12px;cursor:pointer;" onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.style.borderColor='#E5E7EB');this.style.borderColor='var(--purple)'">😊 Good</button>
-        <button style="flex:1;padding:8px;border-radius:10px;border:2px solid #E5E7EB;background:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:12px;cursor:pointer;" onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.style.borderColor='#E5E7EB');this.style.borderColor='var(--purple)'">🌟 Excellent</button>
-      </div>
-    </div>
-    <div class="form-group"><label class="form-label">💪 Strengths</label><textarea style="width:100%;padding:11px 14px;border:2px solid #E5E7EB;border-radius:12px;font-family:'Quicksand',sans-serif;font-weight:600;font-size:12px;outline:none;resize:vertical;min-height:70px;line-height:1.6;">Great enthusiasm and strong reading comprehension. Vocabulary retention has improved significantly.</textarea></div>
-    <div class="form-group"><label class="form-label">🎯 Areas to Improve</label><textarea style="width:100%;padding:11px 14px;border:2px solid #E5E7EB;border-radius:12px;font-family:'Quicksand',sans-serif;font-weight:600;font-size:12px;outline:none;resize:vertical;min-height:70px;line-height:1.6;">Pronunciation needs more practice, especially consonant clusters.</textarea></div>
-    <div class="form-group"><label class="form-label">🚀 Recommended Next Steps</label><textarea style="width:100%;padding:11px 14px;border:2px solid #E5E7EB;border-radius:12px;font-family:'Quicksand',sans-serif;font-weight:600;font-size:12px;outline:none;resize:vertical;min-height:70px;line-height:1.6;">Continue with current level. Recommend renewing with a 12-class package.</textarea></div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal('report-modal')">Cancel</button>
-      <button style="flex:1;padding:11px;border-radius:12px;border:2px solid var(--purple);background:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;color:var(--purple);" onclick="closeModal('report-modal');alert('💾 Draft saved!')">Save Draft</button>
-      <button class="btn-save" onclick="closeModal('report-modal');alert('🚀 Report published to parent portal!')">🚀 Publish</button>
-    </div>
-  </div>
-</div>
-
-<script>
-let RATE = 0.1247;
-fetch('https://api.exchangerate-api.com/v4/latest/CNY')
-  .then(r=>r.json())
-  .then(d=>{
-    RATE=d.rates.PHP;
-    renderStudents();
-    renderPayments();
-    const el=document.getElementById('live-rate');
-    if(el)el.textContent='¥1 = ₱'+RATE.toFixed(4);
-  }).catch(()=>{});
-
-// ─── SEED DATA ───
-let students = JSON.parse(localStorage.getItem('ts-students')||'null') || [{"id":101,"name":"K.Bella","nat":"🇰🇷 Korean","level":"Beginner","rate":30,"classes":46,"total":54,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#A855F7","c2":"#6366F1","badges":[],"paid":false,"birthday":""},{"id":102,"name":"Jackie","nat":"🇰🇷 Korean","level":"Beginner","rate":25,"classes":41,"total":52,"duration":"50 min","schedule":"","attendance":100,"avatar":"👦","c1":"#3B82F6","c2":"#06B6D4","badges":[],"paid":false,"birthday":""},{"id":103,"name":"Lina","nat":"🇰🇷 Korean","level":"Beginner","rate":30,"classes":6,"total":30,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#EC4899","c2":"#F97316","badges":[],"paid":false,"birthday":""},{"id":104,"name":"Aiden","nat":"🇰🇷 Korean","level":"Beginner","rate":35,"classes":5,"total":25,"duration":"50 min","schedule":"","attendance":100,"avatar":"👦","c1":"#10B981","c2":"#3B82F6","badges":[],"paid":false,"birthday":""},{"id":105,"name":"Sophia","nat":"🇰🇷 Korean","level":"Beginner","rate":35,"classes":6,"total":27,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#F59E0B","c2":"#EF4444","badges":[],"paid":false,"birthday":""},{"id":106,"name":"Peter","nat":"🇰🇷 Korean","level":"Beginner","rate":35,"classes":23,"total":52,"duration":"50 min","schedule":"","attendance":100,"avatar":"👦","c1":"#8B5CF6","c2":"#EC4899","badges":[],"paid":false,"birthday":""},{"id":107,"name":"Seah","nat":"🇰🇷 Korean","level":"Beginner","rate":25,"classes":10,"total":52,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#14B8A6","c2":"#6366F1","badges":[],"paid":false,"birthday":""},{"id":108,"name":"Suri","nat":"🇨🇳 Chinese","level":"Beginner","rate":40,"classes":13,"total":30,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#F97316","c2":"#EF4444","badges":[],"paid":false,"birthday":""},{"id":109,"name":"Bella","nat":"🇨🇳 Chinese","level":"Beginner","rate":30,"classes":10,"total":32,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#EC4899","c2":"#A855F7","badges":[],"paid":false,"birthday":""},{"id":110,"name":"COCO-1","nat":"🇨🇳 Chinese","level":"Beginner","rate":35,"classes":2,"total":20,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#F59E0B","c2":"#10B981","badges":[],"paid":false,"birthday":""},{"id":111,"name":"Harry","nat":"🇨🇳 Chinese","level":"Beginner","rate":40,"classes":2,"total":27,"duration":"50 min","schedule":"","attendance":100,"avatar":"👦","c1":"#3B82F6","c2":"#8B5CF6","badges":[],"paid":false,"birthday":""},{"id":112,"name":"Kelly-Adult","nat":"🇨🇳 Chinese","level":"Intermediate","rate":45,"classes":11,"total":11,"duration":"50 min","schedule":"","attendance":100,"avatar":"👩","c1":"#EF4444","c2":"#F97316","badges":[],"paid":false,"birthday":""},{"id":113,"name":"KAREN","nat":"🇨🇳 Chinese","level":"Beginner","rate":30,"classes":18,"total":20,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#10B981","c2":"#14B8A6","badges":[],"paid":false,"birthday":""},{"id":114,"name":"Mollie-Adult & Steven","nat":"🇨🇳 Chinese","level":"Beginner","rate":25,"classes":32,"total":52,"duration":"50 min","schedule":"","attendance":100,"avatar":"👫","c1":"#6366F1","c2":"#A855F7","badges":["Siblings"],"paid":false,"birthday":""},{"id":115,"name":"Coco-2","nat":"🇨🇳 Chinese","level":"Beginner","rate":35,"classes":22,"total":27,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#F59E0B","c2":"#EC4899","badges":[],"paid":false,"birthday":""},{"id":116,"name":"Koala","nat":"🇨🇳 Chinese","level":"Beginner","rate":30,"classes":26,"total":30,"duration":"50 min","schedule":"","attendance":100,"avatar":"🐨","c1":"#8B5CF6","c2":"#3B82F6","badges":[],"paid":false,"birthday":""},{"id":117,"name":"Owen","nat":"🇨🇳 Chinese","level":"Beginner","rate":35,"classes":22,"total":27,"duration":"50 min","schedule":"","attendance":100,"avatar":"👦","c1":"#14B8A6","c2":"#10B981","badges":[],"paid":false,"birthday":""},{"id":118,"name":"Rainy","nat":"🇨🇳 Chinese","level":"Beginner","rate":40,"classes":20,"total":27,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#3B82F6","c2":"#06B6D4","badges":[],"paid":false,"birthday":""},{"id":120,"name":"Carl","nat":"🇨🇳 Chinese","level":"Beginner","rate":25,"classes":3,"total":30,"duration":"50 min","schedule":"","attendance":100,"avatar":"👦","c1":"#F97316","c2":"#FBBF24","badges":[],"paid":false,"birthday":""},{"id":119,"name":"Shily","nat":"🇨🇳 Chinese","level":"Beginner","rate":40,"classes":25,"total":27,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#EC4899","c2":"#F59E0B","badges":[],"paid":false,"birthday":""}];
-
-
-// ─── AUTO SAVE ───
-function saveData(){
-  localStorage.setItem('ts-students', JSON.stringify(students));
-  localStorage.setItem('ts-save-time', new Date().toISOString());
-}
-function showSaveIndicator(){
-  let el = document.getElementById('save-indicator');
-  if(!el){
-    el = document.createElement('div');
-    el.id = 'save-indicator';
-    el.style = 'position:fixed;bottom:16px;right:16px;background:#22C55E;color:#fff;padding:8px 16px;border-radius:8px;font-size:0.8rem;font-weight:700;z-index:9999;opacity:0;transition:opacity 0.3s;';
-    document.body.appendChild(el);
-  }
-  el.textContent = '✅ Saved ' + new Date().toLocaleTimeString();
-  el.style.opacity = '1';
-  setTimeout(()=>el.style.opacity='0', 2000);
-}
-function saveData(){
-  localStorage.setItem('ts-students', JSON.stringify(students));
-  localStorage.setItem('ts-save-time', new Date().toISOString());
-  showSaveIndicator();
-}
-setInterval(()=>{ saveData(); }, 30000);
-
-function clearAllStudents(){
-  if(confirm('Are you sure? This will DELETE all students including the fake test ones. You will start fresh with zero students.')){
-    students=[];
-    saveData();
-    renderStudents();
-    renderDashboard();
-    alert('✅ All students cleared! Go to Students page and add your real students.');
-    nav('students', document.querySelectorAll('.nav-item')[1]);
-  }
-}
-
-// ─── CLOCKS ───
-function updateClocks(){
-  const fmt=tz=>new Intl.DateTimeFormat('en-US',{hour:'numeric',minute:'2-digit',hour12:true,timeZone:tz}).format(new Date());
-  ['th','cn','ph','kr'].forEach(id=>{
-    const el1=document.getElementById('tz-'+id);
-    const el2=document.getElementById('tz-'+id+'2');
-    const tz={th:'Asia/Bangkok',cn:'Asia/Shanghai',ph:'Asia/Manila',kr:'Asia/Seoul'}[id];
-    if(el1)el1.textContent=fmt(tz);
-    if(el2)el2.textContent=fmt(tz);
-  });
-  const now=new Date();
-  document.getElementById('date-display').textContent=now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-}
-updateClocks();setInterval(updateClocks,1000);
-
-// ─── CLASS TIMER ───
-let timerSecs=0;
-setInterval(()=>{
-  timerSecs++;
-  const h=String(Math.floor(timerSecs/3600)).padStart(2,'0');
-  const m=String(Math.floor((timerSecs%3600)/60)).padStart(2,'0');
-  const s=String(timerSecs%60).padStart(2,'0');
-  const el=document.getElementById('class-timer');
-  if(el)el.textContent=`${h}:${m}:${s}`;
-},1000);
-
-// ─── NAVIGATION ───
-function nav(page,btn){
-  if(page !== 'profile') localStorage.setItem('ts-last-page', page);
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+page).classList.add('active');
-  btn.classList.add('active');
-  if(page==='students')renderStudents();
-  if(page==='profile')loadProfile();
-  if(page==='dashboard')renderDashboard();
-  if(page==='payments')renderPayments();
-  if(page==='reports')renderReports();
-  if(page==='hof')renderHOF();
-  if(page==='schedule'){renderScheduleGrid();}
-  if(page==='earnings')renderEarnings();
-  if(page==='classroom')initWB();
-}
-
-// ─── DASHBOARD ───
-function renderDashboard(){
-  const low=students.filter(s=>s.classes<=3).length;
-  document.getElementById('dash-total').textContent=students.length;
-  document.getElementById('dash-low').textContent=low;
-  // Today's classes
-  const today=document.getElementById('today-classes');
-  const sched=getTodaySlots(dashDayOffset);
-  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const d=new Date().getDay();
-  const baseIdx=d===0?6:d-1;
-  const showIdx=(baseIdx+dashDayOffset+7)%7;
-  const isToday=dashDayOffset===0;
-  const dayLabel=isToday?'Today ('+days[showIdx]+')':days[showIdx];
-  const todayHeader=document.getElementById('today-classes-header');
-  if(todayHeader)todayHeader.innerHTML='<span>📅 '+dayLabel+'</span>'
-    +'<div style="display:flex;gap:6px;">'
-    +'<button onclick="dashDayOffset--;renderDashboard();" style="padding:4px 10px;border-radius:6px;border:1px solid #E5E7EB;background:white;cursor:pointer;font-weight:700;">◀</button>'
-    +'<button onclick="dashDayOffset=0;renderDashboard();" style="padding:4px 10px;border-radius:6px;border:none;background:var(--purple);color:white;cursor:pointer;font-weight:700;font-size:0.78rem;">Today</button>'
-    +'<button onclick="dashDayOffset++;renderDashboard();" style="padding:4px 10px;border-radius:6px;border:1px solid #E5E7EB;background:white;cursor:pointer;font-weight:700;">▶</button>'
-    +'</div>';
-  const statusMap={done:{bg:'#F0FDF4',color:'#15803D',label:'✓ Done'},now:{bg:'#FFF7ED',color:'#F97316',label:'🔴 Now'},upcoming:{bg:'#EFF6FF',color:'#3B82F6',label:'Upcoming'}};
-  today.innerHTML=sched.map(({time,s,status})=>{
-    if(!isToday) status='upcoming';
-    const st=statusMap[status];
-    const s_obj = sched.find ? s : s;
-    return `<div class="schedule-item" style="position:relative;">
-      <div class="sched-time" style="color:var(--purple)">${time}</div>
-      <div class="sched-bar" style="background:${s.c1}"></div>
-      <div style="flex:1;"><div class="sched-name">${s.name}</div><div class="sched-detail">${s.nat} · ${s.level} · ${s.duration}</div></div>
-      <div class="sched-badge" style="background:${st.bg};color:${st.color};">${st.label}</div>${isToday&&status!=="done"?"<button onclick=\"markAttendance('"+s.name+"','present')\" style=\"padding:4px 8px;border-radius:6px;border:none;background:#22C55E;color:#fff;font-size:0.72rem;cursor:pointer;font-weight:700;margin-left:4px;\">✅ Present</button><button onclick=\"markAttendance('"+s.name+"','absent')\" style=\"padding:4px 8px;border-radius:6px;border:none;background:#EF4444;color:#fff;font-size:0.72rem;cursor:pointer;font-weight:700;margin-left:3px;\">❌ Absent</button>":s.attendance_today==="present"?"<span style=\"background:#DCFCE7;color:#15803D;padding:3px 8px;border-radius:20px;font-size:0.72rem;font-weight:700;margin-left:4px;\">✅ Present</span>":s.attendance_today==="absent"?"<span style=\"background:#FEE2E2;color:#B91C1C;padding:3px 8px;border-radius:20px;font-size:0.72rem;font-weight:700;margin-left:4px;\">❌ Absent</span>":""}
-    </div>`;
-  }).join('');
-  // Alerts
-  const alerts=document.getElementById('dashboard-alerts');
-  const lowStudents=students.filter(s=>s.classes<=3);
-  let html='';
-  lowStudents.forEach(s=>{html+=`<div class="alert-item" style="background:#FFFBEB;border:1px solid #FDE68A;"><div class="alert-icon">⚠️</div><div><div class="alert-title">${s.name} — ${s.classes} class${s.classes!==1?'es':''} left</div><div class="alert-sub">Package renewal needed</div></div></div>`;});
-  html+=`<div class="alert-item" style="background:#FFF0F7;border:1px solid #FBCFE8;"><div class="alert-icon">🎂</div><div><div class="alert-title">Li Wei's Birthday in 3 days!</div><div class="alert-sub">April 15 — send a greeting!</div></div></div>`;
-  html+=`<div class="alert-item" style="background:#F0F9FF;border:1px solid #BAE6FD;"><div class="alert-icon">🏮</div><div><div class="alert-title">Labour Day Coming</div><div class="alert-sub">May 1–5 · Expect cancellations</div></div></div>`;
-  alerts.innerHTML=html;
-}
-
-// ─── STUDENTS ───
-let currentFilter='all';
-function setFilter(f,btn){
-  currentFilter=f;
-  document.querySelectorAll('[id^="f-"]').forEach(b=>{b.style.background='white';b.style.border='1px solid #E5E7EB';b.style.color='';});
-  btn.style.background='linear-gradient(135deg,var(--purple),var(--blue))';btn.style.color='white';btn.style.border='none';
-  renderStudents();
-}
-function getLevelStyle(l){return{Beginner:{bg:'#ECFDF5',color:'#15803D'},Intermediate:{bg:'#EFF6FF',color:'#1D4ED8'},Advanced:{bg:'#F3E8FF',color:'#7C3AED'}}[l]||{bg:'#F3F4F6',color:'#6B7280'};}
-function renderStudents(){
-  const q=(document.getElementById('student-search')?.value||'').toLowerCase();
-  let list=students;
-  if(currentFilter==='cn')list=list.filter(s=>s.nat.includes('Chinese'));
-  if(currentFilter==='kr')list=list.filter(s=>s.nat.includes('Korean'));
-  if(currentFilter==='low')list=list.filter(s=>s.classes<=3);
-  if(q)list=list.filter(s=>s.name.toLowerCase().includes(q)||s.nat.toLowerCase().includes(q));
-  const grid=document.getElementById('student-grid');
-  if(!grid)return;
-  const lv=l=>getLevelStyle(l);
-  grid.innerHTML=list.map(s=>{
-    const pct=Math.round(s.classes/s.total*100);
-    const bar=s.classes<=3?'#EF4444':s.classes<=4?'#F97316':'#22C55E';
-    const lvs=lv(s.level);
-    return `<div class="s-card">
-      <div class="s-card-top">
-        <div style="position:relative;">
-          <div class="s-av" style="background:linear-gradient(135deg,${s.c1},${s.c2});cursor:pointer;" onclick="openStudentProfile(${s.id})">${s.avatar}</div>
-          ${s.birthday&&isUpcoming(s.birthday)?'<div style="position:absolute;top:-4px;right:-4px;width:14px;height:14px;background:var(--pink);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;border:2px solid white;">🎂</div>':''}
+      <!-- Top Summary -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+        <div style="background:linear-gradient(135deg,#A855F7,#6366F1);border-radius:16px;padding:20px;color:#fff;">
+          <div style="font-size:0.78rem;opacity:0.85;margin-bottom:4px;">💰 Total Earned This Month</div>
+          <div id="pay-total-earned" style="font-size:1.8rem;font-weight:800;">₱0</div>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
-          <div class="level-tag" style="background:${lvs.bg};color:${lvs.color};cursor:pointer;" onclick="cycleLevel(${s.id},event)" title="Click to change level">${s.level} ✏️</div>
-          ${s.classes<=3?'<div class="low-tag">⚠️ Low</div>':''}
-          <div style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;background:${s.duration==='50 min'?'#EDE9FE':'#DCFCE7'};color:${s.duration==='50 min'?'#5B21B6':'#15803D'};">⏱️ <span onclick="toggleDuration(${s.id},event)" style="cursor:pointer;text-decoration:underline dotted;">${s.duration}</span></div>
-        </div>
-      </div>
-      <div class="s-card-body">
-        <div class="s-name" style="cursor:pointer;" onclick="openStudentProfile(${s.id})">${s.name}</div>
-        <div class="s-nat">${s.nat} · ${s.schedule||''}</div>
-        <div class="s-stats">
-          <div><div class="s-stat-val" style="color:${bar}">${s.classes}</div><div class="s-stat-lbl">Left</div></div>
-          <div><div class="s-stat-val" style="color:var(--purple)">¥${s.rate}</div><div class="s-stat-lbl">≈₱${RATE?Math.round(s.rate*RATE):'—'}</div></div>
-          <div><div class="s-stat-val" style="color:var(--blue)">${s.attendance}%</div><div class="s-stat-lbl">Attend.</div></div>
-        </div>
-        <div class="pkg-bar"><div class="pkg-fill" style="width:${pct}%;background:${bar}"></div></div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px;">${s.badges.slice(0,2).map(b=>`<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:#F3E8FF;color:#7C3AED;">${b}</span>`).join('')}</div>
-      </div>
-      <div class="s-card-footer">
-        <button class="s-btn" style="background:#EFF6FF;color:#1D4ED8;" onclick="markDone(${s.id})">✅ Mark Done</button>
-        <button class="s-btn" style="background:#F3E8FF;color:#7C3AED;" onclick="openModal('report-modal')">📝 Report</button>
-        <button class="s-btn" style="background:#EDE9FE;color:#5B21B6;" onclick="openSchedule(${s.id})">📅 Schedule</button>
-        <button class="s-btn" style="background:#DCFCE7;color:#15803D;" onclick="addClass(${s.id})">➕ Add</button>
-        <button class="s-btn" style="background:#FEE2E2;color:#B91C1C;" onclick="deductClass(${s.id})">➖ Deduct</button>
-        <button class="s-btn" style="background:#FEF3C7;color:#B45309;" onclick="deleteStudent(${s.id})">🗑️ Delete</button>
-        <button class="s-btn" style="background:#E0F2FE;color:#0369A1;" onclick="event.stopPropagation();openSetPackage(${s.id})" >📦 Set Package</button>
-        ${s.classes<=3?`<button class="s-btn" style="background:#FFF1F2;color:#BE123C;">🔄 Renew</button>`:''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function addClass(id){
-  const s=students.find(x=>x.id===id);
-  if(!s)return;
-  s.classes++;
-  s.total=Math.max(s.total,s.classes);
-  saveData();
-  renderStudents();
-}
-function deductClass(id){
-  const s=students.find(x=>x.id===id);
-  if(!s)return;
-  if(s.classes<=0){alert('No classes left!');return;}
-  s.classes--;
-  saveData();
-  renderStudents();
-}
-function deleteStudent(id){
-  if(!confirm('Delete this student?'))return;
-  students=students.filter(x=>x.id!==id);
-  saveData();
-  renderStudents();
-}
-
-let currentSchedId = null;
-function openSchedule(id){
-  const s = students.find(x=>x.id===id);
-  if(!s) return;
-  currentSchedId = id;
-  document.getElementById('sched-student-name').textContent = s.name;
-  const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  const sched = s.weekSchedule || {};
-  days.forEach(day=>{
-    document.getElementById('sched-'+day+'-start').value = sched[day]?.start || '';
-    document.getElementById('sched-'+day+'-end').value = sched[day]?.end || '';
-  });
-  document.getElementById('sched-notes').value = s.schedNotes || '';
-  openModal('schedule-modal');
-}
-function saveSchedule(){
-  const s = students.find(x=>x.id===currentSchedId);
-  if(!s) return;
-  const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  s.weekSchedule = {};
-  days.forEach(day=>{
-    const start = document.getElementById('sched-'+day+'-start').value;
-    const end = document.getElementById('sched-'+day+'-end').value;
-    if(start||end) s.weekSchedule[day] = {start,end};
-  });
-  s.schedNotes = document.getElementById('sched-notes').value;
-  saveData();
-  closeModal('schedule-modal');
-  renderStudents();
-  alert('Schedule saved!');
-}
-
-function updateStudentClocks(){
-  const fmt=tz=>new Intl.DateTimeFormat('en-US',{hour:'numeric',minute:'2-digit',second:'2-digit',hour12:true,timeZone:tz}).format(new Date());
-  const th=document.getElementById('stu-th-clock');
-  const cn=document.getElementById('stu-cn-clock');
-  if(th)th.textContent=fmt('Asia/Bangkok');
-  if(cn)cn.textContent=fmt('Asia/Shanghai');
-}
-setInterval(updateStudentClocks,1000);
-updateStudentClocks();
-
-let classTimerInterval=null;
-let classTimerEnd=null;
-function startClassTimer(mins){
-  if(classTimerInterval)clearInterval(classTimerInterval);
-  classTimerEnd=new Date(Date.now()+mins*60*1000);
-  classTimerInterval=setInterval(()=>{
-    const left=classTimerEnd-Date.now();
-    if(left<=0){
-      clearInterval(classTimerInterval);
-      document.getElementById('stu-timer-display').textContent='Done!';
-      alert('⏰ Class time is up!');
-      return;
-    }
-    const m=String(Math.floor(left/60000)).padStart(2,'0');
-    const s=String(Math.floor((left%60000)/1000)).padStart(2,'0');
-    document.getElementById('stu-timer-display').textContent=m+':'+s;
-  },1000);
-}
-function stopClassTimer(){
-  if(classTimerInterval)clearInterval(classTimerInterval);
-  const el=document.getElementById('stu-timer-display');
-  if(el)el.textContent='--:--';
-}
-
-function toggleDuration(id,e){
-  e.stopPropagation();
-  const s=students.find(x=>x.id===id);
-  if(!s)return;
-  s.duration=s.duration==='50 min'?'25 min':'50 min';
-  saveData();renderStudents();
-}
-
-let dashDayOffset=0;
-function getTodaySlots(offset){
-  const d=new Date().getDay();
-  let dayIdx=(d===0?6:d-1);
-  dayIdx=(dayIdx+(offset||0)+7)%7;
-  if(typeof WEEKLY_SCHEDULE==='undefined')return[];
-  return (WEEKLY_SCHEDULE[dayIdx]||[]).map(slot=>{
-    const s=students.find(x=>x.name===slot.student)||{name:slot.student,nat:'',level:'',duration:slot.duration+' min',c1:'#A855F7',c2:'#6366F1'};
-    const nowMins=new Date().getHours()*60+new Date().getMinutes();
-    const t=slot.time.split(' ');const hm=t[0].split(':');let hr=parseInt(hm[0]);const mn=parseInt(hm[1]);
-    if(t[1]==='PM'&&hr!==12)hr+=12;if(t[1]==='AM'&&hr===12)hr=0;
-    const slotMins=hr*60+mn;
-    const status=nowMins>slotMins+slot.duration?'done':nowMins>=slotMins?'now':'upcoming';
-    if(status==='done'){const dk='auto_done_'+slot.student+'_'+new Date().toDateString();if(!localStorage.getItem(dk)){const ds=students.find(x=>x.name===slot.student);if(ds&&ds.classes>0){ds.classes--;saveData();}localStorage.setItem(dk,'1');}}
-    return {time:slot.time, s:{...s,duration:slot.duration+' min'}, status};
-  });
-}
-
-
-function markAttendance(name,type){
-  const s=students.find(x=>x.name===name);
-  if(!s)return;
-  if(type==="present"){
-    if(s.classes<=0){alert(s.name+" has no classes left!");return;}
-    s.classes--;
-    s.attendance_today="present";
-    saveData();renderDashboard();renderStudents();
-    alert("Present! "+s.classes+" left.");
-  }else{
-    s.attendance_today="absent";
-    saveData();renderDashboard();
-    alert("Absent noted.");
-  }
-}
-
-
-function renderScheduleGrid(){
-  const body=document.getElementById('sched-body');
-  if(!body)return;
-  const PASTEL={
-    'K.Bella':   {flag:'<img src=https://flagcdn.com/16x12/kr.png style=vertical-align:middle;margin-right:3px;>',bg:'#FCE4EC',text:'#880E4F'},
-    'Jackie':    {flag:'<img src=https://flagcdn.com/16x12/kr.png style=vertical-align:middle;margin-right:3px;>',bg:'#EDE7F6',text:'#4A148C'},
-    'Lina':      {flag:'<img src=https://flagcdn.com/16x12/kr.png style=vertical-align:middle;margin-right:3px;>',bg:'#E8EAF6',text:'#1A237E'},
-    'Aiden':     {flag:'<img src=https://flagcdn.com/16x12/kr.png style=vertical-align:middle;margin-right:3px;>',bg:'#E0F2F1',text:'#004D40'},
-    'Sophia':    {flag:'<img src=https://flagcdn.com/16x12/kr.png style=vertical-align:middle;margin-right:3px;>',bg:'#E1F5FE',text:'#01579B'},
-    'Peter':     {flag:'<img src=https://flagcdn.com/16x12/kr.png style=vertical-align:middle;margin-right:3px;>',bg:'#FFF8E1',text:'#E65100'},
-    'Seah':      {flag:'<img src=https://flagcdn.com/16x12/kr.png style=vertical-align:middle;margin-right:3px;>',bg:'#F3E5F5',text:'#4A148C'},
-    'Suri':      {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#FFF3E0',text:'#BF360C'},
-    'Bella':     {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#FCE4EC',text:'#880E4F'},
-    'COCO-1':    {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#FFFDE7',text:'#F57F17'},
-    'Harry':     {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#E3F2FD',text:'#0D47A1'},
-    'Kelly-Adult':{flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#E8F5E9',text:'#1B5E20'},
-    'KAREN':     {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#E0F7FA',text:'#006064'},
-    'Mollie-Adult & Steven':{flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#FFF9C4',text:'#827717'},
-    'Coco-2':    {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#FFFDE7',text:'#F57F17'},
-    'Koala':     {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#F3E5F5',text:'#4A148C'},
-    'Owen':      {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#E8F5E9',text:'#1B5E20'},
-    'Rainy':     {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#E3F2FD',text:'#0D47A1'},
-    'Shily':     {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#FCE4EC',text:'#880E4F'},
-    'Carl':      {flag:'<img src=https://flagcdn.com/16x12/cn.png style=vertical-align:middle;margin-right:3px;>',bg:'#FFF8E1',text:'#E65100'},
-  };
-  function cell(name,bg){
-    if(!name)return '<td style="background:#EF4444;color:#fff;text-align:center;padding:7px 4px;border:1px solid #ddd;font-weight:600;font-size:0.78rem;cursor:pointer;" onclick="openSlotEditor(this,\'close\')">Close</td>';
-    if(name==='Avail')return '<td style="background:#EAB308;color:#000;text-align:center;padding:7px 4px;border:1px solid #ddd;font-weight:700;font-size:0.78rem;cursor:pointer;" onclick="openSlotEditor(this,\'avail\')">Available</td>';
-    const s=students.find(x=>x.name===name||x.name.startsWith(name));
-    const meta=PASTEL[name]||{flag:'',bg:'#E8EAF6',text:'#1E1B4B'};
-    const onclick=s?"nav(\'students\',document.querySelectorAll(\'.nav-item\')[1])":'';
-    return '<td style="background:'+meta.bg+';color:'+meta.text+';text-align:center;padding:7px 4px;border:1px solid #ddd;font-weight:700;font-size:0.78rem;cursor:pointer;" onclick="'+onclick+'">'+(meta.flag?meta.flag:'')+name+'</td>';
-  }
-  function sectionCell(label,rows,bg){
-    return '<td rowspan="'+rows+'" style="background:'+bg+';color:#fff;font-weight:800;text-align:center;padding:6px 4px;border:1px solid #ddd;writing-mode:vertical-lr;letter-spacing:3px;">'+label+'</td>';
-  }
-  const rows=[
-    // MORNING
-    {th:'10:00 AM',cn:'11:00 AM',d:[null,null,null,null,null,'Seah',null],section:'MORNING',srows:6,sbg:'#166534'},
-    {th:'10:30 AM',cn:'11:30 AM',d:[null,null,null,null,null,'Seah',null]},
-    {th:'11:00 AM',cn:'12:00 PM',d:[null,null,null,null,null,'Coco-2','Avail']},
-    {th:'11:30 AM',cn:'12:30 PM',d:[null,null,null,null,null,'Shily','Peter']},
-    {th:'12:00 PM',cn:'1:00 PM', d:[null,null,null,null,null,'Owen','Peter']},
-    {th:'12:30 PM',cn:'1:30 PM', d:[null,null,null,null,null,'Owen',null]},
-    // EVENING
-    {th:'5:30 PM',cn:'6:30 PM',d:['Suri','Suri',null,'Suri',null,null,null],section:'EVENING',srows:7,sbg:'#7C2D12'},
-    {th:'6:00 PM',cn:'7:00 PM',d:['Bella','Jackie','Bella','Lina','Koala',null,'Koala']},
-    {th:'6:30 PM',cn:'7:30 PM',d:['COCO-1','Lina','Jackie','Jackie','Koala','Avail','Koala']},
-    {th:'7:00 PM',cn:'8:00 PM',d:['Harry','KAREN','COCO-1','Coco-2','KAREN','Rainy','Rainy']},
-    {th:'7:30 PM',cn:'8:30 PM',d:['K.Bella','Mollie','K.Bella','Peter',null,'Steven','Harry']},
-    {th:'8:00 PM',cn:'9:00 PM',d:['Kelly','Aiden','Sophia','Peter','Owen','Carl','Carl']},
-    {th:'8:30 PM',cn:'9:30 PM',d:[null,null,'Sophia',null,null,null,null]},
-  ];
-  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  let html='';
-  rows.forEach(row=>{
-    html+='<tr>';
-    const timeBg=row.section==='MORNING'?'#FEF9C3':row.th>='5:00 PM'?'#FDE68A':'#FEF9C3';
-    html+='<td style="background:'+timeBg+';color:#713F12;font-weight:700;text-align:center;padding:7px 8px;border:1px solid #ddd;white-space:nowrap;">'+row.th+'</td>';
-    html+='<td style="background:'+timeBg+';color:#713F12;font-weight:700;text-align:center;padding:7px 8px;border:1px solid #ddd;white-space:nowrap;">'+row.cn+'</td>';
-    row.d.forEach(name=>{ html+=cell(name); });
-    if(row.section) html+=sectionCell(row.section,row.srows,row.sbg);
-    html+='</tr>';
-  });
-  body.innerHTML=html;
-
-  try{
-    var _rss=JSON.parse(localStorage.getItem('ts-slots')||'{}');
-    var _KRN=['K.Bella','Jackie','Lina','Aiden','Sophia','Peter','Seah'];
-    var _PC={'K.Bella':{bg:'#FCE4EC',text:'#880E4F'},'Jackie':{bg:'#EDE7F6',text:'#4A148C'},'Lina':{bg:'#E8EAF6',text:'#1A237E'},'Aiden':{bg:'#E0F2F1',text:'#004D40'},'Sophia':{bg:'#E1F5FE',text:'#01579B'},'Peter':{bg:'#FFF8E1',text:'#E65100'},'Seah':{bg:'#F3E5F5',text:'#4A148C'},'Suri':{bg:'#FFF3E0',text:'#BF360C'},'Bella':{bg:'#FCE4EC',text:'#880E4F'},'COCO-1':{bg:'#FFFDE7',text:'#F57F17'},'Harry':{bg:'#E3F2FD',text:'#0D47A1'},'Kelly-Adult':{bg:'#E8F5E9',text:'#1B5E20'},'KAREN':{bg:'#E0F7FA',text:'#006064'},'Mollie-Adult & Steven':{bg:'#FFF9C4',text:'#827717'},'Coco-2':{bg:'#FFFDE7',text:'#F57F17'},'Koala':{bg:'#F3E5F5',text:'#4A148C'},'Owen':{bg:'#E8F5E9',text:'#1B5E20'},'Rainy':{bg:'#E3F2FD',text:'#0D47A1'},'Shily':{bg:'#FCE4EC',text:'#880E4F'},'Carl':{bg:'#FFF8E1',text:'#E65100'}};
-    Object.keys(_rss).forEach(function(key){
-      var parts=key.split('|');var time=parts[0];var colIdx=parseInt(parts[1]);var slot=_rss[key];
-      document.querySelectorAll('#sched-body tr').forEach(function(row){
-        if(row.cells[0]&&row.cells[0].textContent.trim()===time&&row.cells[colIdx]){
-          var td=row.cells[colIdx];
-          if(slot.type==='student'){
-            var isKR=_KRN.indexOf(slot.name)>=0;
-            var meta=_PC[slot.name]||{bg:'#E8EAF6',text:'#1E1B4B'};
-            td.innerHTML='<img src="https://flagcdn.com/16x12/'+(isKR?'kr':'cn')+'.png" style="vertical-align:middle;margin-right:3px;">'+slot.name;
-            td.style.background=meta.bg;td.style.color=meta.text;td.style.cursor='pointer';td.onclick=function(){openSlotEditor(this,'student');};
-          } else if(slot.type==='avail'){
-            td.textContent='Available';td.style.background='#EAB308';td.style.color='#000';td.style.cursor='pointer';
-            td.onclick=function(){openSlotEditor(this,'avail');};
-          } else if(slot.type==='close'){
-            td.textContent='Close';td.style.background='#EF4444';td.style.color='#fff';td.style.cursor='pointer';
-            td.onclick=function(){openSlotEditor(this,'close');};
-          }
-        }
-      });
-    });
-  }catch(e){}
-}
-function isUpcoming(bday){
-  const d=new Date(bday);const today=new Date();
-  const next=new Date(today.getFullYear(),d.getMonth(),d.getDate());
-  if(next<today)next.setFullYear(today.getFullYear()+1);
-  return(next-today)/(1000*60*60*24)<=7;
-}
-function markDone(id){
-  const s=students.find(x=>x.id===id);
-  if(!s)return;
-  if(s.classes<=0){alert(`⚠️ ${s.name} has no classes left! Please renew.`);return;}
-  s.classes--;saveData();renderStudents();renderDashboard();
-  alert(`✅ Done! ${s.name} now has ${s.classes} class${s.classes!==1?'es':''} left.`);
-  if(s.classes<=3&&s.classes>0)alert(`⚠️ ${s.name} is running low — only ${s.classes} left!`);
-}
-
-// ─── SCHEDULE ───
-function renderSchedule(){
-  const list=document.getElementById('schedule-list');
-  if(!list)return;
-  const sched=getTodaySlots(dashDayOffset);
-  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const d=new Date().getDay();
-  const baseIdx=d===0?6:d-1;
-  const showIdx=(baseIdx+dashDayOffset+7)%7;
-  const isToday=dashDayOffset===0;
-  const dayLabel=isToday?'Today ('+days[showIdx]+')':days[showIdx];
-  const todayHeader=document.getElementById('today-classes-header');
-  if(todayHeader)todayHeader.innerHTML='<span>📅 '+dayLabel+'</span>'
-    +'<div style="display:flex;gap:6px;">'
-    +'<button onclick="dashDayOffset--;renderDashboard();" style="padding:4px 10px;border-radius:6px;border:1px solid #E5E7EB;background:white;cursor:pointer;font-weight:700;">◀</button>'
-    +'<button onclick="dashDayOffset=0;renderDashboard();" style="padding:4px 10px;border-radius:6px;border:none;background:var(--purple);color:white;cursor:pointer;font-weight:700;font-size:0.78rem;">Today</button>'
-    +'<button onclick="dashDayOffset++;renderDashboard();" style="padding:4px 10px;border-radius:6px;border:1px solid #E5E7EB;background:white;cursor:pointer;font-weight:700;">▶</button>'
-    +'</div>';
-  const statusMap={done:{bg:'#F0FDF4',color:'#15803D',label:'✓ Done'},now:{bg:'#FFF7ED',color:'#F97316',label:'🔴 Now'},upcoming:{bg:'#EFF6FF',color:'#3B82F6',label:'Upcoming'}};
-  list.innerHTML=sched.map(({time,s,status})=>{
-    const st=statusMap[status];
-    return `<div class="schedule-item">
-      <div class="sched-time" style="color:var(--purple)">${time}</div>
-      <div class="sched-bar" style="background:${s.c1}"></div>
-      <div style="flex:1;"><div class="sched-name">${s.name} <span style="font-size:11px;">${s.nat.split(' ')[0]}</span></div><div class="sched-detail">${s.level} · ${s.duration}</div></div>
-      <div class="sched-badge" style="background:${st.bg};color:${st.color};">${st.label}</div>
-    </div>`;
-  }).join('');
-}
-
-// ─── PAYMENTS ───
-let payF='all';
-function payFilter(f,btn){payF=f;document.querySelectorAll('[onclick^="payFilter"]').forEach(b=>{b.style.background='white';b.style.border='1px solid #E5E7EB';b.style.color='';});btn.style.background='linear-gradient(135deg,var(--purple),var(--blue))';btn.style.color='white';btn.style.border='none';renderPayments();}
-function renderPayments(){
-  let list=students;
-  if(payF==='low')list=list.filter(s=>s.classes<=3);
-  if(payF==='pending')list=list.filter(s=>!s.paid);
-  if(payF==='paid')list=list.filter(s=>s.paid);
-  document.getElementById('pay-total').textContent=students.length;
-  document.getElementById('pay-paid').textContent=students.filter(s=>s.paid).length;
-  document.getElementById('pay-pending').textContent=students.filter(s=>!s.paid).length;
-  document.getElementById('pay-low').textContent=students.filter(s=>s.classes<=3).length;
-  const el=document.getElementById('payments-list');
-  if(!el)return;
-  el.innerHTML=list.map(s=>{
-    const pkg=s.rate*s.total;const rmb=(pkg*RATE).toFixed(2);
-    const bar=s.classes<=3?'#EF4444':s.classes<=4?'#F97316':'#22C55E';
-    const pct=Math.round(s.classes/s.total*100);
-    return `<div class="pay-item">
-      <div class="pay-av" style="background:linear-gradient(135deg,${s.c1},${s.c2})">${s.avatar}</div>
-      <div style="flex:1;"><div class="pay-name">${s.name} <span style="font-size:11px;">${s.nat.split(' ')[0]}</span></div>
-        <div class="pay-detail">${s.level} · ${s.duration}</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;"><div style="width:80px;height:5px;background:#F3F4F6;border-radius:3px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:${bar};border-radius:3px;"></div></div><span style="font-size:10px;font-weight:700;color:${bar};">${s.classes}/${s.total} left</span></div>
-      </div>
-      <div class="pay-amount">₱${pkg.toLocaleString()}</div>
-      <div style="text-align:right;"><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--purple);">¥${rmb}</div><div style="font-size:10px;color:var(--muted);">RMB</div></div>
-      <div style="margin-left:8px;">${s.paid?'<span class="badge-paid">✅ Paid</span>':'<span class="badge-pending">⏳ Pending</span>'}</div>
-      <button style="margin-left:8px;padding:5px 10px;border-radius:8px;border:none;background:#EFF6FF;color:#1D4ED8;font-family:\'Quicksand\',sans-serif;font-weight:700;font-size:11px;cursor:pointer;">${s.paid?'Receipt':'Mark Paid'}</button>
-    </div>`;
-  }).join('');
-}
-function convertCurr(){const v=parseFloat(document.getElementById('php-in').value)||0;document.getElementById('rmb-out').textContent=`¥${(v*RATE).toFixed(2)}`;}
-
-// ─── PROGRESS REPORTS ───
-function renderReports(){
-  const el=document.getElementById('reports-list');if(!el)return;
-  const reports=[
-    {s:students[0],pkg:'Package 3',date:'Apr 10',status:'published',skills:{speaking:80,reading:85,writing:70,listening:88},rating:'🌟 Excellent'},
-    {s:students[2],pkg:'Package 5',date:'Apr 8',status:'published',skills:{speaking:92,reading:95,writing:88,listening:90},rating:'🌟 Excellent'},
-    {s:students[1],pkg:'Package 2',date:'—',status:'draft',skills:{speaking:60,reading:70,writing:55,listening:72},rating:'😊 Good'},
-    {s:students[3],pkg:'Package 1',date:'—',status:'pending',skills:{speaking:55,reading:65,writing:50,listening:60},rating:'🙂 Developing'},
-  ];
-  const sts={published:{bg:'#F0FDF4',color:'#15803D',label:'✅ Published'},draft:{bg:'#FFF7ED',color:'#B45309',label:'✏️ Draft'},pending:{bg:'#F3E8FF',color:'#7C3AED',label:'⏳ Pending'}};
-  el.innerHTML=reports.map(r=>{
-    const st=sts[r.status];
-    const skillColor=v=>v>=80?'var(--green)':v>=60?'var(--blue)':'var(--orange)';
-    return `<div class="report-card">
-      <div class="report-header">
-        <div class="s-av" style="background:linear-gradient(135deg,${r.s.c1},${r.s.c2});width:46px;height:46px;border-radius:13px;">${r.s.avatar}</div>
-        <div style="flex:1;"><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;">${r.s.name} ${r.s.nat.split(' ')[0]}</div><div style="font-size:11px;color:var(--muted);">${r.s.level} · ${r.pkg} · ${r.date} · ${r.s.attendance}% attendance</div></div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:${st.bg};color:${st.color};">${st.label}</span><span style="font-size:12px;font-weight:700;color:var(--muted);">${r.rating}</span></div>
-      </div>
-      <div class="report-body">
-        <div class="skill-row">${['speaking','reading','writing','listening'].map(sk=>`<div class="skill-item"><div class="skill-lbl"><span>${{speaking:'🗣️ Speaking',reading:'📖 Reading',writing:'✍️ Writing',listening:'👂 Listening'}[sk]}</span><span>${r.skills[sk]}%</span></div><div class="skill-bar"><div class="skill-fill" style="width:${r.skills[sk]}%;background:${skillColor(r.skills[sk])}"></div></div></div>`).join('')}</div>
-      </div>
-      <div class="report-footer">
-        <button class="s-btn" style="background:#EFF6FF;color:#1D4ED8;" onclick="openModal('report-modal')">✏️ Edit</button>
-        ${r.status==='published'?'<button class="s-btn" style="background:#F0FDF4;color:#15803D;">📄 PDF</button>':'<button class="s-btn" style="background:linear-gradient(135deg,var(--purple),var(--blue));color:white;" onclick="openModal(\'report-modal\')">🚀 Publish</button>'}
-        <button class="s-btn" style="background:#F3F4F6;color:var(--muted);">👁 Preview</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ─── HALL OF FAME ───
-function renderHOF(){
-  const el=document.getElementById('hof-grid');if(!el)return;
-  el.innerHTML=students.filter(s=>s.badges.length>0).map(s=>`
-    <div class="hof-card">
-      <div class="hof-av" style="background:linear-gradient(135deg,${s.c1},${s.c2})">${s.avatar}</div>
-      <div class="hof-name">${s.name}</div>
-      <div style="font-size:11px;color:var(--muted);">${s.nat}</div>
-      <div class="hof-badges">${s.badges.map(b=>`<span class="hof-badge">${b}</span>`).join('')}</div>
-    </div>`).join('');
-}
-
-// ─── EARNINGS ───
-function renderEarnings(){document.getElementById('earn-students').textContent=students.length;const top=document.getElementById('top-students');if(top)top.innerHTML=students.slice(0,4).map(s=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #F3F4F6;"><div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,${s.c1},${s.c2});display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:white;font-family:'Nunito',sans-serif;">${s.avatar}</div><div style="flex:1;"><div style="font-weight:700;font-size:13px;">${s.name}</div><div style="font-size:10px;color:var(--muted);">${s.attendance}% attendance</div></div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;color:var(--purple);">₱${(s.rate*s.total).toLocaleString()}</div></div>`).join('');}
-
-// ─── ADD STUDENT ───
-function saveStudent(){
-  const name=document.getElementById('in-name').value.trim();
-  const classes=parseInt(document.getElementById('in-classes').value);
-  const rate=parseInt(document.getElementById('in-rate').value);
-  if(!name||!classes||!rate){alert('Please fill in all required fields!');return;}
-  const colors=[['#FF6B9D','#A855F7'],['#3B82F6','#14B8A6'],['#F97316','#FBBF24'],['#A855F7','#FF6B9D'],['#14B8A6','#22C55E'],['#EC4899','#F97316']];
-  const c=colors[students.length%colors.length];
-  const newS={
-    id:Date.now(),name,nick:document.getElementById('in-nick').value||name,
-    nat:document.getElementById('in-nat').value,level:document.getElementById('in-level').value,
-    avatar:name.charAt(0),c1:c[0],c2:c[1],classes,total:classes,rate,
-    duration:document.getElementById('in-duration').value,attendance:100,
-    birthday:document.getElementById('in-bday').value,
-    schedule:document.getElementById('in-sched').value,
-    wechat:document.getElementById('in-wechat').value,
-    notes:document.getElementById('in-notes').value,badges:[],paid:false
-  };
-  students.push(newS);saveData();closeModal('add-student-modal');
-  renderStudents();renderDashboard();
-  alert(`✅ ${name} added successfully!`);
-}
-
-// ─── MODAL ───
-function openModal(id){document.getElementById(id).classList.add('open');populateSelects();}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
-function populateSelects(){
-  const s=document.getElementById('sched-student');
-  if(s){s.innerHTML='<option>Select student...</option>'+students.map(st=>`<option>${st.name}</option>`).join('');}
-}
-function selectReason(btn){document.querySelectorAll('#reason-btns button').forEach(b=>{b.style.borderColor='#E5E7EB';b.style.background='white';});btn.style.borderColor='var(--purple)';btn.style.background='#F3E8FF';}
-
-// ─── WHITEBOARD ───
-let drawing=false,tool='pen',color='#1E1B4B',strokeSize=3,paths=[],curPath=[];
-function initWB(){
-  const canvas=document.getElementById('wb');if(!canvas)return;
-  const wrap=document.getElementById('wb-wrap');
-  canvas.width=wrap.clientWidth;canvas.height=wrap.clientHeight-40;
-  canvas.style.top='40px';
-}
-window.addEventListener('resize',initWB);
-function getCtx(){return document.getElementById('wb')?.getContext('2d');}
-function getPos(e){const r=document.getElementById('wb').getBoundingClientRect();const src=e.touches?e.touches[0]:e;return{x:src.clientX-r.left,y:src.clientY-r.top};}
-document.addEventListener('mousedown',e=>{if(!e.target.matches('#wb'))return;drawing=true;const p=getPos(e);curPath=[{...p,tool,color,size:strokeSize}];const ctx=getCtx();if(ctx){ctx.beginPath();ctx.moveTo(p.x,p.y);}});
-document.addEventListener('mousemove',e=>{if(!drawing||!e.target.matches('#wb'))return;const p=getPos(e);curPath.push(p);const ctx=getCtx();if(!ctx)return;if(tool==='eraser'){ctx.clearRect(p.x-strokeSize*2,p.y-strokeSize*2,strokeSize*4,strokeSize*4);}else{ctx.lineTo(p.x,p.y);ctx.strokeStyle=tool==='marker'?color+'88':color;ctx.lineWidth=tool==='marker'?strokeSize*3:strokeSize;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();}});
-document.addEventListener('mouseup',()=>{if(drawing&&curPath.length>1)paths.push([...curPath]);drawing=false;curPath=[];});
-function clearWB(){if(confirm('Clear whiteboard?')){paths=[];const c=document.getElementById('wb');const ctx=c?.getContext('2d');if(ctx)ctx.clearRect(0,0,c.width,c.height);}}
-function undoWB(){if(paths.length){paths.pop();const c=document.getElementById('wb');const ctx=c?.getContext('2d');if(!ctx)return;ctx.clearRect(0,0,c.width,c.height);paths.forEach(path=>{if(!path.length)return;const f=path[0];ctx.beginPath();ctx.moveTo(f.x,f.y);ctx.strokeStyle=f.tool==='marker'?f.color+'88':f.color;ctx.lineWidth=f.tool==='marker'?f.size*3:f.size;ctx.lineCap='round';ctx.lineJoin='round';path.forEach(p=>ctx.lineTo(p.x,p.y));ctx.stroke();});}}
-function setTool(t){tool=t;document.querySelectorAll('.tool[id^="tool-"]').forEach(el=>el.classList.remove('active'));document.getElementById('tool-'+t)?.classList.add('active');}
-function setColor(c,el){color=c;document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));el.classList.add('active');if(tool==='eraser')setTool('pen');}
-function switchView(v,tab){document.querySelectorAll('.wb-tab').forEach(t=>t.classList.remove('active'));tab.classList.add('active');const wb=document.getElementById('wb');const pdf=document.getElementById('pdf-view');if(v==='pdf'){if(wb)wb.style.display='none';if(pdf){pdf.style.display='flex';}}else{if(wb){wb.style.display='block';initWB();}if(pdf)pdf.style.display='none';}}
-function toggleMaterials(){const t=document.getElementById('materials-tray');t.style.display=t.style.display==='none'?'block':'none';}
-function toggleMic(){const b=document.getElementById('mic-btn');const on=b.classList.contains('on');b.classList.toggle('on',!on);b.classList.toggle('off',on);b.textContent=on?'🔇':'🎤';}
-function toggleCam(){const b=document.getElementById('cam-btn');const on=b.classList.contains('on');b.classList.toggle('on',!on);b.classList.toggle('off',on);b.textContent=on?'🚫':'📷';}
-function endClass(){if(confirm('End this class session?\nClass will be marked Completed and deducted from package.')){alert('✅ Class ended!\n📦 1 class deducted from Chen Xiaoming\'s package.');}}
-function sendChat(){const inp=document.getElementById('chat-input');const t=inp.value.trim();if(!t)return;const msgs=document.getElementById('chat-msgs');const d=document.createElement('div');d.className='msg me';d.innerHTML=`<div class="msg-bubble">${t}</div>`;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;inp.value='';}
-
-
-
-
-function showDay(dayIdx){
-  document.querySelectorAll('[id^="day-btn-"]').forEach((b,i)=>{
-    b.style.background=i===dayIdx?'linear-gradient(135deg,var(--purple),var(--blue))':'white';
-    b.style.color=i===dayIdx?'#fff':'#333';
-  });
-  const slots=WEEKLY_SCHEDULE[dayIdx]||[];
-  const el=document.getElementById('day-schedule');
-  if(!el)return;
-  if(!slots.length){el.innerHTML='<div style="color:#aaa;padding:20px;text-align:center;">No classes scheduled</div>';return;}
-  el.innerHTML=slots.map(slot=>{
-    const s=students.find(x=>x.name===slot.student);
-    const id=s?s.id:null;
-    const color=s?s.c1:'#ccc';
-    const left=s?s.classes:'-';
-    const bar=s?(s.classes<=3?'#EF4444':s.classes<=4?'#F97316':'#22C55E'):'#ccc';
-    return '<div style="display:flex;align-items:center;gap:12px;background:white;border-radius:12px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);">'
-      +'<div style="font-weight:800;color:var(--purple);min-width:75px;">'+slot.time+'</div>'
-      +'<div style="width:10px;height:10px;border-radius:50%;background:'+color+';flex-shrink:0;"></div>'
-      +'<div style="flex:1;font-weight:700;">'+slot.student+'</div>'
-      +'<div style="font-size:0.8rem;background:#F3E8FF;color:#7C3AED;padding:2px 8px;border-radius:20px;font-weight:600;">'+slot.duration+' min</div>'
-      +'<div style="font-size:0.8rem;font-weight:700;color:'+bar+';">'+left+' left</div>'
-      +(id?'<button onclick="startClassTimer('+slot.duration+')" style="padding:4px 10px;border-radius:6px;border:none;background:#6366F1;color:#fff;font-size:0.75rem;cursor:pointer;">Start</button>':'')
-      +'</div>';
-  }).join('');
-}
-
-function showDay(dayIdx){
-  document.querySelectorAll('[id^="day-btn-"]').forEach((b,i)=>{
-    b.style.background=i===dayIdx?'linear-gradient(135deg,var(--purple),var(--blue))':'white';
-    b.style.color=i===dayIdx?'#fff':'#333';
-  });
-  const slots=WEEKLY_SCHEDULE[dayIdx]||[];
-  const el=document.getElementById('day-schedule');
-  if(!el)return;
-  if(!slots.length){el.innerHTML='<div style="color:#aaa;padding:20px;text-align:center;">No classes scheduled</div>';return;}
-  el.innerHTML=slots.map(slot=>{
-    const s=students.find(x=>x.name===slot.student);
-    const id=s?s.id:null;
-    const color=s?s.c1:'#ccc';
-    const left=s?s.classes:'-';
-    const bar=s?(s.classes<=3?'#EF4444':s.classes<=4?'#F97316':'#22C55E'):'#ccc';
-    return '<div style="display:flex;align-items:center;gap:12px;background:white;border-radius:12px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);">'
-      +'<div style="font-weight:800;color:var(--purple);min-width:75px;">'+slot.time+'</div>'
-      +'<div style="width:10px;height:10px;border-radius:50%;background:'+color+';flex-shrink:0;"></div>'
-      +'<div style="flex:1;font-weight:700;">'+slot.student+'</div>'
-      +'<div style="font-size:0.8rem;background:#F3E8FF;color:#7C3AED;padding:2px 8px;border-radius:20px;font-weight:600;">'+slot.duration+' min</div>'
-      +'<div style="font-size:0.8rem;font-weight:700;color:'+bar+';">'+left+' left</div>'
-      +(id?'<button onclick="startClassTimer('+slot.duration+')" style="padding:4px 10px;border-radius:6px;border:none;background:#6366F1;color:#fff;font-size:0.75rem;cursor:pointer;">Start</button>':'')
-      +'</div>';
-  }).join('');
-}
-const WEEKLY_SCHEDULE = {
-  0: [
-    {time:'5:30 PM', student:'Suri', duration:25},
-    {time:'6:00 PM', student:'Bella', duration:25},
-    {time:'6:30 PM', student:'COCO-1', duration:25},
-    {time:'7:00 PM', student:'Harry', duration:25},
-    {time:'7:30 PM', student:'K.Bella', duration:25},
-    {time:'8:00 PM', student:'Kelly-Adult', duration:25},
-  ],
-  1: [
-    {time:'5:30 PM', student:'Suri', duration:25},
-    {time:'6:00 PM', student:'Jackie', duration:25},
-    {time:'6:30 PM', student:'Lina', duration:25},
-    {time:'7:00 PM', student:'KAREN', duration:25},
-    {time:'7:30 PM', student:'Mollie-Adult & Steven', duration:25},
-    {time:'8:00 PM', student:'Aiden', duration:25},
-  ],
-  2: [
-    {time:'6:00 PM', student:'Bella', duration:25},
-    {time:'6:30 PM', student:'Jackie', duration:25},
-    {time:'7:00 PM', student:'COCO-1', duration:25},
-    {time:'7:30 PM', student:'K.Bella', duration:25},
-    {time:'8:00 PM', student:'Sophia', duration:50},
-  ],
-  3: [
-    {time:'5:30 PM', student:'Suri', duration:25},
-    {time:'6:00 PM', student:'Lina', duration:25},
-    {time:'6:30 PM', student:'Jackie', duration:25},
-    {time:'7:00 PM', student:'Coco-2', duration:25},
-    {time:'7:30 PM', student:'Peter', duration:50},
-  ],
-  4: [
-    {time:'6:00 PM', student:'Koala', duration:50},
-    {time:'7:00 PM', student:'KAREN', duration:25},
-    {time:'8:00 PM', student:'Owen', duration:25},
-  ],
-  5: [
-    {time:'10:00 AM', student:'Seah', duration:50},
-    {time:'11:00 AM', student:'Coco-2', duration:25},
-    {time:'11:30 AM', student:'Shily', duration:25},
-    {time:'12:00 PM', student:'Owen', duration:50},
-    {time:'7:00 PM', student:'Rainy', duration:25},
-    {time:'7:30 PM', student:'Steven', duration:25},
-    {time:'8:00 PM', student:'Carl', duration:25},
-  ],
-  6: [
-    {time:'11:30 AM', student:'Peter', duration:50},
-    {time:'6:00 PM', student:'Koala', duration:50},
-    {time:'7:00 PM', student:'Rainy', duration:25},
-    {time:'7:30 PM', student:'Harry', duration:25},
-    {time:'8:00 PM', student:'Carl', duration:25},
-  ],
-};
-// ─── INIT ───
-renderDashboard();
-renderStudents();
-const lastPage = localStorage.getItem('ts-last-page');
-if(lastPage && lastPage !== 'dashboard'){
-  const navBtn = document.querySelector('[onclick*="nav(\''+lastPage+'\'"]');
-  if(navBtn) nav(lastPage, navBtn);
-}
-
-
-// Currency converter shortcut on dashboard
-document.getElementById('php-in')?.addEventListener('input',convertCurr);
-</script>
-
-
-  <!-- PROFILE PAGE -->
-  <div class="page" id="page-profile">
-    <div style="max-width:600px;margin:0 auto;padding:24px 16px;">
-      
-      <!-- Profile Header Card -->
-      <div style="background:linear-gradient(135deg,#A855F7,#6366F1);border-radius:20px;padding:32px 24px;color:#fff;text-align:center;margin-bottom:20px;">
-        <div id="profile-avatar-display" onclick="document.getElementById('avatar-picker').style.display='flex'" style="font-size:4rem;background:rgba(255,255,255,0.2);border-radius:50%;width:80px;height:80px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;cursor:pointer;">👩‍🏫</div>
-        <div style="font-size:0.75rem;opacity:0.8;margin-bottom:6px;">Tap avatar to change</div><label style="display:inline-block;margin-bottom:10px;background:rgba(255,255,255,0.2);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:0.78rem;">📷 Upload Photo<input type="file" accept="image/*" onchange="handlePhotoUpload(this)" style="display:none;"></label>
-        <div id="profile-name-display" style="font-size:1.5rem;font-weight:800;">Teacher Nica</div>
-        <div id="profile-role-display" style="font-size:0.9rem;opacity:0.85;margin-top:4px;">English Teacher</div>
-        <div id="profile-location-display" style="font-size:0.85rem;opacity:0.75;margin-top:4px;">🇹🇭 Bangkok, Thailand</div>
-      </div>
-
-      <!-- Avatar Picker -->
-      <div id="avatar-picker" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
-        <div style="background:#fff;border-radius:16px;padding:24px;max-width:360px;width:90%;">
-          <div style="font-weight:700;margin-bottom:16px;">Choose Avatar</div>
-          <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
-            <div onclick="selectAvatar('👩‍🏫')" style="font-size:2rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid #e5e7eb;">👩‍🏫</div>
-            <div onclick="selectAvatar('👨‍🏫')" style="font-size:2rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid #e5e7eb;">👨‍🏫</div>
-            <div onclick="selectAvatar('👩')" style="font-size:2rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid #e5e7eb;">👩</div>
-            <div onclick="selectAvatar('👨')" style="font-size:2rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid #e5e7eb;">👨</div>
-            <div onclick="selectAvatar('🧑‍💻')" style="font-size:2rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid #e5e7eb;">🧑‍💻</div>
-            <div onclick="selectAvatar('👩‍💼')" style="font-size:2rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid #e5e7eb;">👩‍💼</div>
-          </div>
-          <button onclick="document.getElementById('avatar-picker').style.display='none'" style="margin-top:16px;width:100%;padding:10px;border:none;background:#f3f4f6;border-radius:8px;cursor:pointer;font-weight:600;">Cancel</button>
+        <div style="background:linear-gradient(135deg,#EF4444,#F97316);border-radius:16px;padding:20px;color:#fff;">
+          <div style="font-size:0.78rem;opacity:0.85;margin-bottom:4px;">⚠️ Total Unpaid</div>
+          <div id="pay-total-unpaid" style="font-size:1.8rem;font-weight:800;">₱0</div>
         </div>
       </div>
 
-      <!-- Edit Form -->
-      <div style="background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.07);margin-bottom:16px;">
-        <div style="font-weight:700;font-size:1rem;color:#374151;margin-bottom:16px;">✏️ Edit Profile</div>
-        <div style="margin-bottom:14px;">
-          <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Full Name</label>
-          <input id="profile-name-input" type="text" placeholder="Your full name" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.95rem;box-sizing:border-box;">
-        </div>
-        <div style="margin-bottom:14px;">
-          <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Role</label>
-          <input id="profile-role-input" type="text" placeholder="e.g. English Teacher" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.95rem;box-sizing:border-box;">
-        </div>
-        <div style="margin-bottom:14px;">
-          <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Location</label>
-          <input id="profile-location-input" type="text" placeholder="e.g. Bangkok, Thailand" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.95rem;box-sizing:border-box;">
-        </div>
-        <div style="margin-bottom:20px;">
-          <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Short Bio</label>
-          <textarea id="profile-bio-input" placeholder="Tell your students a little about yourself..." rows="3" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.95rem;box-sizing:border-box;resize:vertical;font-family:inherit;"></textarea>
-        </div>
-        <button onclick="saveProfile()" style="width:100%;padding:12px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;">💾 Save Profile</button>
-        <div id="profile-save-msg" style="display:none;margin-top:12px;text-align:center;color:#22C55E;font-weight:600;">✅ Profile saved!</div>
+      <!-- Filters + Add Payment -->
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+        <select id="pay-filter-status" onchange="renderPayments()" style="padding:8px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.85rem;background:#fff;cursor:pointer;">
+          <option value="all">All Students</option>
+          <option value="paid">Paid</option>
+          <option value="unpaid">Not Paid</option>
+        </select>
+        <select id="pay-filter-month" onchange="renderPayments()" style="padding:8px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.85rem;background:#fff;cursor:pointer;">
+          <option value="all">All Months</option>
+          <option value="0">January</option>
+          <option value="1">February</option>
+          <option value="2">March</option>
+          <option value="3">April</option>
+          <option value="4">May</option>
+          <option value="5">June</option>
+          <option value="6">July</option>
+          <option value="7">August</option>
+          <option value="8">September</option>
+          <option value="9">October</option>
+          <option value="10">November</option>
+          <option value="11">December</option>
+        </select>
+        <button onclick="openAddPaymentModal()" style="padding:8px 16px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:0.85rem;margin-left:auto;">+ Add Payment</button>
       </div>
 
-      <!-- Settings -->
-      <div style="background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.07);">
-        <div style="font-weight:700;font-size:1rem;color:#374151;margin-bottom:16px;">⚙️ Settings</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f3f4f6;">
-          <div>
-            <div style="font-weight:600;font-size:0.9rem;">Dark Mode</div>
-            <div style="font-size:0.78rem;color:#9CA3AF;">Toggle dark/light theme</div>
-          </div>
-          <div id="dark-mode-toggle" onclick="toggleDarkMode()" style="width:44px;height:24px;background:#e5e7eb;border-radius:12px;cursor:pointer;position:relative;transition:background 0.3s;">
-            <div id="dark-mode-knob" style="position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:left 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
-          </div>
+      <!-- Upload PDF -->
+      <div style="background:#fff;border-radius:12px;padding:14px 18px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div style="font-weight:700;font-size:0.9rem;">📄 Monthly Payment Report</div>
+          <div style="font-size:0.78rem;color:#9CA3AF;">Upload a PDF to keep on record</div>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;">
-          <div>
-            <div style="font-weight:600;font-size:0.9rem;">Logout</div>
-            <div style="font-size:0.78rem;color:#9CA3AF;">Sign out of TeachSmart</div>
-          </div>
-          <button onclick="sessionStorage.removeItem('ts_auth');window.location.href='/login.html';" style="padding:8px 16px;background:#FEE2E2;color:#EF4444;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.85rem;">Logout</button>
+        <label style="padding:8px 16px;background:#F5F3FF;color:#A855F7;border:1.5px solid #A855F7;border-radius:10px;font-weight:700;cursor:pointer;font-size:0.85rem;">
+          📤 Upload PDF
+          <input type="file" accept="application/pdf" onchange="handlePDFUpload(this)" style="display:none;">
+        </label>
+      </div>
+
+      <!-- PDF Viewer -->
+      <div id="pdf-viewer-section" style="display:none;background:#fff;border-radius:12px;padding:14px 18px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-weight:700;font-size:0.9rem;">📄 Uploaded Report</div>
+          <button onclick="clearPDF()" style="background:#FEE2E2;color:#EF4444;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;">Remove</button>
+        </div>
+        <iframe id="pdf-frame" style="width:100%;height:500px;border:none;border-radius:8px;"></iframe>
+      </div>
+
+      <!-- Payment List -->
+      <div id="payment-list"></div>
+
+    </div>
+  </div>
+
+  <!-- Add Payment Modal -->
+  <div id="addPaymentModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:420px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.18);position:relative;max-height:90vh;overflow-y:auto;">
+      <button onclick="closeAddPaymentModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#888;">&times;</button>
+      <h2 style="margin:0 0 20px;font-size:1.1rem;color:#374151;">+ Add Payment Record</h2>
+
+      <div style="margin-bottom:14px;">
+        <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Student</label>
+        <select id="pay-student-select" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;"></select>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Amount Paid (₱)</label>
+        <input id="pay-amount" type="number" placeholder="e.g. 3000" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Date Paid</label>
+        <input id="pay-date" type="date" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Class Package</label>
+        <select id="pay-package" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+          <option value="10">10 classes</option>
+          <option value="20">20 classes</option>
+          <option value="25">25 classes</option>
+          <option value="27">27 classes</option>
+          <option value="30">30 classes</option>
+          <option value="32">32 classes</option>
+          <option value="50">50 classes</option>
+          <option value="52">52 classes</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Payment Status</label>
+        <div style="display:flex;gap:10px;">
+          <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;cursor:pointer;">
+            <input type="radio" name="pay-status" value="paid" checked> <span style="font-weight:600;color:#22C55E;">✅ Paid</span>
+          </label>
+          <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;cursor:pointer;">
+            <input type="radio" name="pay-status" value="unpaid"> <span style="font-weight:600;color:#EF4444;">❌ Not Paid</span>
+          </label>
         </div>
       </div>
 
+      <button onclick="savePayment()" style="width:100%;padding:12px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;">💾 Save Payment</button>
+    </div>
+  </div>
+
+  <!-- Payment Detail Modal -->
+  <div id="paymentDetailModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;padding:0;max-width:440px;width:92%;max-height:85vh;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.2);display:flex;flex-direction:column;">
+      <div id="pay-detail-header" style="padding:20px 24px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;position:relative;">
+        <button onclick="closePaymentDetail()" style="position:absolute;top:12px;right:16px;background:rgba(255,255,255,0.2);border:none;font-size:18px;cursor:pointer;color:#fff;width:30px;height:30px;border-radius:50%;">&times;</button>
+        <div id="pay-detail-name" style="font-size:1.2rem;font-weight:800;"></div>
+        <div id="pay-detail-sub" style="font-size:0.85rem;opacity:0.85;margin-top:4px;"></div>
+      </div>
+      <div style="padding:20px 24px;overflow-y:auto;flex:1;">
+        <div style="font-weight:700;font-size:0.95rem;color:#374151;margin-bottom:12px;">📋 Payment History</div>
+        <div id="pay-detail-history"></div>
+      </div>
     </div>
   </div>
 
@@ -2042,6 +1148,214 @@ function applyDarkMode(dark) {
 
 // Load profile on init
 loadProfile();
+</script>
+
+
+<script>
+// ─── PAYMENT FUNCTIONS ───
+function getPayments() {
+  return JSON.parse(localStorage.getItem('ts-payments') || '[]');
+}
+
+function savePayments(payments) {
+  localStorage.setItem('ts-payments', JSON.stringify(payments));
+}
+
+function renderPayments() {
+  var payments = getPayments();
+  var students = JSON.parse(localStorage.getItem('ts-students') || '[]');
+  var statusFilter = document.getElementById('pay-filter-status') ? document.getElementById('pay-filter-status').value : 'all';
+  var monthFilter = document.getElementById('pay-filter-month') ? document.getElementById('pay-filter-month').value : 'all';
+
+  // Filter
+  var filtered = payments.slice();
+  if (statusFilter !== 'all') filtered = filtered.filter(function(p){ return p.status === statusFilter; });
+  if (monthFilter !== 'all') filtered = filtered.filter(function(p){
+    var d = new Date(p.date);
+    return d.getMonth() === parseInt(monthFilter);
+  });
+
+  // Summary
+  var now = new Date();
+  var thisMonth = payments.filter(function(p){
+    var d = new Date(p.date);
+    return p.status === 'paid' && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+  var totalEarned = thisMonth.reduce(function(sum, p){ return sum + (parseFloat(p.amount) || 0); }, 0);
+  var totalUnpaid = payments.filter(function(p){ return p.status === 'unpaid'; })
+    .reduce(function(sum, p){ return sum + (parseFloat(p.amount) || 0); }, 0);
+
+  var earnedEl = document.getElementById('pay-total-earned');
+  var unpaidEl = document.getElementById('pay-total-unpaid');
+  if (earnedEl) earnedEl.textContent = '₱' + totalEarned.toLocaleString();
+  if (unpaidEl) unpaidEl.textContent = '₱' + totalUnpaid.toLocaleString();
+
+  // Render list
+  var list = document.getElementById('payment-list');
+  if (!list) return;
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:#9CA3AF;padding:40px 0;font-size:0.9rem;">No payment records found.<br>Click "+ Add Payment" to get started.</div>';
+    return;
+  }
+
+  // Group by student
+  var byStudent = {};
+  filtered.forEach(function(p) {
+    if (!byStudent[p.studentName]) byStudent[p.studentName] = [];
+    byStudent[p.studentName].push(p);
+  });
+
+  list.innerHTML = Object.keys(byStudent).map(function(name) {
+    var records = byStudent[name];
+    var latest = records[0];
+    var student = students.find(function(s){ return s.name === name; });
+    var classesLeft = student ? student.classes : '?';
+    var classesTotal = student ? student.total : latest.package;
+    var classesUsed = classesTotal - classesLeft;
+    var isPaid = latest.status === 'paid';
+
+    return '<div onclick="openPaymentDetail('' + name + '')" style="background:#fff;border-radius:14px;padding:18px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.07);cursor:pointer;border-left:4px solid ' + (isPaid ? '#22C55E' : '#EF4444') + ';">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
+        '<div style="display:flex;align-items:center;gap:10px;">' +
+          '<div style="font-size:1.6rem;">' + (student ? student.avatar : '👤') + '</div>' +
+          '<div>' +
+            '<div style="font-weight:700;font-size:0.95rem;">' + name + '</div>' +
+            '<div style="font-size:0.78rem;color:#9CA3AF;">' + (latest.date || '') + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<span style="background:' + (isPaid ? '#DCFCE7' : '#FEE2E2') + ';color:' + (isPaid ? '#15803D' : '#DC2626') + ';padding:4px 12px;border-radius:20px;font-size:0.78rem;font-weight:700;">' + (isPaid ? '✅ Paid' : '❌ Not Paid') + '</span>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;">' +
+        '<div style="background:#F5F3FF;border-radius:8px;padding:8px;">' +
+          '<div style="font-weight:700;color:#A855F7;">₱' + parseFloat(latest.amount).toLocaleString() + '</div>' +
+          '<div style="font-size:0.72rem;color:#9CA3AF;">Amount</div>' +
+        '</div>' +
+        '<div style="background:#EFF6FF;border-radius:8px;padding:8px;">' +
+          '<div style="font-weight:700;color:#3B82F6;">' + latest.package + ' classes</div>' +
+          '<div style="font-size:0.72rem;color:#9CA3AF;">Package</div>' +
+        '</div>' +
+        '<div style="background:#F0FDF4;border-radius:8px;padding:8px;">' +
+          '<div style="font-weight:700;color:#22C55E;">' + classesUsed + '/' + classesTotal + '</div>' +
+          '<div style="font-size:0.72rem;color:#9CA3AF;">Used</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function openAddPaymentModal() {
+  var students = JSON.parse(localStorage.getItem('ts-students') || '[]');
+  var select = document.getElementById('pay-student-select');
+  if (select) {
+    select.innerHTML = students.map(function(s){
+      return '<option value="' + s.name + '">' + s.avatar + ' ' + s.name + '</option>';
+    }).join('');
+  }
+  // Set today's date
+  var dateInput = document.getElementById('pay-date');
+  if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+
+  document.getElementById('addPaymentModal').style.display = 'flex';
+}
+
+function closeAddPaymentModal() {
+  document.getElementById('addPaymentModal').style.display = 'none';
+}
+
+function savePayment() {
+  var studentName = document.getElementById('pay-student-select').value;
+  var amount = document.getElementById('pay-amount').value;
+  var date = document.getElementById('pay-date').value;
+  var pkg = document.getElementById('pay-package').value;
+  var status = document.querySelector('input[name="pay-status"]:checked').value;
+
+  if (!studentName || !amount || !date) {
+    alert('Please fill in all fields.');
+    return;
+  }
+
+  var payments = getPayments();
+  payments.unshift({
+    id: Date.now(),
+    studentName: studentName,
+    amount: parseFloat(amount),
+    date: date,
+    package: parseInt(pkg),
+    status: status
+  });
+  savePayments(payments);
+  closeAddPaymentModal();
+  renderPayments();
+}
+
+function openPaymentDetail(name) {
+  var payments = getPayments().filter(function(p){ return p.studentName === name; });
+  var students = JSON.parse(localStorage.getItem('ts-students') || '[]');
+  var student = students.find(function(s){ return s.name === name; });
+
+  document.getElementById('pay-detail-name').textContent = (student ? student.avatar + ' ' : '') + name;
+  document.getElementById('pay-detail-sub').textContent = student ? (student.classes + ' classes left of ' + student.total) : '';
+
+  var history = document.getElementById('pay-detail-history');
+  if (payments.length === 0) {
+    history.innerHTML = '<p style="color:#9CA3AF;text-align:center;">No payment records yet.</p>';
+  } else {
+    history.innerHTML = payments.map(function(p) {
+      var isPaid = p.status === 'paid';
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin-bottom:8px;background:' + (isPaid ? '#F0FDF4' : '#FEF2F2') + ';border-radius:10px;border-left:4px solid ' + (isPaid ? '#22C55E' : '#EF4444') + ';">' +
+        '<div>' +
+          '<div style="font-weight:600;font-size:0.9rem;">' + p.date + '</div>' +
+          '<div style="font-size:0.78rem;color:#6B7280;">' + p.package + ' classes package</div>' +
+        '</div>' +
+        '<div style="text-align:right;">' +
+          '<div style="font-weight:700;color:#A855F7;">₱' + parseFloat(p.amount).toLocaleString() + '</div>' +
+          '<span style="background:' + (isPaid ? '#DCFCE7' : '#FEE2E2') + ';color:' + (isPaid ? '#15803D' : '#DC2626') + ';padding:2px 8px;border-radius:20px;font-size:0.72rem;font-weight:700;">' + (isPaid ? 'Paid' : 'Not Paid') + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  document.getElementById('paymentDetailModal').style.display = 'flex';
+}
+
+function closePaymentDetail() {
+  document.getElementById('paymentDetailModal').style.display = 'none';
+}
+
+function handlePDFUpload(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    localStorage.setItem('ts-pdf-report', e.target.result);
+    showPDF(e.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+function showPDF(data) {
+  var section = document.getElementById('pdf-viewer-section');
+  var frame = document.getElementById('pdf-frame');
+  if (section && frame) {
+    frame.src = data;
+    section.style.display = 'block';
+  }
+}
+
+function clearPDF() {
+  localStorage.removeItem('ts-pdf-report');
+  document.getElementById('pdf-viewer-section').style.display = 'none';
+  document.getElementById('pdf-frame').src = '';
+}
+
+// Close modals on backdrop click
+document.getElementById('addPaymentModal').addEventListener('click', function(e){
+  if (e.target === this) closeAddPaymentModal();
+});
+document.getElementById('paymentDetailModal').addEventListener('click', function(e){
+  if (e.target === this) closePaymentDetail();
+});
 </script>
 
 </body>
