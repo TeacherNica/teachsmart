@@ -819,8 +819,7 @@ setInterval(()=>{
 
 // ─── NAVIGATION ───
 function nav(page,btn){
-  localStorage.setItem('ts-last-page', page);
-  localStorage.setItem('ts-last-page', page);
+  if(page !== 'profile') localStorage.setItem('ts-last-page', page);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
