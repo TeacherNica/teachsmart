@@ -1710,7 +1710,9 @@ function openLowPkgModal() {
       card.title = 'Tap to copy WeChat reminder';
       card.innerHTML = '<span style="font-weight:600;font-size:0.95rem;">' + s.name + '</span><span style="font-size:0.85rem;color:#e67e22;">' + (s.classes || 0) + ' class' + ((s.classes || 0) === 1 ? '' : 'es') + ' left</span>';
       card.addEventListener('click', function() {
-        var msg = 'Hi! Just a friendly reminder that ' + s.name + ' only has ' + (s.classes || 0) + ' class(es) remaining in their package. Please renew soon so we can keep the learning going! Thank you 😊';
+        var hour = new Date().getHours();
+        var greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+        var msg = greeting + '! Just a friendly reminder that ' + s.name + ' only has ' + (s.classes || 0) + ' class(es) remaining in her package. Please let me know if you wish to continue the package, and I would be happy to prepare the QR code for you.';
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(msg).then(function() {
             copyMsg.textContent = '✅ Copied! "' + msg + '"';
