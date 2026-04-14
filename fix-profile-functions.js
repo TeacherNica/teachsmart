@@ -142,7 +142,7 @@ function applyDarkMode(dark) {
 }
 
 // Load profile on init
-loadProfile();
+setTimeout(function(){ loadProfile(); }, 100);
 </script>
 `;
 
