@@ -592,12 +592,6 @@ canvas#wb{position:absolute;top:40px;left:0;right:0;bottom:60px;cursor:crosshair
       <div class="stat-label">Total Unpaid Amount</div>
     </div>
   </div>
-
-  <!-- PDF Records List -->
-  <div style="margin-top:24px;">
-    <div style="font-weight:700;font-size:1rem;color:#374151;margin-bottom:12px;">📁 Uploaded PDF Records</div>
-    <div id="pdf-records-list"><p style="color:#9CA3AF;font-size:0.85rem;">No PDF records yet.</p></div>
-  </div>
 </div>
 
 
@@ -641,7 +635,7 @@ canvas#wb{position:absolute;top:40px;left:0;right:0;bottom:60px;cursor:crosshair
       </select>
     </div>
 
-    <button onclick="uploadPDFs()" style="width:100%;padding:12px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;">💾 Save Files</button>
+    <button onclick="savePDFFiles()" style="width:100%;padding:12px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;">💾 Save Files</button>
     <div id="upload-progress" style="display:none;margin-top:12px;text-align:center;color:#A855F7;font-size:0.85rem;font-weight:600;">Uploading...</div>
   </div>
 </div>
