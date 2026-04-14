@@ -835,7 +835,7 @@ function nav(page,btn){
 
 // ─── DASHBOARD ───
 function renderDashboard(){
-  const low=students.filter(s=>s.classes<=2).length;
+  const low=students.filter(s=>s.classes<=3).length;
   document.getElementById('dash-total').textContent=students.length;
   document.getElementById('dash-low').textContent=low;
   // Today's classes
