@@ -868,7 +868,7 @@ function renderDashboard(){
   }).join('');
   // Alerts
   const alerts=document.getElementById('dashboard-alerts');
-  const lowStudents=students.filter(s=>s.classes<=2);
+  const lowStudents=students.filter(s=>s.classes<=3);
   let html='';
   lowStudents.forEach(s=>{html+=`<div class="alert-item" style="background:#FFFBEB;border:1px solid #FDE68A;"><div class="alert-icon">⚠️</div><div><div class="alert-title">${s.name} — ${s.classes} class${s.classes!==1?'es':''} left</div><div class="alert-sub">Package renewal needed</div></div></div>`;});
   html+=`<div class="alert-item" style="background:#FFF0F7;border:1px solid #FBCFE8;"><div class="alert-icon">🎂</div><div><div class="alert-title">Li Wei's Birthday in 3 days!</div><div class="alert-sub">April 15 — send a greeting!</div></div></div>`;
@@ -890,14 +890,14 @@ function renderStudents(){
   let list=students;
   if(currentFilter==='cn')list=list.filter(s=>s.nat.includes('Chinese'));
   if(currentFilter==='kr')list=list.filter(s=>s.nat.includes('Korean'));
-  if(currentFilter==='low')list=list.filter(s=>s.classes<=2);
+  if(currentFilter==='low')list=list.filter(s=>s.classes<=3);
   if(q)list=list.filter(s=>s.name.toLowerCase().includes(q)||s.nat.toLowerCase().includes(q));
   const grid=document.getElementById('student-grid');
   if(!grid)return;
   const lv=l=>getLevelStyle(l);
   grid.innerHTML=list.map(s=>{
     const pct=Math.round(s.classes/s.total*100);
-    const bar=s.classes<=2?'#EF4444':s.classes<=4?'#F97316':'#22C55E';
+    const bar=s.classes<=3?'#EF4444':s.classes<=4?'#F97316':'#22C55E';
     const lvs=lv(s.level);
     return `<div class="s-card">
       <div class="s-card-top">
@@ -907,7 +907,7 @@ function renderStudents(){
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
           <div class="level-tag" style="background:${lvs.bg};color:${lvs.color};cursor:pointer;" onclick="cycleLevel(${s.id},event)" title="Click to change level">${s.level} ✏️</div>
-          ${s.classes<=2?'<div class="low-tag">⚠️ Low</div>':''}
+          ${s.classes<=3?'<div class="low-tag">⚠️ Low</div>':''}
           <div style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;background:${s.duration==='50 min'?'#EDE9FE':'#DCFCE7'};color:${s.duration==='50 min'?'#5B21B6':'#15803D'};">⏱️ <span onclick="toggleDuration(${s.id},event)" style="cursor:pointer;text-decoration:underline dotted;">${s.duration}</span></div>
         </div>
       </div>
@@ -930,7 +930,7 @@ function renderStudents(){
         <button class="s-btn" style="background:#FEE2E2;color:#B91C1C;" onclick="deductClass(${s.id})">➖ Deduct</button>
         <button class="s-btn" style="background:#FEF3C7;color:#B45309;" onclick="deleteStudent(${s.id})">🗑️ Delete</button>
         <button class="s-btn" style="background:#E0F2FE;color:#0369A1;" onclick="event.stopPropagation();openSetPackage(${s.id})" >📦 Set Package</button>
-        ${s.classes<=2?`<button class="s-btn" style="background:#FFF1F2;color:#BE123C;">🔄 Renew</button>`:''}
+        ${s.classes<=3?`<button class="s-btn" style="background:#FFF1F2;color:#BE123C;">🔄 Renew</button>`:''}
       </div>
     </div>`;
   }).join('');
@@ -1173,7 +1173,7 @@ function markDone(id){
   if(s.classes<=0){alert(`⚠️ ${s.name} has no classes left! Please renew.`);return;}
   s.classes--;saveData();renderStudents();renderDashboard();
   alert(`✅ Done! ${s.name} now has ${s.classes} class${s.classes!==1?'es':''} left.`);
-  if(s.classes<=2&&s.classes>0)alert(`⚠️ ${s.name} is running low — only ${s.classes} left!`);
+  if(s.classes<=3&&s.classes>0)alert(`⚠️ ${s.name} is running low — only ${s.classes} left!`);
 }
 
 // ─── SCHEDULE ───
@@ -1211,18 +1211,18 @@ let payF='all';
 function payFilter(f,btn){payF=f;document.querySelectorAll('[onclick^="payFilter"]').forEach(b=>{b.style.background='white';b.style.border='1px solid #E5E7EB';b.style.color='';});btn.style.background='linear-gradient(135deg,var(--purple),var(--blue))';btn.style.color='white';btn.style.border='none';renderPayments();}
 function renderPayments(){
   let list=students;
-  if(payF==='low')list=list.filter(s=>s.classes<=2);
+  if(payF==='low')list=list.filter(s=>s.classes<=3);
   if(payF==='pending')list=list.filter(s=>!s.paid);
   if(payF==='paid')list=list.filter(s=>s.paid);
   document.getElementById('pay-total').textContent=students.length;
   document.getElementById('pay-paid').textContent=students.filter(s=>s.paid).length;
   document.getElementById('pay-pending').textContent=students.filter(s=>!s.paid).length;
-  document.getElementById('pay-low').textContent=students.filter(s=>s.classes<=2).length;
+  document.getElementById('pay-low').textContent=students.filter(s=>s.classes<=3).length;
   const el=document.getElementById('payments-list');
   if(!el)return;
   el.innerHTML=list.map(s=>{
     const pkg=s.rate*s.total;const rmb=(pkg*RATE).toFixed(2);
-    const bar=s.classes<=2?'#EF4444':s.classes<=4?'#F97316':'#22C55E';
+    const bar=s.classes<=3?'#EF4444':s.classes<=4?'#F97316':'#22C55E';
     const pct=Math.round(s.classes/s.total*100);
     return `<div class="pay-item">
       <div class="pay-av" style="background:linear-gradient(135deg,${s.c1},${s.c2})">${s.avatar}</div>
@@ -1360,7 +1360,7 @@ function showDay(dayIdx){
     const id=s?s.id:null;
     const color=s?s.c1:'#ccc';
     const left=s?s.classes:'-';
-    const bar=s?(s.classes<=2?'#EF4444':s.classes<=4?'#F97316':'#22C55E'):'#ccc';
+    const bar=s?(s.classes<=3?'#EF4444':s.classes<=4?'#F97316':'#22C55E'):'#ccc';
     return '<div style="display:flex;align-items:center;gap:12px;background:white;border-radius:12px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);">'
       +'<div style="font-weight:800;color:var(--purple);min-width:75px;">'+slot.time+'</div>'
       +'<div style="width:10px;height:10px;border-radius:50%;background:'+color+';flex-shrink:0;"></div>'
@@ -1386,7 +1386,7 @@ function showDay(dayIdx){
     const id=s?s.id:null;
     const color=s?s.c1:'#ccc';
     const left=s?s.classes:'-';
-    const bar=s?(s.classes<=2?'#EF4444':s.classes<=4?'#F97316':'#22C55E'):'#ccc';
+    const bar=s?(s.classes<=3?'#EF4444':s.classes<=4?'#F97316':'#22C55E'):'#ccc';
     return '<div style="display:flex;align-items:center;gap:12px;background:white;border-radius:12px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);">'
       +'<div style="font-weight:800;color:var(--purple);min-width:75px;">'+slot.time+'</div>'
       +'<div style="width:10px;height:10px;border-radius:50%;background:'+color+';flex-shrink:0;"></div>'
