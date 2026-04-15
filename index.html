@@ -2734,7 +2734,7 @@ function renderClassNotes(){
     var d = new Date(n.date);
     var dateLabel = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
     var timeLabel = n.time ? new Date('1970-01-01T'+n.time).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) : '';
-    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:12px;margin-bottom:8px;background:'+(isDone?'#F0FDF4':'#FFF');+';border:1.5px solid '+(isDone?'#22C55E':'#DDD6FE')+';gap:8px;flex-wrap:wrap;opacity:'+(isDone?'0.7':'1')+'">' +
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:12px;margin-bottom:8px;background:'+(isDone?'#F0FDF4':'#ffffff')+';border:1.5px solid '+(isDone?'#22C55E':'#DDD6FE')+';gap:8px;flex-wrap:wrap;opacity:'+(isDone?'0.7':'1')+'">' +
       '<div style="flex:1;">' +
         '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">' +
           '<span style="font-weight:800;font-size:0.9rem;color:#374151;">'+(isDone?'✅ ':'')+n.student+'</span>' +
