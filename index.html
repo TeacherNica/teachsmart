@@ -1164,7 +1164,7 @@ function renderScheduleGrid(){
     if(name==='Avail')return '<td style="background:#EAB308;color:#000;text-align:center;padding:7px 4px;border:1px solid #ddd;font-weight:700;font-size:0.78rem;cursor:pointer;" onclick="openSlotEditor(this,\'avail\')">Available</td>';
     const s=students.find(x=>x.name===name||x.name.startsWith(name));
     const meta=PASTEL[name]||{flag:'',bg:'#E8EAF6',text:'#1E1B4B'};
-    const onclick=s?"openStudentProfile("+s.id+")":'';
+    const onclick="openSlotEditor(this,'student')";
     return '<td style="background:'+meta.bg+';color:'+meta.text+';text-align:center;padding:7px 4px;border:1px solid #ddd;font-weight:700;font-size:0.78rem;cursor:pointer;" onclick="'+onclick+'">'+(meta.flag?meta.flag:'')+name+'</td>';
   }
   function sectionCell(label,rows,bg){
@@ -1679,6 +1679,7 @@ document.getElementById('php-in')?.addEventListener('input',convertCurr);
       <button id="slot-assign-btn" onclick="applySlot('assign')" style="padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#A855F7,#3B82F6);color:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Assign Student</button>
       <button id="slot-avail-btn" onclick="applySlot('avail')" style="padding:11px;border-radius:12px;border:none;background:#EAB308;color:#000;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Mark as Available</button>
       <button id="slot-close-btn" onclick="applySlot('close')" style="padding:11px;border-radius:12px;border:none;background:#EF4444;color:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Close Slot</button>
+        <button id="slot-profile-btn" onclick="openProfileFromSlot()" style="display:none;padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#A855F7,#6366F1);color:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:14px;cursor:pointer;">👤 View Profile</button>
       <button onclick="closeSlotEditor()" style="padding:11px;border-radius:12px;border:2px solid #E5E7EB;background:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;color:#6B7280;">Cancel</button>
     </div>
   </div>
@@ -1693,7 +1694,15 @@ function openSlotEditor(td,type){
   var time=row?row.cells[0].textContent.trim():"";
   var days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
   var day=td.cellIndex>=2?days[td.cellIndex-2]:"";
-  document.getElementById("slot-info").textContent=time+" Thailand - "+day+" - Currently: "+(type==="close"?"Closed":"Available");
+  // Get student name from cell for student type
+  var cellText = td.textContent.trim();
+  var studentName = type==="student" ? cellText : "";
+  var studentObj = studentName ? students.find(function(s){ return s.name===studentName || studentName.startsWith(s.name) || s.name.startsWith(studentName); }) : null;
+  if(type==="student"){
+    document.getElementById("slot-info").innerHTML = "<strong>" + studentName + "</strong><br><span style='color:#9CA3AF;'>" + time + " Thailand · " + day + "</span>";
+  } else {
+    document.getElementById("slot-info").textContent = time+" Thailand - "+day+" - Currently: "+(type==="close"?"Closed":"Available");
+  }
   document.getElementById("slot-avail-btn").style.display=type==="close"||type==="student"?"block":"none";
   document.getElementById("slot-close-btn").style.display=type==="avail"||type==="student"?"block":"none";
   document.getElementById("slot-assign-btn").style.display=type==="student"?"none":"block";
@@ -1701,9 +1710,26 @@ function openSlotEditor(td,type){
   document.getElementById("slot-select").style.display=type==="student"?"none":"block";
   document.getElementById("slot-move-wrap").style.display=type==="student"?"block":"none";
   document.getElementById("slot-move-btn").style.display=type==="student"?"block":"none";
+  // Show/hide profile button
+  var profileBtn = document.getElementById("slot-profile-btn");
+  if(profileBtn) profileBtn.style.display = studentObj ? "block" : "none";
+  if(profileBtn && studentObj) profileBtn.setAttribute("data-student-id", studentObj.id);
   var sel=document.getElementById("slot-select");
   sel.innerHTML="<option value=\"\">-- Select student --</option>"+students.map(function(s){return "<option value=\""+s.name+"\">"+s.name+" "+s.nat.split(" ")[0]+"</option>";}).join("");
+  // Pre-select current student in move dropdown
+  if(type==="student" && studentName){
+    var moveSelect = document.getElementById("slot-move-select");
+    if(moveSelect){ Array.from(moveSelect.options).forEach(function(o){ if(o.value===studentName) o.selected=true; }); }
+  }
   document.getElementById("slot-editor-overlay").style.display="flex";
+}
+
+function openProfileFromSlot(){
+  var btn = document.getElementById("slot-profile-btn");
+  var id = btn ? parseInt(btn.getAttribute("data-student-id")) : null;
+  if(!id) return;
+  closeSlotEditor();
+  openStudentProfile(id);
 }
 function closeSlotEditor(){
   document.getElementById("slot-editor-overlay").style.display="none";
