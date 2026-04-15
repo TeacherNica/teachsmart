@@ -1107,6 +1107,11 @@ function markAttendance(name,type){
   var dateStr=now.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
   var timeStr=now.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});
   if(!s.attendanceLog) s.attendanceLog=[];
+  // Duplicate guard: prevent same student being marked twice on same date
+  var alreadyMarked=s.attendanceLog.some(function(e){return e.date===dateStr;});
+  if(alreadyMarked){
+    if(!confirm(s.name+" already has an attendance entry for today ("+dateStr+").\nAdd another entry anyway?")) return;
+  }
   if(type==="present"){
     if(s.classes<=0){alert(s.name+" has no classes left!");return;}
     s.classes--;
@@ -1127,6 +1132,7 @@ function markAttendance(name,type){
     saveData();renderDashboard();
     alert("🔔 Absent noted. No class deducted.");
   }
+}
 }
 
 
