@@ -1164,7 +1164,7 @@ function renderScheduleGrid(){
     if(name==='Avail')return '<td style="background:#EAB308;color:#000;text-align:center;padding:7px 4px;border:1px solid #ddd;font-weight:700;font-size:0.78rem;cursor:pointer;" onclick="openSlotEditor(this,\'avail\')">Available</td>';
     const s=students.find(x=>x.name===name||x.name.startsWith(name));
     const meta=PASTEL[name]||{flag:'',bg:'#E8EAF6',text:'#1E1B4B'};
-    const onclick=s?"nav(\'students\',document.querySelectorAll(\'.nav-item\')[1])":'';
+    const onclick=s?"openStudentProfile("+s.id+")":'';
     return '<td style="background:'+meta.bg+';color:'+meta.text+';text-align:center;padding:7px 4px;border:1px solid #ddd;font-weight:700;font-size:0.78rem;cursor:pointer;" onclick="'+onclick+'">'+(meta.flag?meta.flag:'')+name+'</td>';
   }
   function sectionCell(label,rows,bg){
