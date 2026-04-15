@@ -808,10 +808,6 @@ let students = JSON.parse(localStorage.getItem('ts-students')||'null') || [{"id"
 
 
 // ─── AUTO SAVE ───
-function saveData(){
-  localStorage.setItem('ts-students', JSON.stringify(students));
-  localStorage.setItem('ts-save-time', new Date().toISOString());
-}
 function showSaveIndicator(){
   let el = document.getElementById('save-indicator');
   if(!el){
@@ -1915,19 +1911,15 @@ function openStudentProfile(id) {
   var allStudents = JSON.parse(localStorage.getItem('ts-students') || '[]');
   var s = allStudents.find(function(x){ return x.id === id; });
   if (!s) return;
-
-  // Header
   document.getElementById('profileAvatar').textContent = s.avatar || '👤';
   document.getElementById('profileName').textContent = s.name;
   document.getElementById('profileNat').textContent = s.nat || '';
   document.getElementById('profilePackage').textContent = (s.classes || 0) + ' classes left of ' + (s.total || 0);
-
-  // Stats
   var log = s.attendanceLog || [];
   var presentCount = log.filter(function(l){ return l.status === 'present'; }).length;
+  var noshowCount = log.filter(function(l){ return l.status === 'noshow'; }).length;
   var absentCount = log.filter(function(l){ return l.status === 'absent'; }).length;
   var attendancePct = log.length > 0 ? Math.round((presentCount / log.length) * 100) : (s.attendance || 100);
-
   document.getElementById('profileStats').innerHTML =
     '<div style="flex:1;text-align:center;padding:12px 0;">' +
       '<div style="font-size:1.4rem;font-weight:800;color:#22C55E;">' + presentCount + '</div>' +
@@ -1935,33 +1927,35 @@ function openStudentProfile(id) {
     '</div>' +
     '<div style="flex:1;text-align:center;padding:12px 0;border-left:1px solid #f0f0f0;border-right:1px solid #f0f0f0;">' +
       '<div style="font-size:1.4rem;font-weight:800;color:#EF4444;">' + absentCount + '</div>' +
-      '<div style="font-size:0.75rem;color:#6B7280;">Absent (notified)</div>' +
+      '<div style="font-size:0.75rem;color:#6B7280;">Absent</div>' +
+    '</div>' +
+    '<div style="flex:1;text-align:center;padding:12px 0;border-left:1px solid #f0f0f0;border-right:1px solid #f0f0f0;">' +
+      '<div style="font-size:1.4rem;font-weight:800;color:#EF4444;">' + noshowCount + '</div>' +
+      '<div style="font-size:0.75rem;color:#6B7280;">No Show</div>' +
     '</div>' +
     '<div style="flex:1;text-align:center;padding:12px 0;">' +
       '<div style="font-size:1.4rem;font-weight:800;color:#A855F7;">' + attendancePct + '%</div>' +
-      '<div style="font-size:0.75rem;color:#6B7280;">Attendance</div>' +
+      '<div style="font-size:0.75rem;color:#6B7280;">Attendance %</div>' +
     '</div>';
-
-  // Attendance Log
   var logDiv = document.getElementById('profileAttendanceLog');
+  if (!logDiv) { document.getElementById('studentProfileModal').style.display = 'flex'; return; }
   if (log.length === 0) {
     logDiv.innerHTML = '<p style="color:#9CA3AF;text-align:center;font-size:0.9rem;margin-top:20px;">No attendance records yet.<br>Mark Present or Absent from the dashboard to start tracking.</p>';
   } else {
     logDiv.innerHTML = log.map(function(entry) {
-      var isPresent = entry.status === 'present';
       var bgColor = entry.status==='present' ? '#F0FDF4' : entry.status==='noshow' ? '#FEF2F2' : '#FFF7ED';
       var borderColor = entry.status==='present' ? '#22C55E' : entry.status==='noshow' ? '#EF4444' : '#F97316';
       var badgeBg = entry.status==='present' ? '#22C55E' : entry.status==='noshow' ? '#EF4444' : '#F97316';
       var badgeLabel = entry.status==='present' ? '✅ Present' : entry.status==='noshow' ? '🚫 No Show' : '🔔 Absent';
       return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;margin-bottom:8px;background:' + bgColor + ';border-radius:10px;border-left:4px solid ' + borderColor + ';">' +
         '<div>' +
-          '<div style="font-weight:600;font-size:0.9rem;color:#374151;">' + entry.date + '</div>' +
-          '<div style="font-size:0.78rem;color:#6B7280;">' + entry.time + '</div>' +
+          '<div style="font-weight:600;font-size:0.9rem;color:#374151;">' + (entry.date || 'No date') + '</div>' +
+          '<div style="font-size:0.78rem;color:#6B7280;">' + (entry.time || '') + '</div>' +
         '</div>' +
         '<span style="background:' + badgeBg + ';color:#fff;padding:3px 12px;border-radius:20px;font-size:0.78rem;font-weight:700;">' + badgeLabel + '</span>' +
       '</div>';
     }).join('');
-
+  }
   document.getElementById('studentProfileModal').style.display = 'flex';
 }
 
