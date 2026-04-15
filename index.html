@@ -577,27 +577,32 @@ canvas#wb{position:absolute;top:40px;left:0;right:0;bottom:60px;cursor:crosshair
 <div class="page" id="page-earnings">
   <div class="page-header">
     <div><div class="page-title">📊 Earnings</div><div class="page-sub">Simple income summary</div></div>
-    <button class="btn btn-primary" onclick="openUploadModal()">📁 PDF Records</button>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:500px;">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;">
     <div class="stat" style="padding:24px;">
       <div class="stat-icon" style="background:linear-gradient(135deg,#F3E8FF,#DDD6FE)">💰</div>
       <div class="stat-val" style="color:var(--purple)" id="earn-this-month">₱0</div>
-      <div class="stat-label">Total Earned This Month</div>
+      <div class="stat-label">Earned This Month</div>
     </div>
     <div class="stat" style="padding:24px;">
       <div class="stat-icon" style="background:linear-gradient(135deg,#FFF1F2,#FECDD3)">⚠️</div>
       <div class="stat-val" style="color:var(--red)" id="earn-unpaid">₱0</div>
-      <div class="stat-label">Total Unpaid Amount</div>
+      <div class="stat-label">Total Unpaid</div>
+    </div>
+    <div class="stat" style="padding:24px;">
+      <div class="stat-icon" style="background:linear-gradient(135deg,#F0FDF4,#DCFCE7)">📅</div>
+      <div class="stat-val" style="color:#16a34a" id="earn-total-all">₱0</div>
+      <div class="stat-label">All Time Earned</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:8px;">
+    <div style="font-weight:700;font-size:1rem;color:#374151;margin-bottom:16px;">📅 Monthly Breakdown</div>
+    <div id="earn-monthly-breakdown">
+      <p style="color:#9CA3AF;font-size:0.85rem;text-align:center;padding:20px 0;">No payment records yet.<br>Add payments in the Payments tab to see your monthly earnings here.</p>
     </div>
   </div>
 
 
-  <!-- PDF Records List -->
-  <div style="margin-top:24px;">
-    <div style="font-weight:700;font-size:1rem;color:#374151;margin-bottom:12px;">📁 Uploaded PDF Records</div>
-    <div id="pdf-records-list"><p style="color:#9CA3AF;font-size:0.85rem;">No PDF records yet.</p></div>
-  </div>
 </div>
 
 
@@ -896,7 +901,7 @@ function nav(page,btn){
   if(page==='reports')renderReports();
   if(page==='hof')renderHOF();
   if(page==='schedule'){renderScheduleGrid();}
-  if(page==='earnings'){renderEarnings();renderPDFRecords();}
+  if(page==='earnings'){renderEarnings();}
   if(page==='classroom')initWB();
 }
 
@@ -1350,7 +1355,6 @@ function renderHOF(){
 }
 
 // ─── EARNINGS ───
-function renderEarnings(){document.getElementById('earn-students').textContent=students.length;const top=document.getElementById('top-students');if(top)top.innerHTML=students.slice(0,4).map(s=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #F3F4F6;"><div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,${s.c1},${s.c2});display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:white;font-family:'Nunito',sans-serif;">${s.avatar}</div><div style="flex:1;"><div style="font-weight:700;font-size:13px;">${s.name}</div><div style="font-size:10px;color:var(--muted);">${s.attendance}% attendance</div></div><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;color:var(--purple);">₱${(s.rate*s.total).toLocaleString()}</div></div>`).join('');}
 
 // ─── ADD STUDENT ───
 function saveStudent(){
@@ -2237,18 +2241,66 @@ function renderPayments(){
 function renderEarnings(){
   var payments=getPayments();
   var now=new Date();
+
+  // This month paid
   var thisMonth=payments.filter(function(p){
     if(!p.date||p.status!=='paid') return false;
     var d=new Date(p.date);
     return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
   });
   var totalEarned=thisMonth.reduce(function(sum,p){return sum+(parseFloat(p.amount)||0);},0);
+
+  // All unpaid
   var totalUnpaid=payments.filter(function(p){return p.status==='unpaid';})
     .reduce(function(sum,p){return sum+(parseFloat(p.amount)||0);},0);
+
+  // All time earned
+  var totalAll=payments.filter(function(p){return p.status==='paid';})
+    .reduce(function(sum,p){return sum+(parseFloat(p.amount)||0);},0);
+
   var em=document.getElementById('earn-this-month');
   var eu=document.getElementById('earn-unpaid');
+  var ea=document.getElementById('earn-total-all');
   if(em) em.textContent='₱'+totalEarned.toLocaleString();
   if(eu) eu.textContent='₱'+totalUnpaid.toLocaleString();
+  if(ea) ea.textContent='₱'+totalAll.toLocaleString();
+
+  // Monthly breakdown
+  var container=document.getElementById('earn-monthly-breakdown');
+  if(!container) return;
+
+  if(payments.length===0){
+    container.innerHTML='<p style="color:#9CA3AF;font-size:0.85rem;text-align:center;padding:20px 0;">No payment records yet.<br>Add payments in the Payments tab to see your monthly earnings here.</p>';
+    return;
+  }
+
+  // Group by month
+  var months={};
+  payments.forEach(function(p){
+    if(!p.date) return;
+    var d=new Date(p.date);
+    var key=d.getFullYear()+'-'+(d.getMonth()+1);
+    var label=d.toLocaleString('default',{month:'long',year:'numeric'});
+    if(!months[key]) months[key]={label:label,paid:0,unpaid:0,count:0};
+    months[key].count++;
+    if(p.status==='paid') months[key].paid+=parseFloat(p.amount)||0;
+    else months[key].unpaid+=parseFloat(p.amount)||0;
+  });
+
+  // Sort newest first
+  var keys=Object.keys(months).sort().reverse();
+
+  container.innerHTML=keys.map(function(k){
+    var m=months[k];
+    var isCurrentMonth = k === (now.getFullYear()+'-'+(now.getMonth()+1));
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:12px;margin-bottom:8px;background:'+(isCurrentMonth?'#F5F3FF':'#F9FAFB')+';">'
+      +'<div>'
+        +'<div style="font-weight:700;font-size:0.9rem;color:#374151;">'+m.label+(isCurrentMonth?' <span style="font-size:10px;background:#A855F7;color:white;padding:2px 7px;border-radius:10px;margin-left:6px;">Current</span>':'')+'</div>'
+        +'<div style="font-size:0.78rem;color:#9CA3AF;margin-top:2px;">'+m.count+' payment'+(m.count!==1?'s':'')+(m.unpaid>0?' · <span style="color:#EF4444;">₱'+m.unpaid.toLocaleString()+' unpaid</span>':'')+'</div>'
+      +'</div>'
+      +'<div style="font-family:Nunito,sans-serif;font-weight:800;font-size:1.1rem;color:'+(isCurrentMonth?'var(--purple)':'#374151')+';">₱'+m.paid.toLocaleString()+'</div>'
+    +'</div>';
+  }).join('');
 }
 
 function openAddPaymentModal(){
@@ -2443,26 +2495,6 @@ function savePDFFiles(){
   });
 }
 
-function renderPDFRecords(){
-  var records=getPDFRecords();
-  var container=document.getElementById('pdf-records-list');
-  if(!container)return;
-  if(records.length===0){container.innerHTML='<p style="color:#9CA3AF;font-size:0.85rem;">No PDF records yet.</p>';return;}
-  var grouped={};
-  records.forEach(function(r){if(!grouped[r.month])grouped[r.month]=[];grouped[r.month].push(r);});
-  container.innerHTML=Object.keys(grouped).map(function(month){
-    var files=grouped[month];
-    return '<div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">'+
-      '<div style="font-weight:700;font-size:0.9rem;margin-bottom:10px;">📁 '+month+' <span style="font-size:0.75rem;color:#9CA3AF;">('+files.length+' file'+(files.length===1?'':'s')+')</span></div>'+
-      files.map(function(f){
-        return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#F5F3FF;border-radius:8px;margin-bottom:6px;">'+
-          '<a href="'+f.data+'" target="_blank" style="color:#A855F7;font-weight:600;font-size:0.85rem;text-decoration:none;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">📄 '+f.name+'</a>'+
-          '<button onclick="deletePDFRecord(''+f.id+'')" style="background:#FEE2E2;color:#EF4444;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:600;margin-left:8px;flex-shrink:0;">Delete</button>'+
-        '</div>';
-      }).join('')+
-    '</div>';
-  }).join('');
-}
 
 function deletePDFRecord(id){
   if(!confirm('Delete this file?'))return;
