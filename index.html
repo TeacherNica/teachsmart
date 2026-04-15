@@ -1274,34 +1274,6 @@ function renderSchedule(){
 // ─── PAYMENTS ───
 let payF='all';
 function payFilter(f,btn){payF=f;document.querySelectorAll('[onclick^="payFilter"]').forEach(b=>{b.style.background='white';b.style.border='1px solid #E5E7EB';b.style.color='';});btn.style.background='linear-gradient(135deg,var(--purple),var(--blue))';btn.style.color='white';btn.style.border='none';renderPayments();}
-function renderPayments(){
-  let list=students;
-  if(payF==='low')list=list.filter(s=>s.classes<=3);
-  if(payF==='pending')list=list.filter(s=>!s.paid);
-  if(payF==='paid')list=list.filter(s=>s.paid);
-  document.getElementById('pay-total').textContent=students.length;
-  document.getElementById('pay-paid').textContent=students.filter(s=>s.paid).length;
-  document.getElementById('pay-pending').textContent=students.filter(s=>!s.paid).length;
-  document.getElementById('pay-low').textContent=students.filter(s=>s.classes<=3).length;
-  const el=document.getElementById('payments-list');
-  if(!el)return;
-  el.innerHTML=list.map(s=>{
-    const pkg=s.rate*s.total;const rmb=(pkg*RATE).toFixed(2);
-    const bar=s.classes<=3?'#EF4444':s.classes<=4?'#F97316':'#22C55E';
-    const pct=Math.round(s.classes/s.total*100);
-    return `<div class="pay-item">
-      <div class="pay-av" style="background:linear-gradient(135deg,${s.c1},${s.c2})">${s.avatar}</div>
-      <div style="flex:1;"><div class="pay-name">${s.name} <span style="font-size:11px;">${s.nat.split(' ')[0]}</span></div>
-        <div class="pay-detail">${s.level} · ${s.duration}</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;"><div style="width:80px;height:5px;background:#F3F4F6;border-radius:3px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:${bar};border-radius:3px;"></div></div><span style="font-size:10px;font-weight:700;color:${bar};">${s.classes}/${s.total} left</span></div>
-      </div>
-      <div class="pay-amount">₱${pkg.toLocaleString()}</div>
-      <div style="text-align:right;"><div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:var(--purple);">¥${rmb}</div><div style="font-size:10px;color:var(--muted);">RMB</div></div>
-      <div style="margin-left:8px;">${s.paid?'<span class="badge-paid">✅ Paid</span>':'<span class="badge-pending">⏳ Pending</span>'}</div>
-      <button style="margin-left:8px;padding:5px 10px;border-radius:8px;border:none;background:#EFF6FF;color:#1D4ED8;font-family:\'Quicksand\',sans-serif;font-weight:700;font-size:11px;cursor:pointer;">${s.paid?'Receipt':'Mark Paid'}</button>
-    </div>`;
-  }).join('');
-}
 function convertCurr(){const v=parseFloat(document.getElementById('php-in').value)||0;document.getElementById('rmb-out').textContent=`¥${(v*RATE).toFixed(2)}`;}
 
 // ─── PROGRESS REPORTS ───
@@ -2593,6 +2565,47 @@ function deletePayment(id){
   renderEarnings();
 }
 document.getElementById('editPaymentModal').addEventListener('click',function(e){if(e.target===this)closeEditPaymentModal();});
+</script>
+
+
+<!-- Quick Rename Modal -->
+<div id="quickRenameModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:14px;padding:24px;max-width:340px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+    <div style="font-weight:800;font-size:1rem;color:#374151;margin-bottom:16px;">✏️ Quick Rename Student</div>
+    <input type="hidden" id="quickRenameId">
+    <input id="quickRenameInput" type="text" style="width:100%;padding:10px 14px;border:1.5px solid #A855F7;border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:16px;" placeholder="Enter new name">
+    <div style="display:flex;gap:10px;">
+      <button onclick="saveQuickRename()" style="flex:1;padding:10px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;">💾 Save</button>
+      <button onclick="closeQuickRename()" style="flex:1;padding:10px;background:#F3F4F6;color:#374151;border:none;border-radius:10px;font-weight:700;cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+</div>
+<script>
+function openQuickRename(id,e){
+  if(e) e.stopPropagation();
+  var s=students.find(function(x){return x.id===id;});
+  if(!s) return;
+  document.getElementById("quickRenameId").value=id;
+  document.getElementById("quickRenameInput").value=s.name;
+  document.getElementById("quickRenameModal").style.display="flex";
+  setTimeout(function(){document.getElementById("quickRenameInput").focus();},100);
+}
+function closeQuickRename(){
+  document.getElementById("quickRenameModal").style.display="none";
+}
+function saveQuickRename(){
+  var id=parseInt(document.getElementById("quickRenameId").value);
+  var newName=document.getElementById("quickRenameInput").value.trim();
+  if(!newName){alert("Name cannot be empty!");return;}
+  var idx=students.findIndex(function(x){return x.id===id;});
+  if(idx===-1) return;
+  students[idx].name=newName;
+  students[idx].avatar=newName.charAt(0).toUpperCase();
+  saveData();renderStudents();renderDashboard();
+  closeQuickRename();
+}
+document.getElementById("quickRenameModal").addEventListener("click",function(e){if(e.target===this)closeQuickRename();});
+document.getElementById("quickRenameInput").addEventListener("keydown",function(e){if(e.key==="Enter")saveQuickRename();if(e.key==="Escape")closeQuickRename();});
 </script>
 
 </body>
