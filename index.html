@@ -2593,6 +2593,7 @@ function saveEditedPayment(){
   var payments=getPayments();
   var idx=payments.findIndex(function(x){return String(x.id)===String(id);});
   if(idx===-1){alert('Payment not found.');return;}
+  payments[idx].studentName=document.getElementById('edit-pay-student').value;
   payments[idx].amount=parseFloat(document.getElementById('edit-pay-amount').value)||0;
   payments[idx].date=document.getElementById('edit-pay-date').value;
   payments[idx].status=document.getElementById('edit-pay-status').value;
