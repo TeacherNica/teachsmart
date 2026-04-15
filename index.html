@@ -916,7 +916,7 @@ function renderDashboard(){
       <div class="sched-time" style="color:var(--purple)">${time}</div>
       <div class="sched-bar" style="background:${s.c1}"></div>
       <div style="flex:1;"><div class="sched-name">${s.name}</div><div class="sched-detail">${s.nat} · ${s.level} · ${s.duration}</div></div>
-      <div class="sched-badge" style="background:${st.bg};color:${st.color};">${st.label}</div>${isToday&&status!=="done"?"<button onclick=\"markAttendance('"+s.name+"','present')\" style=\"padding:4px 8px;border-radius:6px;border:none;background:#22C55E;color:#fff;font-size:0.72rem;cursor:pointer;font-weight:700;margin-left:4px;\">✅ Present</button><button onclick=\"markAttendance('"+s.name+"','absent')\" style=\"padding:4px 8px;border-radius:6px;border:none;background:#EF4444;color:#fff;font-size:0.72rem;cursor:pointer;font-weight:700;margin-left:3px;\">❌ Absent</button>":s.attendance_today==="present"?"<span style=\"background:#DCFCE7;color:#15803D;padding:3px 8px;border-radius:20px;font-size:0.72rem;font-weight:700;margin-left:4px;\">✅ Present</span>":s.attendance_today==="absent"?"<span style=\"background:#FEE2E2;color:#B91C1C;padding:3px 8px;border-radius:20px;font-size:0.72rem;font-weight:700;margin-left:4px;\">❌ Absent</span>":""}
+      <div class="sched-badge" style="background:${st.bg};color:${st.color};">${st.label}</div>${isToday&&status!=="done"?"<button onclick=\"markAttendance('"+s.name+"','present')\" style=\"padding:4px 8px;border-radius:6px;border:none;background:#22C55E;color:#fff;font-size:0.72rem;cursor:pointer;font-weight:700;margin-left:4px;\">✅ Present</button><button onclick=\"markAttendance('"+s.name+"','absent')\" style=\"padding:4px 8px;border-radius:6px;border:none;background:#F97316;color:#fff;font-size:0.72rem;cursor:pointer;font-weight:700;margin-left:3px;\">🔔 Absent</button><button onclick=\"markAttendance('"+s.name+"','noshow')\" style=\"padding:4px 8px;border-radius:6px;border:none;background:#EF4444;color:#fff;font-size:0.72rem;cursor:pointer;font-weight:700;margin-left:3px;\">🚫 No Show</button>":s.attendance_today==="present"?"<span style=\"background:#DCFCE7;color:#15803D;padding:3px 8px;border-radius:20px;font-size:0.72rem;font-weight:700;margin-left:4px;\">✅ Present</span>":s.attendance_today==="absent"?"<span style=\"background:#FFF7ED;color:#C2410C;padding:3px 8px;border-radius:20px;font-size:0.72rem;font-weight:700;margin-left:4px;\">🔔 Absent</span>":s.attendance_today==="noshow"?"<span style=\"background:#FEE2E2;color:#B91C1C;padding:3px 8px;border-radius:20px;font-size:0.72rem;font-weight:700;margin-left:4px;\">🚫 No Show</span>":""}
     </div>`;
   }).join('');
   // Alerts
@@ -1106,18 +1106,31 @@ function getTodaySlots(offset){
 
 
 function markAttendance(name,type){
-  const s=students.find(x=>x.name===name);
+  var s=students.find(function(x){return x.name===name;});
   if(!s)return;
+  var now=new Date();
+  var dateStr=now.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
+  var timeStr=now.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});
+  if(!s.attendanceLog) s.attendanceLog=[];
   if(type==="present"){
     if(s.classes<=0){alert(s.name+" has no classes left!");return;}
     s.classes--;
     s.attendance_today="present";
+    s.attendanceLog.unshift({status:"present",date:dateStr,time:timeStr});
     saveData();renderDashboard();renderStudents();
-    alert("Present! "+s.classes+" left.");
-  }else{
+    alert("✅ Present! "+s.classes+" classes left.");
+  } else if(type==="noshow"){
+    if(s.classes<=0){alert(s.name+" has no classes left!");return;}
+    s.classes--;
+    s.attendance_today="noshow";
+    s.attendanceLog.unshift({status:"noshow",date:dateStr,time:timeStr});
+    saveData();renderDashboard();renderStudents();
+    alert("🚫 No Show logged. 1 class deducted. "+s.classes+" classes left.");
+  } else {
     s.attendance_today="absent";
+    s.attendanceLog.unshift({status:"absent",date:dateStr,time:timeStr});
     saveData();renderDashboard();
-    alert("Absent noted.");
+    alert("🔔 Absent noted. No class deducted.");
   }
 }
 
@@ -1925,7 +1938,7 @@ function openStudentProfile(id) {
     '</div>' +
     '<div style="flex:1;text-align:center;padding:12px 0;border-left:1px solid #f0f0f0;border-right:1px solid #f0f0f0;">' +
       '<div style="font-size:1.4rem;font-weight:800;color:#EF4444;">' + absentCount + '</div>' +
-      '<div style="font-size:0.75rem;color:#6B7280;">Absent</div>' +
+      '<div style="font-size:0.75rem;color:#6B7280;">Absent (notified)</div>' +
     '</div>' +
     '<div style="flex:1;text-align:center;padding:12px 0;">' +
       '<div style="font-size:1.4rem;font-weight:800;color:#A855F7;">' + attendancePct + '%</div>' +
@@ -1939,15 +1952,18 @@ function openStudentProfile(id) {
   } else {
     logDiv.innerHTML = log.map(function(entry) {
       var isPresent = entry.status === 'present';
-      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;margin-bottom:8px;background:' + (isPresent ? '#F0FDF4' : '#FEF2F2') + ';border-radius:10px;border-left:4px solid ' + (isPresent ? '#22C55E' : '#EF4444') + ';">' +
+      var bgColor = entry.status==='present' ? '#F0FDF4' : entry.status==='noshow' ? '#FEF2F2' : '#FFF7ED';
+      var borderColor = entry.status==='present' ? '#22C55E' : entry.status==='noshow' ? '#EF4444' : '#F97316';
+      var badgeBg = entry.status==='present' ? '#22C55E' : entry.status==='noshow' ? '#EF4444' : '#F97316';
+      var badgeLabel = entry.status==='present' ? '✅ Present' : entry.status==='noshow' ? '🚫 No Show' : '🔔 Absent';
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;margin-bottom:8px;background:' + bgColor + ';border-radius:10px;border-left:4px solid ' + borderColor + ';">' +
         '<div>' +
           '<div style="font-weight:600;font-size:0.9rem;color:#374151;">' + entry.date + '</div>' +
           '<div style="font-size:0.78rem;color:#6B7280;">' + entry.time + '</div>' +
         '</div>' +
-        '<span style="background:' + (isPresent ? '#22C55E' : '#EF4444') + ';color:#fff;padding:3px 12px;border-radius:20px;font-size:0.78rem;font-weight:700;">' + (isPresent ? '✅ Present' : '❌ Absent') + '</span>' +
+        '<span style="background:' + badgeBg + ';color:#fff;padding:3px 12px;border-radius:20px;font-size:0.78rem;font-weight:700;">' + badgeLabel + '</span>' +
       '</div>';
     }).join('');
-  }
 
   document.getElementById('studentProfileModal').style.display = 'flex';
 }
