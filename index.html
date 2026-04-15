@@ -941,6 +941,7 @@ function renderStudents(){
   if(currentFilter==='kr')list=list.filter(s=>s.nat.includes('Korean'));
   if(currentFilter==='low')list=list.filter(s=>s.classes<=3);
   if(q)list=list.filter(s=>s.name.toLowerCase().includes(q)||s.nat.toLowerCase().includes(q));
+  list=list.slice().sort(function(a,b){return a.name.localeCompare(b.name);});
   const grid=document.getElementById('student-grid');
   if(!grid)return;
   const lv=l=>getLevelStyle(l);
