@@ -1517,22 +1517,7 @@ const WEEKLY_SCHEDULE = {
     {time:'8:00 PM', student:'Carl', duration:25},
   ],
 };
-// ─── INIT ───
-renderDashboard();
-renderStudents();
-const lastPage = localStorage.getItem('ts-last-page');
-if(lastPage && lastPage !== 'dashboard'){
-  const navBtn = document.querySelector('[onclick*="nav(\''+lastPage+'\'"]');
-  if(navBtn) nav(lastPage, navBtn);
-  // Re-render after short delay to fix timing issue
-  setTimeout(function(){
-    if(lastPage==='earnings') renderEarnings();
-    if(lastPage==='payments') renderPayments();
-    if(lastPage==='schedule'){renderScheduleGrid();renderClassNotes();}
-    if(lastPage==='students') renderStudents();
-    if(lastPage==='reports') renderReports();
-  }, 1000);
-}
+// ─── INIT MOVED TO END ───
 
 
 // Currency converter shortcut on dashboard
@@ -2773,6 +2758,24 @@ function renderClassNotes(){
     '</div>';
   }).join('');
 }
+
+// ─── INIT ───
+renderDashboard();
+renderStudents();
+(function(){
+  var lastPage = localStorage.getItem('ts-last-page');
+  if(lastPage && lastPage !== 'dashboard'){
+    var navBtn = document.querySelector('[onclick*="nav(\''+lastPage+'\'"]');
+    if(navBtn) nav(lastPage, navBtn);
+    setTimeout(function(){
+      if(lastPage==='earnings') renderEarnings();
+      if(lastPage==='payments') renderPayments();
+      if(lastPage==='schedule'){renderScheduleGrid();renderClassNotes();}
+      if(lastPage==='students') renderStudents();
+      if(lastPage==='reports') renderReports();
+    }, 300);
+  }
+})();
 </script>
 
 </body>
