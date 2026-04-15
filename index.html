@@ -1890,12 +1890,12 @@ document.getElementById('lowPkgModal').addEventListener('click', function(e) {
 
 <!-- Student Profile Modal -->
 <div id="studentProfileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:16px;padding:0;max-width:480px;width:92%;max-height:85vh;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.2);position:relative;display:flex;flex-direction:column;">
+  <div style="background:#fff;border-radius:16px;padding:0;max-width:500px;width:92%;max-height:90vh;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.18);display:flex;flex-direction:column;">
     <!-- Header -->
-    <div id="profileHeader" style="padding:24px 24px 16px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;position:relative;">
-      <button onclick="closeStudentProfile()" style="position:absolute;top:12px;right:16px;background:rgba(255,255,255,0.2);border:none;font-size:18px;cursor:pointer;color:#fff;width:30px;height:30px;border-radius:50%;">&times;</button>
+    <div id="profileHeader" style="padding:24px 24px 16px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;position:relative;flex-shrink:0;">
+      <button onclick="closeStudentProfile()" style="position:absolute;top:12px;right:16px;background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:20px;cursor:pointer;border-radius:50%;width:30px;height:30px;">&times;</button>
       <div style="display:flex;align-items:center;gap:14px;">
-        <div id="profileAvatar" style="font-size:2.5rem;background:rgba(255,255,255,0.2);border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;"></div>
+        <div id="profileAvatar" style="font-size:2.5rem;background:rgba(255,255,255,0.2);border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"></div>
         <div>
           <div id="profileName" style="font-size:1.3rem;font-weight:800;"></div>
           <div id="profileNat" style="font-size:0.85rem;opacity:0.85;"></div>
@@ -1904,11 +1904,45 @@ document.getElementById('lowPkgModal').addEventListener('click', function(e) {
       </div>
     </div>
     <!-- Stats Row -->
-    <div id="profileStats" style="display:flex;gap:0;border-bottom:1px solid #f0f0f0;"></div>
-    <!-- Attendance Log -->
-    <div style="padding:16px 24px;overflow-y:auto;flex:1;">
+    <div id="profileStats" style="display:flex;gap:0;border-bottom:1px solid #f0f0f0;flex-shrink:0;"></div>
+    <!-- Tabs -->
+    <div style="display:flex;border-bottom:1px solid #f0f0f0;flex-shrink:0;">
+      <button id="profileTab-history" onclick="switchProfileTab('history')" style="flex:1;padding:10px;border:none;background:#F5F3FF;color:#7C3AED;font-weight:700;font-size:0.85rem;cursor:pointer;border-bottom:3px solid #A855F7;">📋 Attendance</button>
+      <button id="profileTab-edit" onclick="switchProfileTab('edit')" style="flex:1;padding:10px;border:none;background:#fff;color:#6B7280;font-weight:700;font-size:0.85rem;cursor:pointer;border-bottom:3px solid transparent;">✏️ Edit Info</button>
+    </div>
+    <!-- Attendance Tab -->
+    <div id="profilePane-history" style="padding:16px 24px;overflow-y:auto;flex:1;">
       <div style="font-weight:700;font-size:0.95rem;color:#374151;margin-bottom:12px;">📋 Attendance History</div>
       <div id="profileAttendanceLog"></div>
+    </div>
+    <!-- Edit Info Tab -->
+    <div id="profilePane-edit" style="padding:16px 24px;overflow-y:auto;flex:1;display:none;">
+      <input type="hidden" id="profileEditId">
+      <div style="margin-bottom:12px;">
+        <label style="font-size:0.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:4px;">Full Name</label>
+        <input id="profileEditName" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:0.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:4px;">Nickname</label>
+        <input id="profileEditNick" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:0.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:4px;">Schedule</label>
+        <input id="profileEditSchedule" placeholder="e.g. Mon/Wed 7:00 PM" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:0.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:4px;">Birthday</label>
+        <input id="profileEditBirthday" type="date" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:0.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:4px;">WeChat ID</label>
+        <input id="profileEditWechat" placeholder="Parent WeChat ID" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:20px;">
+        <label style="font-size:0.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:4px;">Notes</label>
+        <textarea id="profileEditNotes" rows="3" placeholder="e.g. shy student, loves stories..." style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;resize:vertical;"></textarea>
+      </div>
+      <button onclick="saveStudentProfileEdit()" style="width:100%;padding:12px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;">💾 Save Changes</button>
     </div>
   </div>
 </div>
@@ -1922,36 +1956,40 @@ function openStudentProfile(id) {
   // Header
   document.getElementById('profileAvatar').textContent = s.avatar || '👤';
   document.getElementById('profileName').textContent = s.name;
-  document.getElementById('profileNat').textContent = s.nat || '';
+  document.getElementById('profileNat').textContent = (s.nat || '') + (s.level ? ' · ' + s.level : '');
   document.getElementById('profilePackage').textContent = (s.classes || 0) + ' classes left of ' + (s.total || 0);
 
   // Stats
   var log = s.attendanceLog || [];
   var presentCount = log.filter(function(l){ return l.status === 'present'; }).length;
   var absentCount = log.filter(function(l){ return l.status === 'absent'; }).length;
+  var noshowCount = log.filter(function(l){ return l.status === 'noshow'; }).length;
   var attendancePct = log.length > 0 ? Math.round((presentCount / log.length) * 100) : (s.attendance || 100);
 
   document.getElementById('profileStats').innerHTML =
     '<div style="flex:1;text-align:center;padding:12px 0;">' +
-      '<div style="font-size:1.4rem;font-weight:800;color:#22C55E;">' + presentCount + '</div>' +
-      '<div style="font-size:0.75rem;color:#6B7280;">Present</div>' +
+      '<div style="font-size:1.3rem;font-weight:800;color:#22C55E;">' + presentCount + '</div>' +
+      '<div style="font-size:0.72rem;color:#6B7280;">✅ Present</div>' +
     '</div>' +
-    '<div style="flex:1;text-align:center;padding:12px 0;border-left:1px solid #f0f0f0;border-right:1px solid #f0f0f0;">' +
-      '<div style="font-size:1.4rem;font-weight:800;color:#EF4444;">' + absentCount + '</div>' +
-      '<div style="font-size:0.75rem;color:#6B7280;">Absent (notified)</div>' +
+    '<div style="flex:1;text-align:center;padding:12px 0;border-left:1px solid #f0f0f0;">' +
+      '<div style="font-size:1.3rem;font-weight:800;color:#F97316;">' + absentCount + '</div>' +
+      '<div style="font-size:0.72rem;color:#6B7280;">🔔 Absent</div>' +
     '</div>' +
-    '<div style="flex:1;text-align:center;padding:12px 0;">' +
-      '<div style="font-size:1.4rem;font-weight:800;color:#A855F7;">' + attendancePct + '%</div>' +
-      '<div style="font-size:0.75rem;color:#6B7280;">Attendance</div>' +
+    '<div style="flex:1;text-align:center;padding:12px 0;border-left:1px solid #f0f0f0;">' +
+      '<div style="font-size:1.3rem;font-weight:800;color:#EF4444;">' + noshowCount + '</div>' +
+      '<div style="font-size:0.72rem;color:#6B7280;">🚫 No Show</div>' +
+    '</div>' +
+    '<div style="flex:1;text-align:center;padding:12px 0;border-left:1px solid #f0f0f0;">' +
+      '<div style="font-size:1.3rem;font-weight:800;color:#A855F7;">' + attendancePct + '%</div>' +
+      '<div style="font-size:0.72rem;color:#6B7280;">Attendance</div>' +
     '</div>';
 
   // Attendance Log
   var logDiv = document.getElementById('profileAttendanceLog');
   if (log.length === 0) {
-    logDiv.innerHTML = '<p style="color:#9CA3AF;text-align:center;font-size:0.9rem;margin-top:20px;">No attendance records yet.<br>Mark Present or Absent from the dashboard to start tracking.</p>';
+    logDiv.innerHTML = '<p style="color:#9CA3AF;text-align:center;font-size:0.9rem;margin-top:20px;">No attendance records yet.<br>Use the ✅ Present, 🔔 Absent, or 🚫 No Show buttons on the dashboard.</p>';
   } else {
     logDiv.innerHTML = log.map(function(entry) {
-      var isPresent = entry.status === 'present';
       var bgColor = entry.status==='present' ? '#F0FDF4' : entry.status==='noshow' ? '#FEF2F2' : '#FFF7ED';
       var borderColor = entry.status==='present' ? '#22C55E' : entry.status==='noshow' ? '#EF4444' : '#F97316';
       var badgeBg = entry.status==='present' ? '#22C55E' : entry.status==='noshow' ? '#EF4444' : '#F97316';
@@ -1964,611 +2002,51 @@ function openStudentProfile(id) {
         '<span style="background:' + badgeBg + ';color:#fff;padding:3px 12px;border-radius:20px;font-size:0.78rem;font-weight:700;">' + badgeLabel + '</span>' +
       '</div>';
     }).join('');
+  }
 
+  // Populate edit fields
+  document.getElementById('profileEditId').value = s.id;
+  document.getElementById('profileEditName').value = s.name || '';
+  document.getElementById('profileEditNick').value = s.nick || '';
+  document.getElementById('profileEditSchedule').value = s.schedule || '';
+  document.getElementById('profileEditBirthday').value = s.birthday || '';
+  document.getElementById('profileEditWechat').value = s.wechat || '';
+  document.getElementById('profileEditNotes').value = s.notes || '';
+
+  // Show history tab by default
+  switchProfileTab('history');
   document.getElementById('studentProfileModal').style.display = 'flex';
 }
 
-function closeStudentProfile() {
-  document.getElementById('studentProfileModal').style.display = 'none';
+function switchProfileTab(tab) {
+  document.getElementById('profilePane-history').style.display = tab==='history' ? 'block' : 'none';
+  document.getElementById('profilePane-edit').style.display = tab==='edit' ? 'block' : 'none';
+  document.getElementById('profileTab-history').style.background = tab==='history' ? '#F5F3FF' : '#fff';
+  document.getElementById('profileTab-history').style.color = tab==='history' ? '#7C3AED' : '#6B7280';
+  document.getElementById('profileTab-history').style.borderBottom = tab==='history' ? '3px solid #A855F7' : '3px solid transparent';
+  document.getElementById('profileTab-edit').style.background = tab==='edit' ? '#F5F3FF' : '#fff';
+  document.getElementById('profileTab-edit').style.color = tab==='edit' ? '#7C3AED' : '#6B7280';
+  document.getElementById('profileTab-edit').style.borderBottom = tab==='edit' ? '3px solid #A855F7' : '3px solid transparent';
 }
 
-document.getElementById('studentProfileModal').addEventListener('click', function(e) {
-  if (e.target === this) closeStudentProfile();
-});
-</script>
-
-
-<script>
-// ─── PROFILE FUNCTIONS ───
-function loadProfile() {
-  var p = JSON.parse(localStorage.getItem('ts-profile') || '{}');
-  var name = p.name || 'Teacher Nica';
-  var role = p.role || 'English Teacher';
-  var location = p.location || 'Bangkok, Thailand';
-  var bio = p.bio || '';
-  var avatar = p.avatar || '👩‍🏫';
-  var photo = p.photo || '';
-
-  // Update profile header
-  var avatarEl = document.getElementById('profile-avatar-display');
-  if (avatarEl) {
-    if (photo) {
-      avatarEl.innerHTML = '<img src="' + photo + '" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">';
-    } else {
-      avatarEl.textContent = avatar;
-    }
-  }
-
-  var nameDisplay = document.getElementById('profile-name-display');
-  var roleDisplay = document.getElementById('profile-role-display');
-  var locDisplay = document.getElementById('profile-location-display');
-  if (nameDisplay) nameDisplay.textContent = name;
-  if (roleDisplay) roleDisplay.textContent = role;
-  if (locDisplay) locDisplay.textContent = location;
-
-  // Fill inputs
-  var nameInput = document.getElementById('profile-name-input');
-  var roleInput = document.getElementById('profile-role-input');
-  var locInput = document.getElementById('profile-location-input');
-  var bioInput = document.getElementById('profile-bio-input');
-  if (nameInput) nameInput.value = name;
-  if (roleInput) roleInput.value = role;
-  if (locInput) locInput.value = location;
-  if (bioInput) bioInput.value = bio;
-
-  // Update sidebar
-  var sidebarName = document.getElementById('sidebar-name');
-  var sidebarLoc = document.getElementById('sidebar-location');
-  var sidebarAv = document.getElementById('sidebar-avatar');
-  if (sidebarName) sidebarName.textContent = name;
-  if (sidebarLoc) sidebarLoc.textContent = location;
-  if (sidebarAv) {
-    if (photo) {
-      sidebarAv.innerHTML = '<img src="' + photo + '" style="width:36px;height:36px;border-radius:10px;object-fit:cover;">';
-    } else {
-      sidebarAv.textContent = avatar;
-    }
-  }
-
-  // Dark mode
-  var dark = localStorage.getItem('ts-dark-mode') === 'true';
-  if (dark) applyDarkMode(true);
+function saveStudentProfileEdit() {
+  var id = parseInt(document.getElementById('profileEditId').value);
+  var allStudents = JSON.parse(localStorage.getItem('ts-students') || '[]');
+  var idx = allStudents.findIndex(function(x){ return x.id === id; });
+  if (idx === -1) { alert('Student not found.'); return; }
+  allStudents[idx].name = document.getElementById('profileEditName').value.trim() || allStudents[idx].name;
+  allStudents[idx].nick = document.getElementById('profileEditNick').value.trim();
+  allStudents[idx].schedule = document.getElementById('profileEditSchedule').value.trim();
+  allStudents[idx].birthday = document.getElementById('profileEditBirthday').value;
+  allStudents[idx].wechat = document.getElementById('profileEditWechat').value.trim();
+  allStudents[idx].notes = document.getElementById('profileEditNotes').value.trim();
+  allStudents[idx].avatar = allStudents[idx].name.charAt(0).toUpperCase();
+  localStorage.setItem('ts-students', JSON.stringify(allStudents));
+  students = allStudents;
+  renderStudents();
+  renderDashboard();
+  // Update header
+  document.getElementById('profileName').textContent = allStudents[idx].name;
+  document.getElementById('profileAvatar').textContent = allStudents[idx].avatar;
+  alert('✅ Student info updated!');
 }
-
-function saveProfile() {
-  var nameInput = document.getElementById('profile-name-input');
-  var roleInput = document.getElementById('profile-role-input');
-  var locInput = document.getElementById('profile-location-input');
-  var bioInput = document.getElementById('profile-bio-input');
-  var avatarEl = document.getElementById('profile-avatar-display');
-
-  var existing = JSON.parse(localStorage.getItem('ts-profile') || '{}');
-
-  var p = {
-    name: nameInput ? nameInput.value || 'Teacher Nica' : 'Teacher Nica',
-    role: roleInput ? roleInput.value || 'English Teacher' : 'English Teacher',
-    location: locInput ? locInput.value || 'Bangkok, Thailand' : 'Bangkok, Thailand',
-    bio: bioInput ? bioInput.value || '' : '',
-    avatar: avatarEl ? (avatarEl.textContent || '👩‍🏫') : '👩‍🏫',
-    photo: existing.photo || ''
-  };
-
-  localStorage.setItem('ts-profile', JSON.stringify(p));
-  loadProfile();
-
-  var msg = document.getElementById('profile-save-msg');
-  if (msg) {
-    msg.style.display = 'block';
-    setTimeout(function(){ msg.style.display = 'none'; }, 3000);
-  }
-}
-
-function selectAvatar(emoji) {
-  var avatarEl = document.getElementById('profile-avatar-display');
-  if (avatarEl) avatarEl.textContent = emoji;
-  var picker = document.getElementById('avatar-picker');
-  if (picker) picker.style.display = 'none';
-}
-
-function handlePhotoUpload(input) {
-  var file = input.files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var photo = e.target.result;
-    var existing = JSON.parse(localStorage.getItem('ts-profile') || '{}');
-    existing.photo = photo;
-    localStorage.setItem('ts-profile', JSON.stringify(existing));
-    loadProfile();
-  };
-  reader.readAsDataURL(file);
-}
-
-function toggleDarkMode() {
-  var isDark = localStorage.getItem('ts-dark-mode') === 'true';
-  localStorage.setItem('ts-dark-mode', (!isDark).toString());
-  applyDarkMode(!isDark);
-}
-
-function applyDarkMode(dark) {
-  var toggle = document.getElementById('dark-mode-toggle');
-  var knob = document.getElementById('dark-mode-knob');
-  if (dark) {
-    document.body.style.background = '#1a1a2e';
-    document.body.style.color = '#e2e8f0';
-    if (toggle) toggle.style.background = '#A855F7';
-    if (knob) knob.style.left = '22px';
-  } else {
-    document.body.style.background = '';
-    document.body.style.color = '';
-    if (toggle) toggle.style.background = '#e5e7eb';
-    if (knob) knob.style.left = '2px';
-  }
-}
-
-// Load profile on init
-loadProfile();
-</script>
-
-
-<!-- Add Payment Modal -->
-<div id="addPaymentModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:420px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.18);position:relative;max-height:90vh;overflow-y:auto;">
-    <button onclick="closeAddPaymentModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#888;">&times;</button>
-    <h2 style="margin:0 0 20px;font-size:1.1rem;color:#374151;">+ Add Payment Record</h2>
-
-    <div style="margin-bottom:14px;">
-      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Student</label>
-      <select id="pay-student-select" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;"></select>
-    </div>
-
-    <div style="margin-bottom:14px;">
-      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Amount Paid (₱)</label>
-      <input id="pay-amount" type="number" placeholder="e.g. 3000" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
-    </div>
-
-    <div style="margin-bottom:14px;">
-      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Date Paid</label>
-      <input id="pay-date" type="date" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
-    </div>
-
-    <div style="margin-bottom:14px;">
-      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Class Package</label>
-      <select id="pay-package" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
-        <option value="10">10 classes</option>
-        <option value="20">20 classes</option>
-        <option value="25">25 classes</option>
-        <option value="27">27 classes</option>
-        <option value="30">30 classes</option>
-        <option value="32">32 classes</option>
-        <option value="50">50 classes</option>
-        <option value="52">52 classes</option>
-      </select>
-    </div>
-
-    <div style="margin-bottom:14px;">
-      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Classes Used</label>
-      <input id="pay-classes-used" type="number" placeholder="e.g. 4" min="0" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
-    </div>
-
-    <div style="margin-bottom:20px;">
-      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Payment Status</label>
-      <div style="display:flex;gap:10px;">
-        <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;cursor:pointer;">
-          <input type="radio" name="pay-status" value="paid" checked> <span style="font-weight:600;color:#22C55E;">✅ Paid</span>
-        </label>
-        <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;cursor:pointer;">
-          <input type="radio" name="pay-status" value="unpaid"> <span style="font-weight:600;color:#EF4444;">❌ Not Paid</span>
-        </label>
-      </div>
-    </div>
-
-    <button onclick="savePayment()" style="width:100%;padding:12px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;">💾 Save Payment</button>
-  </div>
-</div>
-
-<!-- Payment Detail Modal -->
-<div id="paymentDetailModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:16px;padding:0;max-width:440px;width:92%;max-height:85vh;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.2);display:flex;flex-direction:column;">
-    <div style="padding:20px 24px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;position:relative;">
-      <button onclick="closePaymentDetail()" style="position:absolute;top:12px;right:16px;background:rgba(255,255,255,0.2);border:none;font-size:18px;cursor:pointer;color:#fff;width:30px;height:30px;border-radius:50%;">&times;</button>
-      <div id="pay-detail-name" style="font-size:1.2rem;font-weight:800;"></div>
-      <div id="pay-detail-sub" style="font-size:0.85rem;opacity:0.85;margin-top:4px;"></div>
-    </div>
-    <div style="padding:20px 24px;overflow-y:auto;flex:1;">
-      <div style="font-weight:700;font-size:0.95rem;color:#374151;margin-bottom:12px;">📋 Payment History</div>
-      <div id="pay-detail-history"></div>
-    </div>
-  </div>
-</div>
-
-
-<script>
-function getPayments(){return JSON.parse(localStorage.getItem('ts-payments')||'[]');}
-function savePayments(p){localStorage.setItem('ts-payments',JSON.stringify(p));}
-
-function renderPayments(){
-  var payments=getPayments();
-  var students=JSON.parse(localStorage.getItem('ts-students')||'[]');
-  var sf=document.getElementById('pay-filter-status');
-  var mf=document.getElementById('pay-filter-month');
-  var statusFilter=sf?sf.value:'all';
-  var monthFilter=mf?mf.value:'all';
-  var filtered=payments.slice();
-  if(statusFilter!=='all') filtered=filtered.filter(function(p){return p.status===statusFilter;});
-  if(monthFilter!=='all') filtered=filtered.filter(function(p){
-    if(!p.date) return false;
-    return new Date(p.date).getMonth()===parseInt(monthFilter);
-  });
-  var list=document.getElementById('payment-list');
-  if(!list) return;
-  if(filtered.length===0){
-    list.innerHTML='<div style="text-align:center;color:#9CA3AF;padding:40px 0;font-size:0.9rem;">No payment records yet.<br>Click "+ Add Payment" to get started.</div>';
-    return;
-  }
-  list.innerHTML=filtered.map(function(p){
-    var s=students.find(function(x){return x.name===p.studentName;});
-    var isPaid=p.status==='paid';
-    var pkg=p.package||0;
-    var used=p.classesUsed||0;
-    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #f3f4f6;border-left:4px solid '+(isPaid?'#22C55E':'#EF4444')+';gap:10px;flex-wrap:wrap;">'
-      +'<div style="display:flex;align-items:center;gap:10px;flex:1;">'
-        +'<div style="font-size:1.4rem;">'+(s?s.avatar:'👤')+'</div>'
-        +'<div>'
-          +'<div style="font-weight:700;font-size:0.9rem;">'+p.studentName+'</div>'
-          +'<div style="font-size:0.75rem;color:#9CA3AF;">'+(p.date||'No date')+(p.notes?'  ·  '+p.notes:'')+'</div>'
-        +'</div>'
-      +'</div>'
-      +'<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">'
-        +'<div style="text-align:center;"><div style="font-weight:700;color:#A855F7;font-size:0.9rem;">₱'+parseFloat(p.amount||0).toLocaleString()+'</div><div style="font-size:0.7rem;color:#9CA3AF;">Amount</div></div>'
-        +'<div style="text-align:center;"><div style="font-weight:700;font-size:0.9rem;">'+pkg+' cls</div><div style="font-size:0.7rem;color:#9CA3AF;">Package</div></div>'
-        +'<span style="background:'+(isPaid?'#DCFCE7':'#FEE2E2')+';color:'+(isPaid?'#15803D':'#DC2626')+';padding:4px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;">'+(isPaid?'✅ Paid':'❌ Not Paid')+'</span>'
-        +'<button onclick="editPayment('+p.id+')" style="padding:5px 12px;border-radius:8px;border:none;background:#EFF6FF;color:#1D4ED8;font-weight:700;font-size:11px;cursor:pointer;">✏️ Edit</button>'
-        +'<button onclick="deletePayment('+p.id+')" style="padding:5px 12px;border-radius:8px;border:none;background:#FEE2E2;color:#EF4444;font-weight:700;font-size:11px;cursor:pointer;">🗑️ Delete</button>'
-      +'</div>'
-    +'</div>';
-  }).join('');
-}
-
-function renderEarnings(){
-  var payments=getPayments();
-  var now=new Date();
-
-  // This month paid
-  var thisMonth=payments.filter(function(p){
-    if(!p.date||p.status!=='paid') return false;
-    var d=new Date(p.date);
-    return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
-  });
-  var totalEarned=thisMonth.reduce(function(sum,p){return sum+(parseFloat(p.amount)||0);},0);
-
-  // All unpaid
-  var totalUnpaid=payments.filter(function(p){return p.status==='unpaid';})
-    .reduce(function(sum,p){return sum+(parseFloat(p.amount)||0);},0);
-
-  // All time earned
-  var totalAll=payments.filter(function(p){return p.status==='paid';})
-    .reduce(function(sum,p){return sum+(parseFloat(p.amount)||0);},0);
-
-  var em=document.getElementById('earn-this-month');
-  var eu=document.getElementById('earn-unpaid');
-  var ea=document.getElementById('earn-total-all');
-  if(em) em.textContent='₱'+totalEarned.toLocaleString();
-  if(eu) eu.textContent='₱'+totalUnpaid.toLocaleString();
-  if(ea) ea.textContent='₱'+totalAll.toLocaleString();
-
-  // Monthly breakdown
-  var container=document.getElementById('earn-monthly-breakdown');
-  if(!container) return;
-
-  if(payments.length===0){
-    container.innerHTML='<p style="color:#9CA3AF;font-size:0.85rem;text-align:center;padding:20px 0;">No payment records yet.<br>Add payments in the Payments tab to see your monthly earnings here.</p>';
-    return;
-  }
-
-  // Group by month
-  var months={};
-  payments.forEach(function(p){
-    if(!p.date) return;
-    var d=new Date(p.date);
-    var key=d.getFullYear()+'-'+(d.getMonth()+1);
-    var label=d.toLocaleString('default',{month:'long',year:'numeric'});
-    if(!months[key]) months[key]={label:label,paid:0,unpaid:0,count:0};
-    months[key].count++;
-    if(p.status==='paid') months[key].paid+=parseFloat(p.amount)||0;
-    else months[key].unpaid+=parseFloat(p.amount)||0;
-  });
-
-  // Sort newest first
-  var keys=Object.keys(months).sort().reverse();
-
-  container.innerHTML=keys.map(function(k){
-    var m=months[k];
-    var isCurrentMonth = k === (now.getFullYear()+'-'+(now.getMonth()+1));
-    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:12px;margin-bottom:8px;background:'+(isCurrentMonth?'#F5F3FF':'#F9FAFB')+';">'
-      +'<div>'
-        +'<div style="font-weight:700;font-size:0.9rem;color:#374151;">'+m.label+(isCurrentMonth?' <span style="font-size:10px;background:#A855F7;color:white;padding:2px 7px;border-radius:10px;margin-left:6px;">Current</span>':'')+'</div>'
-        +'<div style="font-size:0.78rem;color:#9CA3AF;margin-top:2px;">'+m.count+' payment'+(m.count!==1?'s':'')+(m.unpaid>0?' · <span style="color:#EF4444;">₱'+m.unpaid.toLocaleString()+' unpaid</span>':'')+'</div>'
-      +'</div>'
-      +'<div style="font-family:Nunito,sans-serif;font-weight:800;font-size:1.1rem;color:'+(isCurrentMonth?'var(--purple)':'#374151')+';">₱'+m.paid.toLocaleString()+'</div>'
-    +'</div>';
-  }).join('');
-}
-
-function openAddPaymentModal(){
-  var students=JSON.parse(localStorage.getItem('ts-students')||'[]');
-  var sel=document.getElementById('pay-student-select');
-  if(sel) sel.innerHTML=students.map(function(s){return '<option value="'+s.name+'">'+(s.avatar||'👤')+' '+s.name+'</option>';}).join('');
-  var di=document.getElementById('pay-date');
-  if(di) di.value=new Date().toISOString().split('T')[0];
-  document.getElementById('addPaymentModal').style.display='flex';
-}
-
-function closeAddPaymentModal(){
-  document.getElementById('addPaymentModal').style.display='none';
-}
-
-function savePayment(){
-  var sn=document.getElementById('pay-student-select').value;
-  var amt=document.getElementById('pay-amount').value;
-  var dt=document.getElementById('pay-date').value;
-  var pkg=document.getElementById('pay-package').value;
-  var used=document.getElementById('pay-classes-used').value||0;
-  var status=document.querySelector('input[name="pay-status"]:checked').value;
-  if(!sn||!amt){alert('Please fill in student and amount.');return;}
-  var payments=getPayments();
-  payments.unshift({id:Date.now(),studentName:sn,amount:parseFloat(amt),date:dt,package:parseInt(pkg),classesUsed:parseInt(used),status:status});
-  savePayments(payments);
-  closeAddPaymentModal();
-  renderPayments();
-}
-
-function openPaymentDetail(id){
-  var payments=getPayments();
-  var record=payments.find(function(p){return p.id===id;});
-  if(!record) return;
-  var all=payments.filter(function(p){return p.studentName===record.studentName;});
-  var students=JSON.parse(localStorage.getItem('ts-students')||'[]');
-  var s=students.find(function(x){return x.name===record.studentName;});
-  document.getElementById('pay-detail-name').textContent=(s?s.avatar+' ':'')+record.studentName;
-  document.getElementById('pay-detail-sub').textContent=s?(s.classes+' classes left of '+s.total):'';
-  var hist=document.getElementById('pay-detail-history');
-  hist.innerHTML=all.map(function(p){
-    var isPaid=p.status==='paid';
-    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;margin-bottom:8px;background:'+(isPaid?'#F0FDF4':'#FEF2F2')+';border-radius:10px;border-left:4px solid '+(isPaid?'#22C55E':'#EF4444')+';">'+
-      '<div><div style="font-weight:600;font-size:0.9rem;">'+(p.date||'No date')+'</div><div style="font-size:0.78rem;color:#6B7280;">'+p.package+' classes · '+p.classesUsed+' used</div></div>'+
-      '<div style="text-align:right;"><div style="font-weight:700;color:#A855F7;">₱'+parseFloat(p.amount||0).toLocaleString()+'</div><span style="background:'+(isPaid?'#DCFCE7':'#FEE2E2')+';color:'+(isPaid?'#15803D':'#DC2626')+';padding:2px 8px;border-radius:20px;font-size:0.72rem;font-weight:700;">'+(isPaid?'Paid':'Not Paid')+'</span></div>'+
-    '</div>';
-  }).join('');
-  document.getElementById('paymentDetailModal').style.display='flex';
-}
-
-function closePaymentDetail(){document.getElementById('paymentDetailModal').style.display='none';}
-
-function handlePDFUpload(input){
-  var file=input.files[0];
-  if(!file) return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    localStorage.setItem('ts-pdf-report',e.target.result);
-    showPDF(e.target.result);
-  };
-  reader.readAsDataURL(file);
-}
-
-function showPDF(data){
-  var s=document.getElementById('pdf-viewer-section');
-  var f=document.getElementById('pdf-frame');
-  if(s&&f){f.src=data;s.style.display='block';}
-}
-
-function clearPDF(){
-  localStorage.removeItem('ts-pdf-report');
-  document.getElementById('pdf-viewer-section').style.display='none';
-  document.getElementById('pdf-frame').src='';
-}
-
-document.getElementById('addPaymentModal').addEventListener('click',function(e){if(e.target===this)closeAddPaymentModal();});
-document.getElementById('paymentDetailModal').addEventListener('click',function(e){if(e.target===this)closePaymentDetail();});
-</script>
-
-
-<script>
-// ─── PDF REPORTS ───
-function getPDFReports(){
-  return JSON.parse(localStorage.getItem('ts-pdf-reports')||'[]');
-}
-
-function savePDFReports(reports){
-  localStorage.setItem('ts-pdf-reports', JSON.stringify(reports));
-}
-
-// [PDF renderReports removed - duplicate]
-
-function openUploadModal(){
-  document.getElementById('pdf-file-count').textContent = '';
-  document.getElementById('pdf-upload-input').value = '';
-  document.getElementById('upload-progress').style.display = 'none';
-  document.getElementById('uploadPDFModal').style.display = 'flex';
-}
-
-function closeUploadModal(){
-  document.getElementById('uploadPDFModal').style.display = 'none';
-}
-
-document.getElementById('pdf-upload-input').addEventListener('change', function(){
-  var count = this.files.length;
-  document.getElementById('pdf-file-count').textContent = count + ' file'+(count===1?'':' s')+' selected';
-});
-
-function uploadPDFs(){
-  var input = document.getElementById('pdf-upload-input');
-  var month = document.getElementById('pdf-month-select').value;
-  var files = input.files;
-
-  if(!files || files.length === 0){
-    alert('Please select at least one PDF file.');
-    return;
-  }
-
-  var progress = document.getElementById('upload-progress');
-  progress.style.display = 'block';
-
-  var reports = getPDFReports();
-  var loaded = 0;
-
-  Array.from(files).forEach(function(file){
-    var reader = new FileReader();
-    reader.onload = function(e){
-      reports.unshift({
-        id: Date.now() + Math.random(),
-        name: file.name,
-        month: month,
-        data: e.target.result,
-        uploadedAt: new Date().toISOString()
-      });
-      loaded++;
-      if(loaded === files.length){
-        savePDFReports(reports);
-        closeUploadModal();
-        renderReports();
-      }
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-function viewPDF(id){
-  var reports = getPDFReports();
-  var report = reports.find(function(r){ return String(r.id) === String(id); });
-  if(!report) return;
-  var win = window.open();
-  win.document.write('<iframe src="'+report.data+'" style="width:100%;height:100%;border:none;"></iframe>');
-}
-
-function deletePDF(id){
-  if(!confirm('Delete this file?')) return;
-  var reports = getPDFReports().filter(function(r){ return String(r.id) !== String(id); });
-  savePDFReports(reports);
-  renderReports();
-}
-
-document.getElementById('uploadPDFModal').addEventListener('click', function(e){
-  if(e.target === this) closeUploadModal();
-});
-</script>
-
-<script>
-// ─── PDF RECORDS ───
-function getPDFRecords(){return JSON.parse(localStorage.getItem('ts-pdf-records')||'[]');}
-function savePDFRecordsToDB(r){localStorage.setItem('ts-pdf-records',JSON.stringify(r));}
-
-function savePDFFiles(){
-  var input=document.getElementById('pdf-upload-input');
-  var monthEl=document.getElementById('pdf-month-select');
-  if(!input||!input.files||input.files.length===0){alert('Please select a file first.');return;}
-  var month=monthEl?monthEl.value:'Unknown';
-  var files=Array.from(input.files);
-  var records=getPDFRecords();
-  var loaded=0;
-  files.forEach(function(file){
-    var reader=new FileReader();
-    reader.onload=function(e){
-      records.unshift({id:Date.now()+Math.random(),name:file.name,month:month,data:e.target.result,savedAt:new Date().toLocaleString()});
-      loaded++;
-      if(loaded===files.length){
-        savePDFRecordsToDB(records);
-        closeUploadModal();
-        renderPDFRecords();
-        alert('✅ '+loaded+' file(s) saved!');
-      }
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-
-function deletePDFRecord(id){
-  if(!confirm('Delete this file?'))return;
-  var records=getPDFRecords().filter(function(r){return String(r.id)!==String(id);});
-  savePDFRecordsToDB(records);
-  renderPDFRecords();
-}
-</script>
-
-<!-- Edit Payment Modal -->
-<div id="editPaymentModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:420px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.18);position:relative;">
-    <button onclick="closeEditPaymentModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#888;">&times;</button>
-    <h2 style="margin:0 0 20px;font-size:1.1rem;color:#374151;">✏️ Edit Payment</h2>
-    <input type="hidden" id="edit-pay-id">
-    <div style="margin-bottom:14px;">
-      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Student</label>
-      <input id="edit-pay-student" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;background:#F9FAFB;" readonly>
-    </div>
-    <div style="margin-bottom:14px;">
-      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Amount (₱)</label>
-      <input id="edit-pay-amount" type="number" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
-    </div>
-    <div style="margin-bottom:14px;">
-      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Date</label>
-      <input id="edit-pay-date" type="date" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
-    </div>
-    <div style="margin-bottom:14px;">
-      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Status</label>
-      <select id="edit-pay-status" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
-        <option value="paid">✅ Paid</option>
-        <option value="unpaid">❌ Not Paid</option>
-      </select>
-    </div>
-    <div style="margin-bottom:20px;">
-      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Notes</label>
-      <input id="edit-pay-notes" type="text" placeholder="e.g. Package 3, April renewal..." style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
-    </div>
-    <button onclick="saveEditedPayment()" style="width:100%;padding:12px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;">💾 Save Changes</button>
-  </div>
-</div>
-
-<script>
-function editPayment(id){
-  var payments=getPayments();
-  var p=payments.find(function(x){return String(x.id)===String(id);});
-  if(!p) return;
-  document.getElementById('edit-pay-id').value=p.id;
-  document.getElementById('edit-pay-student').value=p.studentName;
-  document.getElementById('edit-pay-amount').value=p.amount||0;
-  document.getElementById('edit-pay-date').value=p.date||''  ;
-  document.getElementById('edit-pay-status').value=p.status||'unpaid';
-  document.getElementById('edit-pay-notes').value=p.notes||'';
-  document.getElementById('editPaymentModal').style.display='flex';
-}
-function closeEditPaymentModal(){
-  document.getElementById('editPaymentModal').style.display='none';
-}
-function saveEditedPayment(){
-  var id=document.getElementById('edit-pay-id').value;
-  var payments=getPayments();
-  var idx=payments.findIndex(function(x){return String(x.id)===String(id);});
-  if(idx===-1){alert('Payment not found.');return;}
-  payments[idx].amount=parseFloat(document.getElementById('edit-pay-amount').value)||0;
-  payments[idx].date=document.getElementById('edit-pay-date').value;
-  payments[idx].status=document.getElementById('edit-pay-status').value;
-  payments[idx].notes=document.getElementById('edit-pay-notes').value;
-  savePayments(payments);
-  closeEditPaymentModal();
-  renderPayments();
-  renderEarnings();
-  alert('✅ Payment updated!');
-}
-function deletePayment(id){
-  if(!confirm('Are you sure you want to delete this payment? This cannot be undone.')) return;
-  var payments=getPayments().filter(function(x){return String(x.id)!==String(id);});
-  savePayments(payments);
-  renderPayments();
-  renderEarnings();
-}
-document.getElementById('editPaymentModal').addEventListener('click',function(e){if(e.target===this)closeEditPaymentModal();});
-</script>
-
-</body>
-</html>
