@@ -877,7 +877,8 @@ function nav(page,btn){
   if(page==='payments')renderPayments();
   if(page==='reports')renderReports();
   if(page==='hof')renderHOF();
-  if(page==='schedule'){renderScheduleGrid();}
+  if(page==='schedule'){renderScheduleGrid();
+  renderClassNotes();;}
   if(page==='earnings'){renderEarnings();}
   if(page==='classroom')initWB();
 }
@@ -2657,6 +2658,82 @@ function saveQuickRename(){
 }
 document.getElementById("quickRenameModal").addEventListener("click",function(e){if(e.target===this)closeQuickRename();});
 document.getElementById("quickRenameInput").addEventListener("keydown",function(e){if(e.key==="Enter")saveQuickRename();if(e.key==="Escape")closeQuickRename();});
+
+function saveClassNote(){
+  var student = document.getElementById('note-student').value.trim();
+  var date = document.getElementById('note-date').value;
+  var time = document.getElementById('note-time').value;
+  var reason = document.getElementById('note-reason').value.trim();
+  if(!student){alert('Please enter a student name!');return;}
+  if(!date){alert('Please select a date!');return;}
+  if(!time){alert('Please select a time!');return;}
+  var notes = JSON.parse(localStorage.getItem('ts-class-notes')||'[]');
+  var note = {
+    id: Date.now(),
+    student: student,
+    date: date,
+    time: time,
+    reason: reason,
+    done: false,
+    createdAt: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
+  };
+  notes.unshift(note);
+  localStorage.setItem('ts-class-notes', JSON.stringify(notes));
+  // Clear form
+  document.getElementById('note-student').value='';
+  document.getElementById('note-date').value='';
+  document.getElementById('note-time').value='';
+  document.getElementById('note-reason').value='';
+  renderClassNotes();
+  alert('✅ Note saved!');
+}
+
+function markNoteDone(id){
+  var notes = JSON.parse(localStorage.getItem('ts-class-notes')||'[]');
+  var idx = notes.findIndex(function(n){return n.id===id;});
+  if(idx===-1) return;
+  notes[idx].done = true;
+  localStorage.setItem('ts-class-notes', JSON.stringify(notes));
+  renderClassNotes();
+}
+
+function deleteClassNote(id){
+  if(!confirm('Delete this note?')) return;
+  var notes = JSON.parse(localStorage.getItem('ts-class-notes')||'[]');
+  notes = notes.filter(function(n){return n.id!==id;});
+  localStorage.setItem('ts-class-notes', JSON.stringify(notes));
+  renderClassNotes();
+}
+
+function renderClassNotes(){
+  var container = document.getElementById('class-notes-list');
+  if(!container) return;
+  var notes = JSON.parse(localStorage.getItem('ts-class-notes')||'[]');
+  if(notes.length===0){
+    container.innerHTML='<p style="color:#9CA3AF;font-size:0.85rem;text-align:center;padding:20px 0;">No makeup class notes yet.<br>Add one above! 📝</p>';
+    return;
+  }
+  container.innerHTML = notes.map(function(n){
+    var isDone = n.done;
+    var d = new Date(n.date);
+    var dateLabel = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+    var timeLabel = n.time ? new Date('1970-01-01T'+n.time).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) : '';
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:12px;margin-bottom:8px;background:'+(isDone?'#F0FDF4':'#FFF');+';border:1.5px solid '+(isDone?'#22C55E':'#DDD6FE')+';gap:8px;flex-wrap:wrap;opacity:'+(isDone?'0.7':'1')+'">' +
+      '<div style="flex:1;">' +
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">' +
+          '<span style="font-weight:800;font-size:0.9rem;color:#374151;">'+(isDone?'✅ ':'')+n.student+'</span>' +
+          (isDone?'<span style="background:#DCFCE7;color:#15803D;padding:2px 8px;border-radius:20px;font-size:0.7rem;font-weight:700;">Done</span>':'<span style="background:#EDE9FE;color:#7C3AED;padding:2px 8px;border-radius:20px;font-size:0.7rem;font-weight:700;">Pending</span>') +
+        '</div>' +
+        '<div style="font-size:0.78rem;color:#6B7280;">📅 '+dateLabel+' · ⏰ '+timeLabel+'</div>' +
+        (n.reason?'<div style="font-size:0.78rem;color:#9CA3AF;margin-top:2px;">📝 '+n.reason+'</div>':'') +
+      '</div>' +
+      '<div style="display:flex;gap:6px;">' +
+        (!isDone?'<button onclick="markNoteDone('+n.id+')" style="padding:6px 12px;border-radius:8px;border:none;background:#DCFCE7;color:#15803D;font-weight:700;font-size:11px;cursor:pointer;">✅ Done</button>':'') +
+        '<button onclick="deleteClassNote('+n.id+')" style="padding:6px 12px;border-radius:8px;border:none;background:#FEE2E2;color:#EF4444;font-weight:700;font-size:11px;cursor:pointer;">🗑️</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
 </script>
 
 </body>
