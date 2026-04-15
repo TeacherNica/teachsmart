@@ -551,26 +551,7 @@ canvas#wb{position:absolute;top:40px;left:0;right:0;bottom:60px;cursor:crosshair
     <div id="payment-list"></div>
   </div>
 
-  <!-- PDF Upload -->
-  <div style="background:#fff;border-radius:12px;padding:14px 18px;margin-top:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-    <div>
-      <div style="font-weight:700;font-size:0.9rem;">📄 Monthly Payment Report</div>
-      <div style="font-size:0.78rem;color:#9CA3AF;">Upload a PDF to keep on record</div>
-    </div>
-    <label style="padding:8px 16px;background:#F5F3FF;color:#A855F7;border:1.5px solid #A855F7;border-radius:10px;font-weight:700;cursor:pointer;font-size:0.85rem;">
-      📤 Upload PDF
-      <input type="file" accept="application/pdf" onchange="handlePDFUpload(this)" style="display:none;">
-    </label>
-  </div>
 
-  <!-- PDF Viewer -->
-  <div id="pdf-viewer-section" style="display:none;background:#fff;border-radius:12px;padding:14px 18px;margin-top:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-      <div style="font-weight:700;font-size:0.9rem;">📄 Uploaded Report</div>
-      <button onclick="clearPDF()" style="background:#FEE2E2;color:#EF4444;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;">Remove</button>
-    </div>
-    <iframe id="pdf-frame" style="width:100%;height:500px;border:none;border-radius:8px;"></iframe>
-  </div>
 </div>
 
 <!-- ─── EARNINGS ─── -->
@@ -2197,45 +2178,40 @@ function renderPayments(){
   var mf=document.getElementById('pay-filter-month');
   var statusFilter=sf?sf.value:'all';
   var monthFilter=mf?mf.value:'all';
-
   var filtered=payments.slice();
   if(statusFilter!=='all') filtered=filtered.filter(function(p){return p.status===statusFilter;});
   if(monthFilter!=='all') filtered=filtered.filter(function(p){
     if(!p.date) return false;
     return new Date(p.date).getMonth()===parseInt(monthFilter);
   });
-
   var list=document.getElementById('payment-list');
   if(!list) return;
-
   if(filtered.length===0){
     list.innerHTML='<div style="text-align:center;color:#9CA3AF;padding:40px 0;font-size:0.9rem;">No payment records yet.<br>Click "+ Add Payment" to get started.</div>';
-  } else {
-    list.innerHTML=filtered.map(function(p){
-      var s=students.find(function(x){return x.name===p.studentName;});
-      var isPaid=p.status==='paid';
-      var used=p.classesUsed||0;
-      var pkg=p.package||0;
-      return '<div onclick="openPaymentDetail('+p.id+')" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #f3f4f6;cursor:pointer;border-left:4px solid '+(isPaid?'#22C55E':'#EF4444')+';gap:10px;flex-wrap:wrap;">'+
-        '<div style="display:flex;align-items:center;gap:10px;flex:1;">'+
-          '<div style="font-size:1.4rem;">'+(s?s.avatar:'👤')+'</div>'+
-          '<div>'+
-            '<div style="font-weight:700;font-size:0.9rem;">'+p.studentName+'</div>'+
-            '<div style="font-size:0.75rem;color:#9CA3AF;">'+(p.date||'No date')+'</div>'+
-          '</div>'+
-        '</div>'+
-        '<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">'+
-          '<div style="text-align:center;"><div style="font-weight:700;color:#A855F7;font-size:0.9rem;">₱'+parseFloat(p.amount||0).toLocaleString()+'</div><div style="font-size:0.7rem;color:#9CA3AF;">Amount</div></div>'+
-          '<div style="text-align:center;"><div style="font-weight:700;font-size:0.9rem;">'+pkg+' cls</div><div style="font-size:0.7rem;color:#9CA3AF;">Package</div></div>'+
-          '<div style="text-align:center;"><div style="font-weight:700;font-size:0.9rem;">'+used+'/'+pkg+'</div><div style="font-size:0.7rem;color:#9CA3AF;">Progress</div></div>'+
-          '<span style="background:'+(isPaid?'#DCFCE7':'#FEE2E2')+';color:'+(isPaid?'#15803D':'#DC2626')+';padding:4px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;">'+(isPaid?'✅ Paid':'❌ Not Paid')+'</span>'+
-        '</div>'+
-      '</div>';
-    }).join('');
+    return;
   }
-
-  // Update earnings tab
-  renderEarnings();
+  list.innerHTML=filtered.map(function(p){
+    var s=students.find(function(x){return x.name===p.studentName;});
+    var isPaid=p.status==='paid';
+    var pkg=p.package||0;
+    var used=p.classesUsed||0;
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #f3f4f6;border-left:4px solid '+(isPaid?'#22C55E':'#EF4444')+';gap:10px;flex-wrap:wrap;">'
+      +'<div style="display:flex;align-items:center;gap:10px;flex:1;">'
+        +'<div style="font-size:1.4rem;">'+(s?s.avatar:'👤')+'</div>'
+        +'<div>'
+          +'<div style="font-weight:700;font-size:0.9rem;">'+p.studentName+'</div>'
+          +'<div style="font-size:0.75rem;color:#9CA3AF;">'+(p.date||'No date')+(p.notes?'  ·  '+p.notes:'')+'</div>'
+        +'</div>'
+      +'</div>'
+      +'<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">'
+        +'<div style="text-align:center;"><div style="font-weight:700;color:#A855F7;font-size:0.9rem;">₱'+parseFloat(p.amount||0).toLocaleString()+'</div><div style="font-size:0.7rem;color:#9CA3AF;">Amount</div></div>'
+        +'<div style="text-align:center;"><div style="font-weight:700;font-size:0.9rem;">'+pkg+' cls</div><div style="font-size:0.7rem;color:#9CA3AF;">Package</div></div>'
+        +'<span style="background:'+(isPaid?'#DCFCE7':'#FEE2E2')+';color:'+(isPaid?'#15803D':'#DC2626')+';padding:4px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;">'+(isPaid?'✅ Paid':'❌ Not Paid')+'</span>'
+        +'<button onclick="editPayment('+p.id+')" style="padding:5px 12px;border-radius:8px;border:none;background:#EFF6FF;color:#1D4ED8;font-weight:700;font-size:11px;cursor:pointer;">✏️ Edit</button>'
+        +'<button onclick="deletePayment('+p.id+')" style="padding:5px 12px;border-radius:8px;border:none;background:#FEE2E2;color:#EF4444;font-weight:700;font-size:11px;cursor:pointer;">🗑️ Delete</button>'
+      +'</div>'
+    +'</div>';
+  }).join('');
 }
 
 function renderEarnings(){
@@ -2503,5 +2479,80 @@ function deletePDFRecord(id){
   renderPDFRecords();
 }
 </script>
+
+<!-- Edit Payment Modal -->
+<div id="editPaymentModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:420px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.18);position:relative;">
+    <button onclick="closeEditPaymentModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#888;">&times;</button>
+    <h2 style="margin:0 0 20px;font-size:1.1rem;color:#374151;">✏️ Edit Payment</h2>
+    <input type="hidden" id="edit-pay-id">
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Student</label>
+      <input id="edit-pay-student" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;background:#F9FAFB;" readonly>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Amount (₱)</label>
+      <input id="edit-pay-amount" type="number" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Date</label>
+      <input id="edit-pay-date" type="date" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Status</label>
+      <select id="edit-pay-status" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+        <option value="paid">✅ Paid</option>
+        <option value="unpaid">❌ Not Paid</option>
+      </select>
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Notes</label>
+      <input id="edit-pay-notes" type="text" placeholder="e.g. Package 3, April renewal..." style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+    </div>
+    <button onclick="saveEditedPayment()" style="width:100%;padding:12px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;">💾 Save Changes</button>
+  </div>
+</div>
+
+<script>
+function editPayment(id){
+  var payments=getPayments();
+  var p=payments.find(function(x){return String(x.id)===String(id);});
+  if(!p) return;
+  document.getElementById('edit-pay-id').value=p.id;
+  document.getElementById('edit-pay-student').value=p.studentName;
+  document.getElementById('edit-pay-amount').value=p.amount||0;
+  document.getElementById('edit-pay-date').value=p.date||''  ;
+  document.getElementById('edit-pay-status').value=p.status||'unpaid';
+  document.getElementById('edit-pay-notes').value=p.notes||'';
+  document.getElementById('editPaymentModal').style.display='flex';
+}
+function closeEditPaymentModal(){
+  document.getElementById('editPaymentModal').style.display='none';
+}
+function saveEditedPayment(){
+  var id=document.getElementById('edit-pay-id').value;
+  var payments=getPayments();
+  var idx=payments.findIndex(function(x){return String(x.id)===String(id);});
+  if(idx===-1){alert('Payment not found.');return;}
+  payments[idx].amount=parseFloat(document.getElementById('edit-pay-amount').value)||0;
+  payments[idx].date=document.getElementById('edit-pay-date').value;
+  payments[idx].status=document.getElementById('edit-pay-status').value;
+  payments[idx].notes=document.getElementById('edit-pay-notes').value;
+  savePayments(payments);
+  closeEditPaymentModal();
+  renderPayments();
+  renderEarnings();
+  alert('✅ Payment updated!');
+}
+function deletePayment(id){
+  if(!confirm('Are you sure you want to delete this payment? This cannot be undone.')) return;
+  var payments=getPayments().filter(function(x){return String(x.id)!==String(id);});
+  savePayments(payments);
+  renderPayments();
+  renderEarnings();
+}
+document.getElementById('editPaymentModal').addEventListener('click',function(e){if(e.target===this)closeEditPaymentModal();});
+</script>
+
 </body>
 </html>
