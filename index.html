@@ -286,8 +286,8 @@ canvas#wb{position:absolute;top:40px;left:0;right:0;bottom:60px;cursor:crosshair
       <div class="card">
         <div class="card-title">💱 Live Exchange Rate</div>
         <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px;">PHP → RMB</div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;color:var(--text);">¥0.1247</div><div style="font-size:10px;color:var(--green);font-weight:700;">per ₱1.00 · live</div></div>
-          <div style="text-align:right;"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px;">₱2,500 =</div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;color:var(--purple);">¥311.75</div></div>
+          <div><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px;">CNY → PHP</div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:24px;color:var(--text);" id="live-rate-display">₱8.80</div><div style="font-size:10px;color:var(--green);font-weight:700;">per ¥1.00 · live</div></div>
+          <div style="text-align:right;"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px;">¥1 =</div><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;color:var(--purple);" id="live-rate">₱8.80</div></div>
         </div>
       </div>
       <div class="card">
@@ -816,7 +816,9 @@ fetch('https://api.frankfurter.app/latest?from=CNY&to=PHP')
     renderStudents();
     renderPayments();
     const el=document.getElementById('live-rate');
-    if(el)el.textContent='¥1 = ₱'+RATE.toFixed(4);
+    if(el)el.textContent='₱'+RATE.toFixed(2);
+    var el2=document.getElementById('live-rate-display');
+    if(el2)el2.textContent='₱'+RATE.toFixed(2);
   }).catch(()=>{
     // fallback to exchangerate-api
     fetch('https://api.exchangerate-api.com/v4/latest/CNY')
@@ -826,7 +828,9 @@ fetch('https://api.frankfurter.app/latest?from=CNY&to=PHP')
         renderStudents();
         renderPayments();
         const el=document.getElementById('live-rate');
-        if(el)el.textContent='¥1 = ₱'+RATE.toFixed(4);
+        if(el)el.textContent='₱'+RATE.toFixed(2);
+        var el2=document.getElementById('live-rate-display');
+        if(el2)el2.textContent='₱'+RATE.toFixed(2);
       }).catch(()=>{});
   });
 
