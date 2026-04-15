@@ -2214,6 +2214,10 @@ function renderPayments(){
 
   // Sort newest first
   var sortedKeys=Object.keys(groups).sort().reverse();
+  // Sort vouchers within each month by date descending
+  sortedKeys.forEach(function(k){
+    groups[k].payments.sort(function(a,b){ return new Date(b.date)-new Date(a.date); });
+  });
 
   var html='';
   sortedKeys.forEach(function(k){
