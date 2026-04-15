@@ -1524,14 +1524,14 @@ const lastPage = localStorage.getItem('ts-last-page');
 if(lastPage && lastPage !== 'dashboard'){
   const navBtn = document.querySelector('[onclick*="nav(\''+lastPage+'\'"]');
   if(navBtn) nav(lastPage, navBtn);
-  // Fallback: call render directly if navBtn not found
-  if(!navBtn){
+  // Re-render after short delay to fix timing issue
+  setTimeout(function(){
     if(lastPage==='earnings') renderEarnings();
     if(lastPage==='payments') renderPayments();
     if(lastPage==='schedule'){renderScheduleGrid();renderClassNotes();}
     if(lastPage==='students') renderStudents();
     if(lastPage==='reports') renderReports();
-  }
+  }, 300);
 }
 
 
