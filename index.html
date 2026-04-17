@@ -1120,25 +1120,23 @@ function getTodaySlots(offset){
   const d=new Date().getDay();
   let dayIdx=(d===0?6:d-1);
   dayIdx=(dayIdx+(offset||0)+7)%7;
-  // Get hardcoded schedule as base
-  var baseSlots = (typeof WEEKLY_SCHEDULE!=="undefined" ? (WEEKLY_SCHEDULE[dayIdx]||[]) : []);
-  // Get localStorage overrides - key format is "time|dayNumber" e.g. "6:30 PM|6"
+  // ts-slots day number = dayIdx + 2 (Mon=2, Tue=3 ... Sat=7, Sun=8)
+  var tsSlotsDay = dayIdx + 2;
+  // Get localStorage overrides
   var savedSlots = JSON.parse(localStorage.getItem("ts-slots")||"{}");
-  // Build merged slot map from hardcoded schedule
+  // Start with hardcoded schedule as base
   var slotMap = {};
+  var baseSlots = (typeof WEEKLY_SCHEDULE!=="undefined" ? (WEEKLY_SCHEDULE[dayIdx]||[]) : []);
   baseSlots.forEach(function(slot){
     slotMap[slot.time] = {student: slot.student, duration: slot.duration};
   });
-  // Apply localStorage overrides using correct key format "time|dayIndex"
+  // Apply localStorage overrides AFTER hardcoded (localStorage wins)
   Object.keys(savedSlots).forEach(function(key){
     var parts = key.split("|");
     if(parts.length !== 2) return;
     var time = parts[0];
     var keyDay = parseInt(parts[1]);
-    // dayIdx uses 0=Mon...6=Sun, but ts-slots uses 1=Mon...7=Sun
-    // Check both formats
-    var matches = (keyDay === dayIdx) || (keyDay === dayIdx + 1);
-    if(!matches) return;
+    if(keyDay !== tsSlotsDay) return;
     var slot = savedSlots[key];
     if(slot.type === "student" && slot.name) {
       var stu = students.find(function(x){return x.name===slot.name;});
