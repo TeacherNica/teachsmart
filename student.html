@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TeachSmart — Student Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pink: #FF6B9D;
+  --purple: #A855F7;
+  --blue: #3B82F6;
+  --green: #22C55E;
+  --orange: #F97316;
+  --yellow: #FBBF24;
+  --bg: #F0F4FF;
+  --card: #ffffff;
+  --text: #1E1B4B;
+  --muted: #6B7280;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  color: var(--text);
+}
+
+/* ── LOGIN ── */
+#login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #FF6B9D 100%);
+  padding: 20px;
+}
+
+.login-card {
+  background: white;
+  border-radius: 28px;
+  padding: 40px 32px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  text-align: center;
+  animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.login-logo {
+  font-family: 'Fredoka One', cursive;
+  font-size: 2.2rem;
+  background: linear-gradient(135deg, #A855F7, #FF6B9D);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 6px;
+}
+
+.login-sub {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+
+.login-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #E5E7EB;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-family: 'Nunito', sans-serif;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.login-input:focus { border-color: var(--purple); }
+
+.login-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #A855F7, #FF6B9D);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(168,85,247,0.4); }
+.login-error { color: #EF4444; font-size: 0.85rem; margin-top: 8px; font-weight: 700; }
+
+/* ── STUDENT APP ── */
+#student-app { display: none; }
+
+.student-header {
+  background: linear-gradient(135deg, #A855F7, #FF6B9D);
+  padding: 20px 20px 40px;
+  color: white;
+  position: relative;
+}
+
+.student-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.student-app-name {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.4rem;
+}
+
+.logout-btn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+}
+
+.student-avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.student-big-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  border: 3px solid rgba(255,255,255,0.6);
+}
+
+.student-welcome {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.student-name-big {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.8rem;
+}
+
+.student-nat {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* ── CONTENT ── */
+.student-content {
+  padding: 0 16px 30px;
+  margin-top: -24px;
+}
+
+.s-card {
+  background: white;
+  border-radius: 20px;
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  animation: slideUp 0.4s ease forwards;
+  opacity: 0;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.s-card:nth-child(1) { animation-delay: 0.1s; }
+.s-card:nth-child(2) { animation-delay: 0.2s; }
+.s-card:nth-child(3) { animation-delay: 0.3s; }
+.s-card:nth-child(4) { animation-delay: 0.4s; }
+.s-card:nth-child(5) { animation-delay: 0.5s; }
+.s-card:nth-child(6) { animation-delay: 0.6s; }
+
+.card-title-fun {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Classes remaining */
+.classes-big {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.classes-number {
+  font-family: 'Fredoka One', cursive;
+  font-size: 4rem;
+  line-height: 1;
+  background: linear-gradient(135deg, #A855F7, #FF6B9D);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.classes-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.pkg-bar {
+  height: 10px;
+  background: #F3F4F6;
+  border-radius: 10px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.pkg-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 1s ease;
+}
+
+.low-warning {
+  background: linear-gradient(135deg, #FEF2F2, #FFE4E6);
+  border: 2px solid #FECDD3;
+  border-radius: 14px;
+  padding: 14px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.low-warning-text {
+  font-weight: 800;
+  color: #DC2626;
+  font-size: 0.9rem;
+}
+
+/* Quote */
+.quote-text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.5;
+  text-align: center;
+  font-style: italic;
+}
+
+.quote-author {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* Schedule */
+.schedule-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.schedule-item:last-child { border-bottom: none; }
+
+.schedule-day {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #EDE9FE, #DDD6FE);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.8rem;
+  color: #7C3AED;
+  flex-shrink: 0;
+}
+
+.schedule-info { flex: 1; }
+.schedule-time { font-weight: 800; font-size: 0.9rem; }
+.schedule-duration { font-size: 0.75rem; color: var(--muted); }
+
+/* Attendance */
+.att-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 12px;
+  margin-bottom: 6px;
+}
+
+.att-date { font-weight: 700; font-size: 0.85rem; }
+.att-time { font-size: 0.75rem; color: var(--muted); }
+
+/* Progress */
+.skill-row { margin-bottom: 12px; }
+.skill-label { font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; }
+.skill-bar { height: 10px; background: #F3F4F6; border-radius: 10px; overflow: hidden; }
+.skill-fill { height: 100%; border-radius: 10px; transition: width 1s ease; }
+
+/* Birthday */
+.birthday-card {
+  background: linear-gradient(135deg, #FFF7ED, #FEF3C7);
+  border: 2px solid #FDE68A;
+  border-radius: 14px;
+  padding: 14px;
+  text-align: center;
+}
+
+/* Homework */
+.homework-box {
+  background: #F5F3FF;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #4C1D95;
+  font-weight: 600;
+}
+
+/* Translations */
+.lang-zh { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">📚 TeachSmart</div>
+    <div class="login-sub">Student Portal · 学生入口 · 학생 포털</div>
+    <input class="login-input" id="login-name" placeholder="Your name · 你的名字 · 이름" />
+    <input class="login-input" id="login-pin" type="password" placeholder="PIN code · 密码 · 비밀번호" />
+    <button class="login-btn" onclick="studentLogin()">🚀 Enter · 进入 · 입장</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- STUDENT APP -->
+<div id="student-app">
+  <div class="student-header">
+    <div class="student-header-top">
+      <div class="student-app-name">📚 TeachSmart</div>
+      <button class="logout-btn" onclick="studentLogout()">🚪 Logout</button>
+    </div>
+    <div class="student-avatar-section">
+      <div class="student-big-avatar" id="s-avatar">👤</div>
+      <div>
+        <div class="student-welcome" id="s-greeting">Good morning!</div>
+        <div class="student-name-big" id="s-name">Student</div>
+        <div class="student-nat" id="s-nat"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="student-content" id="student-content"></div>
+</div>
+
+<script>
+const STUDENT_PIN = 'student2026';
+
+// Translations
+const T = {
+  zh: {
+    greeting_morning: '早上好！☀️',
+    greeting_afternoon: '下午好！🌤️',
+    greeting_evening: '晚上好！🌙',
+    classes_left: '剩余课时',
+    classes_of: '共',
+    low_warning: '⚠️ 课时不足！请联系老师续费。',
+    schedule_title: '📅 我的课程表',
+    attendance_title: '✅ 上课记录',
+    progress_title: '📊 学习进度',
+    homework_title: '📝 老师留言',
+    quote_title: '🌟 今日寄语',
+    no_schedule: '暂无课程安排',
+    no_attendance: '暂无上课记录',
+    no_homework: '老师暂未留言',
+    present: '✅ 出席',
+    absent: '🔔 请假',
+    noshow: '🚫 未出席',
+    days: ['周一','周二','周三','周四','周五','周六','周日'],
+    birthday_soon: '🎂 你的生日快到了！还有',
+    birthday_days: '天',
+    birthday_today: '🎂 今天是你的生日！生日快乐！🎉',
+  },
+  kr: {
+    greeting_morning: '좋은 아침이에요! ☀️',
+    greeting_afternoon: '안녕하세요! 🌤️',
+    greeting_evening: '좋은 저녁이에요! 🌙',
+    classes_left: '남은 수업',
+    classes_of: '/',
+    low_warning: '⚠️ 수업이 부족해요! 선생님께 문의하세요.',
+    schedule_title: '📅 내 수업 일정',
+    attendance_title: '✅ 수업 기록',
+    progress_title: '📊 학습 진도',
+    homework_title: '📝 선생님 메시지',
+    quote_title: '🌟 오늘의 명언',
+    no_schedule: '수업 일정이 없어요',
+    no_attendance: '수업 기록이 없어요',
+    no_homework: '선생님 메시지가 없어요',
+    present: '✅ 출석',
+    absent: '🔔 결석',
+    noshow: '🚫 노쇼',
+    days: ['월','화','수','목','금','토','일'],
+    birthday_soon: '🎂 생일이 얼마 남지 않았어요! ',
+    birthday_days: '일 남았어요',
+    birthday_today: '🎂 오늘은 당신의 생일이에요! 생일 축하해요! 🎉',
+  },
+  en: {
+    greeting_morning: 'Good morning! ☀️',
+    greeting_afternoon: 'Good afternoon! 🌤️',
+    greeting_evening: 'Good evening! 🌙',
+    classes_left: 'Classes Left',
+    classes_of: 'of',
+    low_warning: '⚠️ Low on classes! Please contact your teacher.',
+    schedule_title: '📅 My Schedule',
+    attendance_title: '✅ Attendance History',
+    progress_title: '📊 My Progress',
+    homework_title: '📝 Teacher\'s Message',
+    quote_title: '🌟 Quote of the Day',
+    no_schedule: 'No schedule yet',
+    no_attendance: 'No attendance records yet',
+    no_homework: 'No message from teacher yet',
+    present: '✅ Present',
+    absent: '🔔 Absent',
+    noshow: '🚫 No Show',
+    days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    birthday_soon: '🎂 Your birthday is in ',
+    birthday_days: ' days!',
+    birthday_today: '🎂 Today is your birthday! Happy Birthday! 🎉',
+  }
+};
+
+const QUOTES = {
+  zh: [
+    { text: '学习是一段旅程，不是终点。', author: '— 智慧箴言' },
+    { text: '每一天都是新的开始，加油！', author: '— 励志语录' },
+    { text: '坚持就是胜利，你做到了！', author: '— 人生哲理' },
+    { text: '进步不在于快慢，而在于坚持。', author: '— 学习之道' },
+    { text: '英语是你走向世界的桥梁。', author: '— Teacher Nica' },
+  ],
+  kr: [
+    { text: '배움은 끝이 없는 여행이에요.', author: '— 지혜의 말' },
+    { text: '매일이 새로운 시작이에요. 화이팅!', author: '— 응원의 말' },
+    { text: '포기하지 마세요. 당신은 할 수 있어요!', author: '— 인생 철학' },
+    { text: '영어는 세상과 소통하는 다리예요.', author: '— Teacher Nica' },
+    { text: '작은 진전도 큰 성공의 시작이에요.', author: '— 학습의 길' },
+  ],
+  en: [
+    { text: 'Every expert was once a beginner. Keep going!', author: '— Teacher Nica' },
+    { text: 'Learning a language opens a new world.', author: '— Wisdom' },
+    { text: 'Progress, not perfection. You\'re doing great!', author: '— Teacher Nica' },
+    { text: 'Consistency is the key to fluency.', author: '— Language Learning' },
+    { text: 'Believe in yourself — your English is getting better every day!', author: '— Teacher Nica' },
+  ]
+};
+
+let currentStudent = null;
+let logoutTimer = null;
+
+function getLang(student) {
+  if (!student) return 'en';
+  if (student.nat && student.nat.includes('Chinese')) return 'zh';
+  if (student.nat && student.nat.includes('Korean')) return 'kr';
+  return 'en';
+}
+
+function getGreeting(lang) {
+  const h = new Date().getHours();
+  const t = T[lang];
+  if (h < 12) return t.greeting_morning;
+  if (h < 18) return t.greeting_afternoon;
+  return t.greeting_evening;
+}
+
+function studentLogin() {
+  const nameInput = document.getElementById('login-name').value.trim();
+  const pinInput = document.getElementById('login-pin').value.trim();
+  const errEl = document.getElementById('login-error');
+
+  if (!nameInput) { errEl.textContent = '⚠️ Please enter your name · 请输入姓名 · 이름을 입력하세요'; return; }
+  if (pinInput !== STUDENT_PIN) { errEl.textContent = '❌ Wrong PIN · 密码错误 · PIN이 틀려요'; return; }
+
+  // Find student
+  const students = JSON.parse(localStorage.getItem('ts-students') || '[]');
+  const student = students.find(function(s) {
+    return s.name.toLowerCase() === nameInput.toLowerCase();
+  });
+
+  if (!student) {
+    errEl.textContent = '❌ Student not found · 找不到该学生 · 학생을 찾을 수 없어요';
+    return;
+  }
+
+  currentStudent = student;
+  sessionStorage.setItem('ts-student-session', JSON.stringify(student));
+  showStudentApp(student);
+  startLogoutTimer();
+}
+
+function showStudentApp(student) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('student-app').style.display = 'block';
+
+  const lang = getLang(student);
+  const t = T[lang];
+
+  // Header
+  document.getElementById('s-avatar').textContent = student.avatar || student.name.charAt(0);
+  document.getElementById('s-greeting').textContent = getGreeting(lang);
+  document.getElementById('s-name').textContent = student.name;
+  document.getElementById('s-nat').textContent = student.nat || '';
+
+  // Build content
+  const content = document.getElementById('student-content');
+  content.innerHTML = '';
+
+  const cards = [];
+
+  // 1. Quote of the day
+  const quotes = QUOTES[lang];
+  const quote = quotes[Math.floor(Math.random() * quotes.length)];
+  cards.push(`
+    <div class="s-card" style="background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border:2px solid #DDD6FE;">
+      <div class="card-title-fun" style="color:#7C3AED;">${t.quote_title}</div>
+      <div class="quote-text">"${quote.text}"</div>
+      <div class="quote-author">${quote.author}</div>
+    </div>
+  `);
+
+  // 2. Classes remaining
+  const pct = Math.round((student.classes / student.total) * 100);
+  const barColor = student.classes <= 3 ? '#EF4444' : student.classes <= 6 ? '#F97316' : '#A855F7';
+  cards.push(`
+    <div class="s-card">
+      <div class="card-title-fun" style="color:#A855F7;">📦 ${t.classes_left}</div>
+      <div class="classes-big">
+        <div class="classes-number">${student.classes}</div>
+        <div class="classes-label">${t.classes_of} ${student.total} classes</div>
+      </div>
+      <div class="pkg-bar"><div class="pkg-fill" style="width:${pct}%;background:${barColor};"></div></div>
+      ${student.classes <= 3 ? `<div class="low-warning"><div class="low-warning-text">${t.low_warning}</div></div>` : ''}
+    </div>
+  `);
+
+  // 3. Birthday
+  if (student.birthday) {
+    const today = new Date();
+    const bday = new Date(student.birthday);
+    const thisYear = new Date(today.getFullYear(), bday.getMonth(), bday.getDate());
+    if (thisYear < today) thisYear.setFullYear(today.getFullYear() + 1);
+    const daysUntil = Math.ceil((thisYear - today) / (1000 * 60 * 60 * 24));
+    if (daysUntil <= 30) {
+      const bdayText = daysUntil === 0 ? t.birthday_today : `${t.birthday_soon}${daysUntil}${t.birthday_days}`;
+      cards.push(`
+        <div class="s-card">
+          <div class="birthday-card">
+            <div style="font-size:2.5rem;margin-bottom:8px;">🎂</div>
+            <div style="font-weight:800;font-size:1rem;color:#92400E;">${bdayText}</div>
+          </div>
+        </div>
+      `);
+    }
+  }
+
+  // 4. Teacher's message (homework)
+  const homework = student.homework || '';
+  cards.push(`
+    <div class="s-card">
+      <div class="card-title-fun" style="color:#F97316;">${t.homework_title}</div>
+      <div class="homework-box">${homework || t.no_homework}</div>
+    </div>
+  `);
+
+  // 5. Schedule
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const schedule = JSON.parse(localStorage.getItem('ts-schedule') || '{}');
+  let scheduleItems = '';
+  days.forEach(function(day, i) {
+    const daySlots = schedule[day] || {};
+    Object.keys(daySlots).forEach(function(time) {
+      const slot = daySlots[time];
+      if (slot && slot.name === student.name) {
+        scheduleItems += `
+          <div class="schedule-item">
+            <div class="schedule-day">${t.days[i]}</div>
+            <div class="schedule-info">
+              <div class="schedule-time">${time}</div>
+              <div class="schedule-duration">⏱️ ${student.duration || '50 min'}</div>
+            </div>
+          </div>
+        `;
+      }
+    });
+  });
+  cards.push(`
+    <div class="s-card">
+      <div class="card-title-fun" style="color:#3B82F6;">${t.schedule_title}</div>
+      ${scheduleItems || `<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:10px 0;">${t.no_schedule}</div>`}
+    </div>
+  `);
+
+  // 6. Attendance history
+  const log = student.attendanceLog || [];
+  let attItems = '';
+  log.slice(0, 10).forEach(function(entry) {
+    const bgColor = entry.status==='present' ? '#F0FDF4' : entry.status==='noshow' ? '#FEF2F2' : '#FFF7ED';
+    const borderColor = entry.status==='present' ? '#22C55E' : entry.status==='noshow' ? '#EF4444' : '#F97316';
+    const badgeBg = entry.status==='present' ? '#22C55E' : entry.status==='noshow' ? '#EF4444' : '#F97316';
+    const badgeLabel = entry.status==='present' ? t.present : entry.status==='noshow' ? t.noshow : t.absent;
+    attItems += `
+      <div class="att-item" style="background:${bgColor};border-left:4px solid ${borderColor};">
+        <div>
+          <div class="att-date">${entry.date || ''}</div>
+          <div class="att-time">${entry.time || ''}</div>
+        </div>
+        <span style="background:${badgeBg};color:white;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;">${badgeLabel}</span>
+      </div>
+    `;
+  });
+  cards.push(`
+    <div class="s-card">
+      <div class="card-title-fun" style="color:#22C55E;">${t.attendance_title}</div>
+      ${attItems || `<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:10px 0;">${t.no_attendance}</div>`}
+    </div>
+  `);
+
+  // 7. Progress
+  if (student.skills && student.skills.length > 0) {
+    const skillColors = ['#A855F7','#3B82F6','#22C55E','#F97316','#FF6B9D'];
+    let skillRows = '';
+    student.skills.forEach(function(skill, i) {
+      const color = skillColors[i % skillColors.length];
+      skillRows += `
+        <div class="skill-row">
+          <div class="skill-label">
+            <span>${skill.name}</span>
+            <span style="color:${color};font-weight:800;">${skill.value}%</span>
+          </div>
+          <div class="skill-bar">
+            <div class="skill-fill" style="width:${skill.value}%;background:${color};"></div>
+          </div>
+        </div>
+      `;
+    });
+    cards.push(`
+      <div class="s-card">
+        <div class="card-title-fun" style="color:#A855F7;">${t.progress_title}</div>
+        ${skillRows}
+      </div>
+    `);
+  }
+
+  content.innerHTML = cards.join('');
+}
+
+function studentLogout() {
+  currentStudent = null;
+  sessionStorage.removeItem('ts-student-session');
+  clearTimeout(logoutTimer);
+  document.getElementById('student-app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-name').value = '';
+  document.getElementById('login-pin').value = '';
+  document.getElementById('login-error').textContent = '';
+}
+
+function startLogoutTimer() {
+  clearTimeout(logoutTimer);
+  logoutTimer = setTimeout(function() {
+    alert('Session expired. Please log in again.');
+    studentLogout();
+  }, 30 * 60 * 1000); // 30 minutes
+}
+
+// Reset timer on activity
+document.addEventListener('click', function() { if(currentStudent) startLogoutTimer(); });
+
+// Check for existing session
+window.onload = function() {
+  const session = sessionStorage.getItem('ts-student-session');
+  if (session) {
+    try {
+      const student = JSON.parse(session);
+      // Re-fetch fresh data
+      const students = JSON.parse(localStorage.getItem('ts-students') || '[]');
+      const fresh = students.find(function(s) { return s.id === student.id; });
+      if (fresh) {
+        currentStudent = fresh;
+        showStudentApp(fresh);
+        startLogoutTimer();
+      }
+    } catch(e) {}
+  }
+
+  // Enter key on PIN
+  document.getElementById('login-pin').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') studentLogin();
+  });
+  document.getElementById('login-name').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('login-pin').focus();
+  });
+};
+</script>
+</body>
+</html>
