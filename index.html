@@ -2794,6 +2794,18 @@ function renderClassNotes(){
   }).join('');
 }
 
+// ─── DAILY RESET ───
+// Clear attendance_today if it's a new day
+(function(){
+  var today = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  var lastReset = localStorage.getItem('ts-last-reset');
+  if(lastReset !== today) {
+    students.forEach(function(s){ s.attendance_today = ''; });
+    localStorage.setItem('ts-last-reset', today);
+    localStorage.setItem('ts-students', JSON.stringify(students));
+  }
+})();
+
 // ─── INIT ───
 renderDashboard();
 renderStudents();
