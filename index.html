@@ -445,93 +445,50 @@ canvas#wb{position:absolute;top:40px;left:0;right:0;bottom:60px;cursor:crosshair
 <!-- ─── CLASSROOM ─── -->
 <div class="page" id="page-classroom">
   <div class="page-header">
-    <div style="display:flex;align-items:center;gap:14px;">
-      <div style="display:flex;align-items:center;gap:8px;background:white;padding:6px 14px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
-        <div style="width:28px;height:28px;background:linear-gradient(135deg,var(--blue),var(--teal));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:white;font-family:'Nunito',sans-serif;">陈</div>
-        <div style="font-weight:700;font-size:14px;">Chen Xiaoming 🇨🇳</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:5px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:5px 11px;">
-        <div style="width:7px;height:7px;background:var(--red);border-radius:50%;animation:pulse 1.5s infinite;"></div>
-        <span style="font-size:12px;font-weight:700;color:#EF4444;">LIVE</span>
-      </div>
-      <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;background:white;padding:5px 13px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.05);" id="class-timer">00:00:00</div>
-      <div style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:5px 11px;font-size:12px;font-weight:700;color:var(--blue);">🎥 VooV: 892-456-123</div>
-    </div>
-    <div style="display:flex;gap:7px;">
-      <button class="btn btn-sm" style="background:white;border:1px solid #E5E7EB;" onclick="toggleMaterials()">📁 Materials</button>
-      <button class="btn btn-sm" style="background:linear-gradient(135deg,var(--red),#DC2626);color:white;" onclick="endClass()">⏹ End Class</button>
+    <div><div class="page-title">🎥 Live Classroom</div><div class="page-sub">Start your Tencent Meeting classes</div></div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button onclick="classroomDayOffset--;renderClassroom();" style="padding:6px 12px;border-radius:8px;border:1px solid #E5E7EB;background:white;cursor:pointer;font-weight:700;">◀</button>
+      <button onclick="classroomDayOffset=0;renderClassroom();" style="padding:6px 14px;border-radius:8px;border:none;background:var(--purple);color:white;cursor:pointer;font-weight:700;font-size:0.82rem;">Today</button>
+      <button onclick="classroomDayOffset++;renderClassroom();" style="padding:6px 12px;border-radius:8px;border:1px solid #E5E7EB;background:white;cursor:pointer;font-weight:700;">▶</button>
     </div>
   </div>
-  <div class="classroom-shell">
-    <div class="tools-col">
-      <div class="tool active" id="tool-pen" onclick="setTool('pen')">✏️</div>
-      <div class="tool" id="tool-marker" onclick="setTool('marker')">🖊️</div>
-      <div class="tool" id="tool-eraser" onclick="setTool('eraser')">🧹</div>
-      <div class="tool-sep"></div>
-      <div class="color-dot active" style="background:#1E1B4B;" onclick="setColor('#1E1B4B',this)"></div>
-      <div class="color-dot" style="background:#EF4444;" onclick="setColor('#EF4444',this)"></div>
-      <div class="color-dot" style="background:#3B82F6;" onclick="setColor('#3B82F6',this)"></div>
-      <div class="color-dot" style="background:#22C55E;" onclick="setColor('#22C55E',this)"></div>
-      <div class="color-dot" style="background:#F97316;" onclick="setColor('#F97316',this)"></div>
-      <div class="color-dot" style="background:#A855F7;" onclick="setColor('#A855F7',this)"></div>
-      <div class="tool-sep"></div>
-      <div class="tool" onclick="clearWB()" title="Clear">🗑️</div>
-      <div class="tool" onclick="undoWB()" title="Undo">↩️</div>
-    </div>
-    <div class="wb-area" style="display:flex;flex-direction:column;">
-      <div class="wb-tabs">
-        <button class="wb-tab active" onclick="switchView('wb',this)">🖊️ Whiteboard</button>
-        <button class="wb-tab" onclick="switchView('pdf',this)">📄 PDF Lesson</button>
-      </div>
-      <div style="flex:1;position:relative;overflow:hidden;" id="wb-wrap">
-        <canvas id="wb"></canvas>
-        <div id="pdf-view" style="display:none;position:absolute;inset:0;background:#525659;overflow:auto;display:none;align-items:center;justify-content:center;padding:20px;">
-          <div style="background:white;border-radius:8px;padding:32px;max-width:600px;width:100%;box-shadow:0 8px 30px rgba(0,0,0,0.3);">
-            <h2 style="font-family:'Nunito',sans-serif;font-weight:900;color:var(--text);margin-bottom:14px;font-size:20px;">Chapter 5: Describing Places</h2>
-            <p style="font-size:14px;color:#374151;line-height:1.8;margin-bottom:12px;">In this chapter, we will learn how to describe places using vivid and descriptive language.</p>
-            <div style="background:#F0F4FF;border-radius:10px;padding:14px;margin-bottom:10px;"><div style="font-weight:700;font-size:13px;margin-bottom:8px;">Exercise 1 — Fill in the blanks:</div><div style="font-size:13px;color:#374151;margin-bottom:6px;font-weight:600;">1. The old temple was _______ and full of history.</div><div style="font-size:13px;color:#374151;margin-bottom:6px;font-weight:600;">2. The city market was _______ with people and colours.</div><div style="font-size:13px;color:#374151;font-weight:600;">3. The lake at sunrise looked _______ and peaceful.</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="wb-bottom">
-        <button class="media-btn on" id="mic-btn" onclick="toggleMic()">🎤</button>
-        <button class="media-btn on" id="cam-btn" onclick="toggleCam()">📷</button>
-        <button class="media-btn on" id="share-btn">🖥️</button>
-        <div style="display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.08);border-radius:9px;padding:6px 12px;margin-left:6px;">
-          <span style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;">Size</span>
-          <input type="range" min="1" max="20" value="3" style="width:70px;accent-color:var(--purple);" oninput="strokeSize=parseInt(this.value)">
-        </div>
-        <div style="margin-left:auto;font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);">📦 Chen Xiaoming · <span style="color:#22C55E;">12 classes left</span></div>
-      </div>
-    </div>
-    <div class="chat-col">
-      <div class="video-feeds">
-        <div class="video-feed" style="border-color:rgba(168,85,247,0.4);">👩‍🏫<div class="vid-label">🟣 You</div></div>
-        <div class="video-feed">👦<div class="vid-label">🇨🇳 Chen</div></div>
-      </div>
-      <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.06);font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;">💬 Class Chat</div>
-      <div class="chat-msgs" id="chat-msgs">
-        <div class="msg me"><div class="msg-bubble">Hello! Let's start with vocabulary 😊</div></div>
-        <div class="msg them"><div class="msg-bubble">Hello teacher! Ready 📚</div></div>
-        <div class="msg me"><div class="msg-bubble">Open page 42. Describing places today.</div></div>
-        <div class="msg them"><div class="msg-bubble">Teacher, what does "magnificent" mean?</div></div>
-        <div class="msg me"><div class="msg-bubble">Very beautiful and impressive! Like — "The view was magnificent." ⛰️</div></div>
-      </div>
-      <div class="chat-inp-row">
-        <input class="chat-inp" placeholder="Type a message..." id="chat-input" onkeypress="if(event.key==='Enter')sendChat()">
-        <button class="send-btn" onclick="sendChat()">➤</button>
-      </div>
-    </div>
-  </div>
-  <!-- Materials Tray -->
-  <div id="materials-tray" style="display:none;position:fixed;bottom:80px;left:290px;background:white;border-radius:16px;padding:14px;width:240px;box-shadow:0 8px 30px rgba(0,0,0,0.15);border:1px solid rgba(0,0,0,0.08);z-index:50;">
-    <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">📁 Materials</div>
-    <div onclick="switchView('pdf',document.querySelectorAll('.wb-tab')[1])" style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='#F9FAFB'" onmouseout="this.style.background='transparent'"><span style="font-size:18px;">📘</span><div><div style="font-weight:700;font-size:12px;">Textbook Ch.5</div><div style="font-size:10px;color:var(--muted);">PDF · 12 pages</div></div><span style="font-size:10px;font-weight:700;color:var(--purple);background:#F3E8FF;padding:2px 7px;border-radius:6px;margin-left:auto;">Open</span></div>
-    <div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;cursor:pointer;" onmouseover="this.style.background='#F9FAFB'" onmouseout="this.style.background='transparent'"><span style="font-size:18px;">📄</span><div><div style="font-weight:700;font-size:12px;">Vocabulary Worksheet</div><div style="font-size:10px;color:var(--muted);">PDF · 2 pages</div></div><span style="font-size:10px;font-weight:700;color:var(--purple);background:#F3E8FF;padding:2px 7px;border-radius:6px;margin-left:auto;">Open</span></div>
-  </div>
-</div>
 
-<!-- ─── PAYMENTS ─── -->
+  <!-- Day label -->
+  <div id="classroom-day-label" style="font-weight:800;font-size:1rem;color:#374151;margin-bottom:14px;"></div>
+
+  <!-- Active Timer (hidden by default) -->
+  <div id="classroom-timer-card" style="display:none;background:linear-gradient(135deg,#A855F7,#7C3AED);border-radius:16px;padding:18px 20px;margin-bottom:16px;color:white;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div style="font-size:0.8rem;opacity:0.85;margin-bottom:4px;">🔴 CLASS IN PROGRESS</div>
+        <div id="classroom-timer-name" style="font-weight:900;font-size:1.2rem;"></div>
+        <div id="classroom-timer-duration" style="font-size:0.8rem;opacity:0.85;"></div>
+      </div>
+      <div style="text-align:center;">
+        <div id="classroom-timer-display" style="font-family:'Nunito',sans-serif;font-weight:900;font-size:2.5rem;letter-spacing:2px;">00:00</div>
+        <div style="font-size:0.75rem;opacity:0.8;">elapsed</div>
+      </div>
+      <button onclick="stopClassTimer()" style="padding:8px 16px;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.4);color:white;border-radius:10px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;">⏹ End Class</button>
+    </div>
+  </div>
+
+  <!-- Students list -->
+  <div id="classroom-list"></div>
+
+  <!-- Link Modal -->
+  <div id="classroom-link-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+    <div style="background:white;border-radius:20px;padding:28px 24px;max-width:420px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+      <div style="font-weight:900;font-size:1.1rem;color:#374151;margin-bottom:6px;">🎥 Start Class</div>
+      <div id="classroom-link-student" style="font-size:0.85rem;color:#6B7280;margin-bottom:16px;"></div>
+      <label style="font-size:0.8rem;font-weight:700;color:#6B7280;display:block;margin-bottom:6px;">Tencent Meeting Link</label>
+      <input id="classroom-link-input" placeholder="Paste your Tencent Meeting link here..." style="width:100%;padding:10px 14px;border:1.5px solid #DDD6FE;border-radius:10px;font-size:0.9rem;font-family:'Nunito',sans-serif;box-sizing:border-box;margin-bottom:14px;">
+      <div style="display:flex;gap:8px;">
+        <button onclick="closeClassroomModal()" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid #E5E7EB;background:white;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Cancel</button>
+        <button onclick="startClassNow()" style="flex:2;padding:10px;background:linear-gradient(135deg,#A855F7,#7C3AED);color:white;border:none;border-radius:10px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;">▶ Start & Open Meeting</button>
+      </div>
+    </div>
+  </div>
+
 <div class="page" id="page-payments">
   <div class="page-header">
     <div><div class="page-title">💰 Payments</div><div class="page-sub">Track student payments</div></div>
@@ -942,7 +899,7 @@ function nav(page,btn){
   if(page==='schedule'){renderScheduleGrid();
   renderClassNotes();;}
   if(page==='earnings'){renderEarnings();}
-  if(page==='classroom')initWB();
+  if(page==='classroom'){renderClassroom();}
 }
 
 // ─── DASHBOARD ───
@@ -2943,6 +2900,108 @@ function renderMaterialsList(){
       +'</div>'
     +'</div>';
   }).join('');
+}
+
+var classroomDayOffset = 0;
+var _classroomStudent = null;
+var _classroomTimer = null;
+var _classroomSeconds = 0;
+
+function renderClassroom(){
+  var days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var d = new Date().getDay();
+  var baseIdx = d===0?6:d-1;
+  var showIdx = (baseIdx+classroomDayOffset+7)%7;
+  var isToday = classroomDayOffset===0;
+  var dayLabel = document.getElementById('classroom-day-label');
+  if(dayLabel) dayLabel.textContent = isToday ? '📅 Today (' + days[showIdx] + ')' : '📅 ' + days[showIdx];
+
+  var sched = getTodaySlots(classroomDayOffset);
+  var list = document.getElementById('classroom-list');
+  if(!list) return;
+
+  if(sched.length === 0){
+    list.innerHTML = '<div style="text-align:center;color:#9CA3AF;padding:40px 0;font-size:0.9rem;">No classes scheduled for this day.</div>';
+    return;
+  }
+
+  list.innerHTML = sched.map(function(slot){
+    var s = slot.s;
+    var status = slot.status;
+    var statusColors = {done:'#22C55E', now:'#F97316', upcoming:'#3B82F6'};
+    var statusLabels = {done:'✓ Done', now:'🔴 Now', upcoming:'Upcoming'};
+    var color = statusColors[status] || '#3B82F6';
+    var label = statusLabels[status] || 'Upcoming';
+    return '<div style="background:white;border-radius:14px;padding:16px 18px;margin-bottom:10px;border:1.5px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">'
+      +'<div style="display:flex;align-items:center;gap:12px;flex:1;">'
+        +'<div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,'+s.c1+','+s.c2+');display:flex;align-items:center;justify-content:center;font-size:1.3rem;">'+s.avatar+'</div>'
+        +'<div>'
+          +'<div style="font-weight:800;font-size:0.95rem;color:#374151;">'+s.name+'</div>'
+          +'<div style="font-size:0.78rem;color:#6B7280;">'+slot.time+' · '+s.duration+'</div>'
+        +'</div>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:8px;">'
+        +'<span style="background:'+color+'1A;color:'+color+';padding:4px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;">'+label+'</span>'
+        +'<button onclick="openClassroomModal(''+s.name+'',''+s.duration+'')" style="padding:8px 16px;background:linear-gradient(135deg,#A855F7,#7C3AED);color:white;border:none;border-radius:10px;font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif;">▶ Start</button>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+function openClassroomModal(studentName, duration){
+  _classroomStudent = {name: studentName, duration: duration};
+  document.getElementById('classroom-link-student').textContent = '👤 ' + studentName + ' · ' + duration;
+  document.getElementById('classroom-link-input').value = '';
+  document.getElementById('classroom-link-modal').style.display = 'flex';
+}
+
+function closeClassroomModal(){
+  document.getElementById('classroom-link-modal').style.display = 'none';
+  _classroomStudent = null;
+}
+
+function startClassNow(){
+  var link = document.getElementById('classroom-link-input').value.trim();
+  if(!link){ alert('Please paste your Tencent Meeting link!'); return; }
+  // Open meeting in new tab
+  window.open(link, '_blank');
+  closeClassroomModal();
+  // Start timer
+  startClassTimer(_classroomStudent || {name:'Student', duration:'25 min'});
+}
+
+function startClassTimer(student){
+  // Stop any existing timer
+  if(_classroomTimer) clearInterval(_classroomTimer);
+  _classroomSeconds = 0;
+  var card = document.getElementById('classroom-timer-card');
+  var nameEl = document.getElementById('classroom-timer-name');
+  var durEl = document.getElementById('classroom-timer-duration');
+  if(card) card.style.display = 'block';
+  if(nameEl) nameEl.textContent = student.name;
+  if(durEl) durEl.textContent = student.duration;
+  _classroomTimer = setInterval(function(){
+    _classroomSeconds++;
+    var mins = Math.floor(_classroomSeconds / 60);
+    var secs = _classroomSeconds % 60;
+    var display = document.getElementById('classroom-timer-display');
+    if(display) display.textContent = String(mins).padStart(2,'0') + ':' + String(secs).padStart(2,'0');
+    // Alert when class duration is reached
+    var durMins = parseInt(student.duration) || 25;
+    if(_classroomSeconds === durMins * 60){
+      alert('⏰ ' + student.duration + ' is up! Class time for ' + student.name + ' is complete.');
+    }
+  }, 1000);
+}
+
+function stopClassTimer(){
+  if(_classroomTimer) clearInterval(_classroomTimer);
+  _classroomTimer = null;
+  _classroomSeconds = 0;
+  var card = document.getElementById('classroom-timer-card');
+  if(card) card.style.display = 'none';
+  var display = document.getElementById('classroom-timer-display');
+  if(display) display.textContent = '00:00';
 }
 </script>
 
