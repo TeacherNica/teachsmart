@@ -1384,7 +1384,7 @@ function convertCurr(){const v=parseFloat(document.getElementById('php-in').valu
 
 // ─── PROGRESS REPORTS ───
 function renderReports(){
-  var el=document.getElementById('report-list');
+  var el=document.getElementById('reports-list');
   if(!el)return;
   var allStudents=JSON.parse(localStorage.getItem('ts-students')||'[]');
   if(allStudents.length===0){
