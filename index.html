@@ -1384,32 +1384,58 @@ function convertCurr(){const v=parseFloat(document.getElementById('php-in').valu
 
 // ─── PROGRESS REPORTS ───
 function renderReports(){
-  const el=document.getElementById('reports-list');if(!el)return;
-  const reports=[
-    {s:students[0],pkg:'Package 3',date:'Apr 10',status:'published',skills:{speaking:80,reading:85,writing:70,listening:88},rating:'🌟 Excellent'},
-    {s:students[2],pkg:'Package 5',date:'Apr 8',status:'published',skills:{speaking:92,reading:95,writing:88,listening:90},rating:'🌟 Excellent'},
-    {s:students[1],pkg:'Package 2',date:'—',status:'draft',skills:{speaking:60,reading:70,writing:55,listening:72},rating:'😊 Good'},
-    {s:students[3],pkg:'Package 1',date:'—',status:'pending',skills:{speaking:55,reading:65,writing:50,listening:60},rating:'🙂 Developing'},
-  ];
-  const sts={published:{bg:'#F0FDF4',color:'#15803D',label:'✅ Published'},draft:{bg:'#FFF7ED',color:'#B45309',label:'✏️ Draft'},pending:{bg:'#F3E8FF',color:'#7C3AED',label:'⏳ Pending'}};
-  el.innerHTML=reports.map(r=>{
-    const st=sts[r.status];
-    const skillColor=v=>v>=80?'var(--green)':v>=60?'var(--blue)':'var(--orange)';
-    return `<div class="report-card">
-      <div class="report-header">
-        <div class="s-av" style="background:linear-gradient(135deg,${r.s.c1},${r.s.c2});width:46px;height:46px;border-radius:13px;">${r.s.avatar}</div>
-        <div style="flex:1;"><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;">${r.s.name} ${r.s.nat.split(' ')[0]}</div><div style="font-size:11px;color:var(--muted);">${r.s.level} · ${r.pkg} · ${r.date} · ${r.s.attendance}% attendance</div></div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:${st.bg};color:${st.color};">${st.label}</span><span style="font-size:12px;font-weight:700;color:var(--muted);">${r.rating}</span></div>
-      </div>
-      <div class="report-body">
-        <div class="skill-row">${['speaking','reading','writing','listening'].map(sk=>`<div class="skill-item"><div class="skill-lbl"><span>${{speaking:'🗣️ Speaking',reading:'📖 Reading',writing:'✍️ Writing',listening:'👂 Listening'}[sk]}</span><span>${r.skills[sk]}%</span></div><div class="skill-bar"><div class="skill-fill" style="width:${r.skills[sk]}%;background:${skillColor(r.skills[sk])}"></div></div></div>`).join('')}</div>
-      </div>
-      <div class="report-footer">
-        <button class="s-btn" style="background:#EFF6FF;color:#1D4ED8;" onclick="openModal('report-modal')">✏️ Edit</button>
-        ${r.status==='published'?'<button class="s-btn" style="background:#F0FDF4;color:#15803D;">📄 PDF</button>':'<button class="s-btn" style="background:linear-gradient(135deg,var(--purple),var(--blue));color:white;" onclick="openModal(\'report-modal\')">🚀 Publish</button>'}
-        <button class="s-btn" style="background:#F3F4F6;color:var(--muted);">👁 Preview</button>
-      </div>
-    </div>`;
+  var el=document.getElementById('report-list');
+  if(!el)return;
+  var allStudents=JSON.parse(localStorage.getItem('ts-students')||'[]');
+  if(allStudents.length===0){
+    el.innerHTML='<div style="text-align:center;color:#9CA3AF;padding:40px 0;">No students found.</div>';
+    return;
+  }
+  function skillColor(v){return v>=80?'var(--green)':v>=60?'var(--orange)':'var(--red)';}
+  el.innerHTML=allStudents.map(function(s){
+    var skills=s.skills||[];
+    var hasSkills=skills.length>0;
+    var skillsHtml=hasSkills
+      ?skills.map(function(sk){
+        return '<div style="margin-bottom:8px;">'
+          +'<div style="display:flex;justify-content:space-between;font-size:0.78rem;font-weight:700;margin-bottom:3px;">'
+            +'<span>'+sk.name+'</span>'
+            +'<span style="color:'+skillColor(sk.value)+'">'+sk.value+'%</span>'
+          +'</div>'
+          +'<div class="skill-bar"><div class="skill-fill" style="width:'+sk.value+'%;background:'+skillColor(sk.value)+'"></div></div>'
+        +'</div>';
+      }).join('')
+      :'<div style="color:#9CA3AF;font-size:0.82rem;text-align:center;padding:10px 0;">No skills added yet.</div>';
+    var attendanceLog=s.attendanceLog||[];
+    var presentCount=attendanceLog.filter(function(l){return l.status==='present';}).length;
+    var totalCount=attendanceLog.length;
+    var attPct=totalCount>0?Math.round((presentCount/totalCount)*100):(s.attendance||100);
+    var level=s.level||'Beginner';
+    var levelColor=level==='Advanced'?'#7C3AED':level==='Intermediate'?'#2563EB':'#15803D';
+    var levelBg=level==='Advanced'?'#F5F3FF':level==='Intermediate'?'#EFF6FF':'#F0FDF4';
+    return '<div class="report-card">'
+      +'<div class="report-header">'
+        +'<div style="display:flex;align-items:center;gap:10px;">'
+          +'<div style="font-size:1.8rem;">'+s.avatar+'</div>'
+          +'<div>'
+            +'<div style="font-weight:800;font-size:0.95rem;">'+s.name+'</div>'
+            +'<div style="font-size:0.75rem;color:#6B7280;">'+s.nat+' · '+s.classes+' classes left</div>'
+          +'</div>'
+        +'</div>'
+        +'<span style="background:'+levelBg+';color:'+levelColor+';padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;">'+level+'</span>'
+      +'</div>'
+      +'<div style="padding:12px 0;border-bottom:1px solid #F3F4F6;">'
+        +'<div style="display:flex;justify-content:space-around;text-align:center;">'
+          +'<div><div style="font-weight:800;color:#22C55E;font-size:1.1rem;">'+presentCount+'</div><div style="font-size:0.72rem;color:#6B7280;">Present</div></div>'
+          +'<div><div style="font-weight:800;color:#A855F7;font-size:1.1rem;">'+attPct+'%</div><div style="font-size:0.72rem;color:#6B7280;">Attendance</div></div>'
+          +'<div><div style="font-weight:800;color:#3B82F6;font-size:1.1rem;">'+s.duration+'</div><div style="font-size:0.72rem;color:#6B7280;">Duration</div></div>'
+        +'</div>'
+      +'</div>'
+      +'<div style="padding:12px 0;">'+skillsHtml+'</div>'
+      +'<div class="report-footer">'
+        +'<button class="s-btn" style="background:#EFF6FF;color:#1D4ED8;" onclick="openStudentProfile('+s.id+')">👤 View Profile</button>'
+      +'</div>'
+    +'</div>';
   }).join('');
 }
 
