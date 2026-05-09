@@ -731,6 +731,16 @@ canvas#wb{position:absolute;top:40px;left:0;right:0;bottom:60px;cursor:crosshair
 </div>
 
 <!-- ─── SETTINGS ─── -->
+<div class="page" id="page-absence">
+  <div class="page-header">
+    <div><div class="page-title">📋 Absence Log</div><div class="page-sub">Track student and teacher absences</div></div>
+  </div>
+  <div style="text-align:center;color:#9CA3AF;padding:60px 0;font-size:0.9rem;">
+    <div style="font-size:3rem;margin-bottom:12px;">📋</div>
+    <div style="font-weight:700;margin-bottom:6px;">Absence Log Coming Soon</div>
+    <div style="font-size:0.8rem;">This feature is being built.</div>
+  </div>
+</div>
 <div class="page" id="page-settings">
   <div class="page-header"><div><div class="page-title">⚙️ Settings</div><div class="page-sub">Configure your TeachSmart app</div></div></div>
   <div class="grid-2">
@@ -940,9 +950,9 @@ function nav(page,btn){
   if(page==='reports')renderReports();
   if(page==='hof')renderHOF();
   if(page==='schedule'){renderScheduleGrid();
-  renderClassNotes();;}
+  renderClassNotes();}
   if(page==='earnings'){renderEarnings();}
-  if(page==='classroom')initWB();
+  if(page==='classroom')renderClassroom();
 }
 
 // ─── DASHBOARD ───
@@ -1504,31 +1514,7 @@ function showDay(dayIdx){
   }).join('');
 }
 
-function showDay(dayIdx){
-  document.querySelectorAll('[id^="day-btn-"]').forEach((b,i)=>{
-    b.style.background=i===dayIdx?'linear-gradient(135deg,var(--purple),var(--blue))':'white';
-    b.style.color=i===dayIdx?'#fff':'#333';
-  });
-  const slots=WEEKLY_SCHEDULE[dayIdx]||[];
-  const el=document.getElementById('day-schedule');
-  if(!el)return;
-  if(!slots.length){el.innerHTML='<div style="color:#aaa;padding:20px;text-align:center;">No classes scheduled</div>';return;}
-  el.innerHTML=slots.map(slot=>{
-    const s=students.find(x=>x.name===slot.student);
-    const id=s?s.id:null;
-    const color=s?s.c1:'#ccc';
-    const left=s?s.classes:'-';
-    const bar=s?(s.classes<=3?'#EF4444':s.classes<=4?'#F97316':'#22C55E'):'#ccc';
-    return '<div style="display:flex;align-items:center;gap:12px;background:white;border-radius:12px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);">'
-      +'<div style="font-weight:800;color:var(--purple);min-width:75px;">'+slot.time+'</div>'
-      +'<div style="width:10px;height:10px;border-radius:50%;background:'+color+';flex-shrink:0;"></div>'
-      +'<div style="flex:1;font-weight:700;">'+slot.student+'</div>'
-      +'<div style="font-size:0.8rem;background:#F3E8FF;color:#7C3AED;padding:2px 8px;border-radius:20px;font-weight:600;">'+slot.duration+' min</div>'
-      +'<div style="font-size:0.8rem;font-weight:700;color:'+bar+';">'+left+' left</div>'
-      +(id?'<button onclick="startClassTimer('+slot.duration+')" style="padding:4px 10px;border-radius:6px;border:none;background:#6366F1;color:#fff;font-size:0.75rem;cursor:pointer;">Start</button>':'')
-      +'</div>';
-  }).join('');
-}
+
 const WEEKLY_SCHEDULE = {
   0: [
     {time:'5:30 PM', student:'Suri', duration:25},
@@ -2943,6 +2929,105 @@ function renderMaterialsList(){
       +'</div>'
     +'</div>';
   }).join('');
+}
+
+var classroomDayOffset = 0;
+var _classroomStudent = null;
+var _classroomTimer = null;
+var _classroomSeconds = 0;
+
+function renderClassroom(){
+  var days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var d = new Date().getDay();
+  var baseIdx = d===0?6:d-1;
+  var showIdx = (baseIdx+classroomDayOffset+7)%7;
+  var isToday = classroomDayOffset===0;
+  var dayLabel = document.getElementById('classroom-day-label');
+  if(dayLabel) dayLabel.textContent = isToday ? '📅 Today (' + days[showIdx] + ')' : '📅 ' + days[showIdx];
+  var sched = getTodaySlots(classroomDayOffset);
+  var list = document.getElementById('classroom-list');
+  if(!list) return;
+  if(sched.length === 0){
+    list.innerHTML = '<div style="text-align:center;color:#9CA3AF;padding:40px 0;font-size:0.9rem;">No classes scheduled for this day.</div>';
+    return;
+  }
+  list.innerHTML = sched.map(function(slot){
+    var s = slot.s;
+    var status = slot.status;
+    var statusColors = {done:'#22C55E', now:'#F97316', upcoming:'#3B82F6'};
+    var statusLabels = {done:'✓ Done', now:'🔴 Now', upcoming:'Upcoming'};
+    var color = statusColors[status] || '#3B82F6';
+    var label = statusLabels[status] || 'Upcoming';
+    return '<div style="background:white;border-radius:14px;padding:16px 18px;margin-bottom:10px;border:1.5px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">'
+      +'<div style="display:flex;align-items:center;gap:12px;flex:1;">'
+        +'<div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,'+s.c1+','+s.c2+');display:flex;align-items:center;justify-content:center;font-size:1.3rem;">'+(s.avatar||s.name.charAt(0))+'</div>'
+        +'<div>'
+          +'<div style="font-weight:800;font-size:0.95rem;color:#374151;">'+s.name+'</div>'
+          +'<div style="font-size:0.78rem;color:#6B7280;">'+slot.time+' · '+s.duration+'</div>'
+        +'</div>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:8px;">'
+        +'<span style="background:'+color+'1A;color:'+color+';padding:4px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;">'+label+'</span>'
+        +'<button onclick="openClassroomModal(''+s.name+'',''+s.duration+'')" style="padding:8px 16px;background:linear-gradient(135deg,#A855F7,#7C3AED);color:white;border:none;border-radius:10px;font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif;">▶ Start</button>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+function openClassroomModal(studentName, duration){
+  _classroomStudent = {name: studentName, duration: duration};
+  var el = document.getElementById('classroom-link-student');
+  if(el) el.textContent = '👤 ' + studentName + ' · ' + duration;
+  var inp = document.getElementById('classroom-link-input');
+  if(inp) inp.value = '';
+  var modal = document.getElementById('classroom-link-modal');
+  if(modal) modal.style.display = 'flex';
+}
+
+function closeClassroomModal(){
+  var modal = document.getElementById('classroom-link-modal');
+  if(modal) modal.style.display = 'none';
+}
+
+function startClassNow(){
+  var inp = document.getElementById('classroom-link-input');
+  var link = inp ? inp.value.trim() : '';
+  if(!link){ alert('Please paste your Tencent Meeting link!'); return; }
+  window.open(link, '_blank');
+  closeClassroomModal();
+  if(_classroomStudent) startClassTimer(_classroomStudent);
+}
+
+function startClassTimer(student){
+  if(_classroomTimer) clearInterval(_classroomTimer);
+  _classroomSeconds = 0;
+  var card = document.getElementById('classroom-timer-card');
+  var nameEl = document.getElementById('classroom-timer-name');
+  var durEl = document.getElementById('classroom-timer-duration');
+  if(card) card.style.display = 'block';
+  if(nameEl) nameEl.textContent = student.name;
+  if(durEl) durEl.textContent = student.duration;
+  _classroomTimer = setInterval(function(){
+    _classroomSeconds++;
+    var mins = Math.floor(_classroomSeconds/60);
+    var secs = _classroomSeconds%60;
+    var display = document.getElementById('classroom-timer-display');
+    if(display) display.textContent = String(mins).padStart(2,'0')+':'+String(secs).padStart(2,'0');
+    var durMins = parseInt(student.duration)||25;
+    if(_classroomSeconds === durMins*60){
+      alert('⏰ '+student.duration+' is up! Class time for '+student.name+' is complete.');
+    }
+  }, 1000);
+}
+
+function stopClassTimer(){
+  if(_classroomTimer) clearInterval(_classroomTimer);
+  _classroomTimer = null;
+  _classroomSeconds = 0;
+  var card = document.getElementById('classroom-timer-card');
+  if(card) card.style.display = 'none';
+  var display = document.getElementById('classroom-timer-display');
+  if(display) display.textContent = '00:00';
 }
 </script>
 
