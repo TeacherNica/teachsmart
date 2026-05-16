@@ -876,7 +876,6 @@ fetch('https://api.frankfurter.app/latest?from=CNY&to=PHP')
 
 // ─── SEED DATA ───
 let students = JSON.parse(localStorage.getItem('ts-students')||'null') || [{"id":101,"name":"K.Bella","nat":"🇰🇷 Korean","level":"Beginner","rate":30,"classes":46,"total":54,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#A855F7","c2":"#6366F1","badges":[],"paid":false,"birthday":""},{"id":102,"name":"Jackie","nat":"🇰🇷 Korean","level":"Beginner","rate":25,"classes":41,"total":52,"duration":"50 min","schedule":"","attendance":100,"avatar":"👦","c1":"#3B82F6","c2":"#06B6D4","badges":[],"paid":false,"birthday":""},{"id":103,"name":"Lina","nat":"🇰🇷 Korean","level":"Beginner","rate":30,"classes":6,"total":30,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#EC4899","c2":"#F97316","badges":[],"paid":false,"birthday":""},{"id":104,"name":"Aiden","nat":"🇰🇷 Korean","level":"Beginner","rate":35,"classes":5,"total":25,"duration":"50 min","schedule":"","attendance":100,"avatar":"👦","c1":"#10B981","c2":"#3B82F6","badges":[],"paid":false,"birthday":""},{"id":105,"name":"Sophia","nat":"🇰🇷 Korean","level":"Beginner","rate":35,"classes":6,"total":27,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#F59E0B","c2":"#EF4444","badges":[],"paid":false,"birthday":""},{"id":106,"name":"Peter","nat":"🇰🇷 Korean","level":"Beginner","rate":35,"classes":23,"total":52,"duration":"50 min","schedule":"","attendance":100,"avatar":"👦","c1":"#8B5CF6","c2":"#EC4899","badges":[],"paid":false,"birthday":""},{"id":107,"name":"Seah","nat":"🇰🇷 Korean","level":"Beginner","rate":25,"classes":10,"total":52,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#14B8A6","c2":"#6366F1","badges":[],"paid":false,"birthday":""},{"id":108,"name":"Suri","nat":"🇨🇳 Chinese","level":"Beginner","rate":40,"classes":13,"total":30,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#F97316","c2":"#EF4444","badges":[],"paid":false,"birthday":""},{"id":109,"name":"Bella","nat":"🇨🇳 Chinese","level":"Beginner","rate":30,"classes":10,"total":32,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#EC4899","c2":"#A855F7","badges":[],"paid":false,"birthday":""},{"id":110,"name":"COCO-1","nat":"🇨🇳 Chinese","level":"Beginner","rate":35,"classes":2,"total":20,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#F59E0B","c2":"#10B981","badges":[],"paid":false,"birthday":""},{"id":111,"name":"Harry","nat":"🇨🇳 Chinese","level":"Beginner","rate":40,"classes":2,"total":27,"duration":"50 min","schedule":"","attendance":100,"avatar":"👦","c1":"#3B82F6","c2":"#8B5CF6","badges":[],"paid":false,"birthday":""},{"id":112,"name":"Kelly-Adult","nat":"🇨🇳 Chinese","level":"Intermediate","rate":45,"classes":11,"total":11,"duration":"50 min","schedule":"","attendance":100,"avatar":"👩","c1":"#EF4444","c2":"#F97316","badges":[],"paid":false,"birthday":""},{"id":113,"name":"KAREN","nat":"🇨🇳 Chinese","level":"Beginner","rate":30,"classes":18,"total":20,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#10B981","c2":"#14B8A6","badges":[],"paid":false,"birthday":""},{"id":114,"name":"Mollie-Adult & Steven","nat":"🇨🇳 Chinese","level":"Beginner","rate":25,"classes":32,"total":52,"duration":"50 min","schedule":"","attendance":100,"avatar":"👫","c1":"#6366F1","c2":"#A855F7","badges":["Siblings"],"paid":false,"birthday":""},{"id":115,"name":"Coco-2","nat":"🇨🇳 Chinese","level":"Beginner","rate":35,"classes":22,"total":27,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#F59E0B","c2":"#EC4899","badges":[],"paid":false,"birthday":""},{"id":116,"name":"Koala","nat":"🇨🇳 Chinese","level":"Beginner","rate":30,"classes":26,"total":30,"duration":"50 min","schedule":"","attendance":100,"avatar":"🐨","c1":"#8B5CF6","c2":"#3B82F6","badges":[],"paid":false,"birthday":""},{"id":117,"name":"Owen","nat":"🇨🇳 Chinese","level":"Beginner","rate":35,"classes":22,"total":27,"duration":"50 min","schedule":"","attendance":100,"avatar":"👦","c1":"#14B8A6","c2":"#10B981","badges":[],"paid":false,"birthday":""},{"id":118,"name":"Rainy","nat":"🇨🇳 Chinese","level":"Beginner","rate":40,"classes":20,"total":27,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#3B82F6","c2":"#06B6D4","badges":[],"paid":false,"birthday":""},{"id":120,"name":"Carl","nat":"🇨🇳 Chinese","level":"Beginner","rate":25,"classes":3,"total":30,"duration":"50 min","schedule":"","attendance":100,"avatar":"👦","c1":"#F97316","c2":"#FBBF24","badges":[],"paid":false,"birthday":""},{"id":119,"name":"Shily","nat":"🇨🇳 Chinese","level":"Beginner","rate":40,"classes":25,"total":27,"duration":"50 min","schedule":"","attendance":100,"avatar":"👧","c1":"#EC4899","c2":"#F59E0B","badges":[],"paid":false,"birthday":""}];
-if(!localStorage.getItem('ts-students')) localStorage.setItem('ts-students', JSON.stringify(students));
 
 
 // ─── AUTO SAVE ───
@@ -904,7 +903,7 @@ function clearAllStudents(){
     students=[];
     saveData();
     renderStudents();
-    // renderDashboard() called in init block below
+    renderDashboard();
     alert('✅ All students cleared! Go to Students page and add your real students.');
     nav('students', document.querySelectorAll('.nav-item')[1]);
   }
@@ -958,7 +957,6 @@ function nav(page,btn){
 
 // ─── DASHBOARD ───
 function renderDashboard(){
-  students=JSON.parse(localStorage.getItem('ts-students')||'[]');
   const low=students.filter(s=>s.classes<=3).length;
   document.getElementById('dash-total').textContent=students.length;
   document.getElementById('dash-low').textContent=low;
@@ -2852,36 +2850,21 @@ function renderClassNotes(){
 })();
 
 // ─── INIT ───
+renderDashboard();
+renderStudents();
 (function(){
-  var lastPage = localStorage.getItem('ts-last-page') || 'dashboard';
-  // Find the matching nav button by looping (avoids querySelector quote issues)
-  var navBtn = null;
-  document.querySelectorAll('.nav-item').forEach(function(el){
-    var oc = el.getAttribute('onclick') || '';
-    if(oc.indexOf("nav('" + lastPage + "'") !== -1) navBtn = el;
-  });
-  if(!navBtn) {
-    lastPage = 'dashboard';
-    document.querySelectorAll('.nav-item').forEach(function(el){
-      var oc = el.getAttribute('onclick') || '';
-      if(oc.indexOf("nav('dashboard'") !== -1) navBtn = el;
-    });
+  var lastPage = localStorage.getItem('ts-last-page');
+  if(lastPage && lastPage !== 'dashboard'){
+    var navBtn = document.querySelector('[onclick*="nav(\''+lastPage+'\'"]');
+    if(navBtn) nav(lastPage, navBtn);
+    setTimeout(function(){
+      if(lastPage==='earnings') renderEarnings();
+      if(lastPage==='payments') renderPayments();
+      if(lastPage==='schedule'){renderScheduleGrid();renderClassNotes();}
+      if(lastPage==='students') renderStudents();
+      if(lastPage==='reports') renderReports();
+    }, 300);
   }
-  // Activate the right page and nav button
-  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
-  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
-  var pageEl = document.getElementById('page-' + lastPage);
-  if(pageEl) pageEl.classList.add('active');
-  if(navBtn) navBtn.classList.add('active');
-  // Call the right render function
-  if(lastPage==='dashboard')  { students=JSON.parse(localStorage.getItem('ts-students')||'null')||students; setTimeout(renderDashboard,0); }
-  if(lastPage==='students')   renderStudents();
-  if(lastPage==='payments')   renderPayments();
-  if(lastPage==='earnings')   renderEarnings();
-  if(lastPage==='schedule')   { renderScheduleGrid(); renderClassNotes(); }
-  if(lastPage==='reports')    renderReports();
-  if(lastPage==='materials')  updateFolderCounts();
-  if(lastPage==='classroom')  renderClassroom();
 })();
 
 var _currentFolder = '';
@@ -3011,7 +2994,7 @@ function renderClassroom(){
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:8px;">'
         +'<span style="background:'+color+'1A;color:'+color+';padding:4px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;">'+label+'</span>'
-        +'<button onclick="openClassroomModal(this.dataset.name,this.dataset.dur)" data-name="'+s.name+'" data-dur="'+s.duration+'" style="padding:8px 16px;background:linear-gradient(135deg,#A855F7,#7C3AED);color:white;border:none;border-radius:10px;font-weight:800;font-size:0.82rem;cursor:pointer;">▶ Start</button>'
+        +'<button onclick="openClassroomModal(''+s.name+'',''+s.duration+'')" style="padding:8px 16px;background:linear-gradient(135deg,#A855F7,#7C3AED);color:white;border:none;border-radius:10px;font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif;">▶ Start</button>'
       +'</div>'
     +'</div>';
   }).join('');
