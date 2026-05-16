@@ -2994,7 +2994,7 @@ function renderClassroom(){
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:8px;">'
         +'<span style="background:'+color+'1A;color:'+color+';padding:4px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;">'+label+'</span>'
-        +'<button onclick="openClassroomModal(this.dataset.n,this.dataset.d)" data-n="'+s.name+'" data-d="'+s.duration+'" style="padding:8px 16px;background:linear-gradient(135deg,#A855F7,#7C3AED);color:white;border:none;border-radius:10px;font-weight:800;font-size:0.82rem;cursor:pointer;">▶ Start</button>'
+        +'<button onclick="openClassroomModal(''+s.name+'',''+s.duration+'')" style="padding:8px 16px;background:linear-gradient(135deg,#A855F7,#7C3AED);color:white;border:none;border-radius:10px;font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif;">▶ Start</button>'
       +'</div>'
     +'</div>';
   }).join('');
