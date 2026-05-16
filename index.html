@@ -1596,39 +1596,1259 @@ const WEEKLY_SCHEDULE = {
     {time:'8:00 PM', student:'Carl', duration:25},
   ],
 };
-// ─── INIT ───
-window.addEventListener('DOMContentLoaded', function(){
-  // Always refresh students from storage first
-  students = JSON.parse(localStorage.getItem('ts-students') || 'null') || students;
+// ─── INIT MOVED TO END ───
 
-  var lastPage = localStorage.getItem('ts-last-page') || 'dashboard';
 
-  // Hide all pages, deactivate all nav
-  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
-  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+// Currency converter shortcut on dashboard
+document.getElementById('php-in')?.addEventListener('input',convertCurr);
+</script>
 
-  // Show the right page
-  var pageEl = document.getElementById('page-' + lastPage);
-  if (!pageEl) { lastPage = 'dashboard'; pageEl = document.getElementById('page-dashboard'); }
-  pageEl.classList.add('active');
 
-  // Activate the matching nav button
-  document.querySelectorAll('.nav-item').forEach(function(el){
-    var oc = el.getAttribute('onclick') || '';
-    if (oc.indexOf("'" + lastPage + "'") !== -1) el.classList.add('active');
+  <!-- PROFILE PAGE -->
+  <div class="page" id="page-profile">
+    <div style="max-width:600px;margin:0 auto;padding:24px 16px;">
+      
+      <!-- Profile Header Card -->
+      <div style="background:linear-gradient(135deg,#A855F7,#6366F1);border-radius:20px;padding:32px 24px;color:#fff;text-align:center;margin-bottom:20px;">
+        <div id="profile-avatar-display" onclick="document.getElementById('avatar-picker').style.display='flex'" style="font-size:4rem;background:rgba(255,255,255,0.2);border-radius:50%;width:80px;height:80px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;cursor:pointer;">👩‍🏫</div>
+        <div style="font-size:0.75rem;opacity:0.8;margin-bottom:6px;">Tap avatar to change</div><label style="display:inline-block;margin-bottom:10px;background:rgba(255,255,255,0.2);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:0.78rem;">📷 Upload Photo<input type="file" accept="image/*" onchange="handlePhotoUpload(this)" style="display:none;"></label>
+        <div id="profile-name-display" style="font-size:1.5rem;font-weight:800;">Teacher Nica</div>
+        <div id="profile-role-display" style="font-size:0.9rem;opacity:0.85;margin-top:4px;">English Teacher</div>
+        <div id="profile-location-display" style="font-size:0.85rem;opacity:0.75;margin-top:4px;">🇹🇭 Bangkok, Thailand</div>
+      </div>
+
+      <!-- Avatar Picker -->
+      <div id="avatar-picker" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:16px;padding:24px;max-width:360px;width:90%;">
+          <div style="font-weight:700;margin-bottom:16px;">Choose Avatar</div>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
+            <div onclick="selectAvatar('👩‍🏫')" style="font-size:2rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid #e5e7eb;">👩‍🏫</div>
+            <div onclick="selectAvatar('👨‍🏫')" style="font-size:2rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid #e5e7eb;">👨‍🏫</div>
+            <div onclick="selectAvatar('👩')" style="font-size:2rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid #e5e7eb;">👩</div>
+            <div onclick="selectAvatar('👨')" style="font-size:2rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid #e5e7eb;">👨</div>
+            <div onclick="selectAvatar('🧑‍💻')" style="font-size:2rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid #e5e7eb;">🧑‍💻</div>
+            <div onclick="selectAvatar('👩‍💼')" style="font-size:2rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid #e5e7eb;">👩‍💼</div>
+          </div>
+          <button onclick="document.getElementById('avatar-picker').style.display='none'" style="margin-top:16px;width:100%;padding:10px;border:none;background:#f3f4f6;border-radius:8px;cursor:pointer;font-weight:600;">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Edit Form -->
+      <div style="background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.07);margin-bottom:16px;">
+        <div style="font-weight:700;font-size:1rem;color:#374151;margin-bottom:16px;">✏️ Edit Profile</div>
+        <div style="margin-bottom:14px;">
+          <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Full Name</label>
+          <input id="profile-name-input" type="text" placeholder="Your full name" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.95rem;box-sizing:border-box;">
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Role</label>
+          <input id="profile-role-input" type="text" placeholder="e.g. English Teacher" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.95rem;box-sizing:border-box;">
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Location</label>
+          <input id="profile-location-input" type="text" placeholder="e.g. Bangkok, Thailand" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.95rem;box-sizing:border-box;">
+        </div>
+        <div style="margin-bottom:20px;">
+          <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Short Bio</label>
+          <textarea id="profile-bio-input" placeholder="Tell your students a little about yourself..." rows="3" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.95rem;box-sizing:border-box;resize:vertical;font-family:inherit;"></textarea>
+        </div>
+        <button onclick="saveProfile()" style="width:100%;padding:12px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;">💾 Save Profile</button>
+        <div id="profile-save-msg" style="display:none;margin-top:12px;text-align:center;color:#22C55E;font-weight:600;">✅ Profile saved!</div>
+      </div>
+
+      <!-- Settings -->
+      <div style="background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.07);">
+        <div style="font-weight:700;font-size:1rem;color:#374151;margin-bottom:16px;">⚙️ Settings</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f3f4f6;">
+          <div>
+            <div style="font-weight:600;font-size:0.9rem;">Dark Mode</div>
+            <div style="font-size:0.78rem;color:#9CA3AF;">Toggle dark/light theme</div>
+          </div>
+          <div id="dark-mode-toggle" onclick="toggleDarkMode()" style="width:44px;height:24px;background:#e5e7eb;border-radius:12px;cursor:pointer;position:relative;transition:background 0.3s;">
+            <div id="dark-mode-knob" style="position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:left 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;">
+          <div>
+            <div style="font-weight:600;font-size:0.9rem;">Logout</div>
+            <div style="font-size:0.78rem;color:#9CA3AF;">Sign out of TeachSmart</div>
+          </div>
+          <button onclick="sessionStorage.removeItem('ts_auth');window.location.href='/login.html';" style="padding:8px 16px;background:#FEE2E2;color:#EF4444;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.85rem;">Logout</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="schedule-modal" class="modal-overlay">
+  <div class="modal" style="max-width:480px;width:95%">
+    <div class="modal-header">
+      <div class="modal-title">📅 Weekly Schedule</div>
+      <button class="modal-close" onclick="closeModal('schedule-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="sched-student-name" style="font-weight:700;font-size:1.1rem;margin-bottom:16px;color:var(--purple)"></div>
+      <div style="display:grid;gap:10px;" id="sched-days">
+        
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:90px;font-weight:600;font-size:0.85rem;">Monday</div>
+          <input type="time" id="sched-Monday-start" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+          <span style="font-size:0.8rem;color:#888;">to</span>
+          <input type="time" id="sched-Monday-end" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:90px;font-weight:600;font-size:0.85rem;">Tuesday</div>
+          <input type="time" id="sched-Tuesday-start" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+          <span style="font-size:0.8rem;color:#888;">to</span>
+          <input type="time" id="sched-Tuesday-end" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:90px;font-weight:600;font-size:0.85rem;">Wednesday</div>
+          <input type="time" id="sched-Wednesday-start" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+          <span style="font-size:0.8rem;color:#888;">to</span>
+          <input type="time" id="sched-Wednesday-end" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:90px;font-weight:600;font-size:0.85rem;">Thursday</div>
+          <input type="time" id="sched-Thursday-start" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+          <span style="font-size:0.8rem;color:#888;">to</span>
+          <input type="time" id="sched-Thursday-end" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:90px;font-weight:600;font-size:0.85rem;">Friday</div>
+          <input type="time" id="sched-Friday-start" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+          <span style="font-size:0.8rem;color:#888;">to</span>
+          <input type="time" id="sched-Friday-end" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:90px;font-weight:600;font-size:0.85rem;">Saturday</div>
+          <input type="time" id="sched-Saturday-start" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+          <span style="font-size:0.8rem;color:#888;">to</span>
+          <input type="time" id="sched-Saturday-end" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:90px;font-weight:600;font-size:0.85rem;">Sunday</div>
+          <input type="time" id="sched-Sunday-start" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+          <span style="font-size:0.8rem;color:#888;">to</span>
+          <input type="time" id="sched-Sunday-end" style="flex:1;padding:6px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;" />
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <label style="font-weight:600;font-size:0.85rem;">Notes</label>
+        <textarea id="sched-notes" rows="2" style="width:100%;padding:8px;border-radius:6px;border:1px solid #E5E7EB;font-size:0.85rem;margin-top:4px;box-sizing:border-box;"></textarea>
+      </div>
+      <button onclick="saveSchedule()" class="btn btn-primary" style="width:100%;margin-top:16px;">💾 Save Schedule</button>
+    </div>
+  </div>
+</div>
+<!-- SLOT EDITOR MODAL -->
+<div id="slot-editor-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(4px);z-index:300;align-items:center;justify-content:center;" onclick="if(event.target===this)closeSlotEditor()">
+  <div style="background:white;border-radius:22px;padding:26px;width:360px;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;margin-bottom:6px;">Edit Slot</div>
+    <div id="slot-info" style="font-size:12px;color:#6B7280;margin-bottom:18px;"></div>
+    <div id="slot-move-wrap" style="display:none;margin-bottom:14px;"><label style="font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Move to Another Slot</label><select id="slot-move-time" style="width:100%;padding:10px 14px;border:2px solid #E5E7EB;border-radius:12px;font-family:'Quicksand',sans-serif;font-weight:600;font-size:13px;outline:none;margin-bottom:8px;"><option value="">-- Select time --</option><option>5:30 PM</option><option>6:00 PM</option><option>6:30 PM</option><option>7:00 PM</option><option>7:30 PM</option><option>8:00 PM</option><option>8:30 PM</option><option>10:00 AM</option><option>10:30 AM</option><option>11:00 AM</option><option>11:30 AM</option><option>12:00 PM</option><option>12:30 PM</option></select><select id="slot-move-day" style="width:100%;padding:10px 14px;border:2px solid #E5E7EB;border-radius:12px;font-family:'Quicksand',sans-serif;font-weight:600;font-size:13px;outline:none;"><option value="">-- Select day --</option><option>Mon</option><option>Tue</option><option>Wed</option><option>Thu</option><option>Fri</option><option>Sat</option><option>Sun</option></select></div>
+    <label id="slot-assign-label" style="font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Assign Student</label>
+    <select id="slot-select" style="width:100%;padding:10px 14px;border:2px solid #E5E7EB;border-radius:12px;font-family:'Quicksand',sans-serif;font-weight:600;font-size:13px;outline:none;margin-bottom:14px;"><option value="">-- Select student --</option></select>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button id="slot-move-btn" onclick="applySlot('move')" style="display:none;padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#10B981,#3B82F6);color:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Move to Selected Slot</button>
+      <button id="slot-assign-btn" onclick="applySlot('assign')" style="padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#A855F7,#3B82F6);color:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Assign Student</button>
+      <button id="slot-avail-btn" onclick="applySlot('avail')" style="padding:11px;border-radius:12px;border:none;background:#EAB308;color:#000;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Mark as Available</button>
+      <button id="slot-close-btn" onclick="applySlot('close')" style="padding:11px;border-radius:12px;border:none;background:#EF4444;color:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Close Slot</button>
+        <button id="slot-profile-btn" onclick="openProfileFromSlot()" style="display:none;padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#A855F7,#6366F1);color:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:14px;cursor:pointer;">👤 View Profile</button>
+      <button onclick="closeSlotEditor()" style="padding:11px;border-radius:12px;border:2px solid #E5E7EB;background:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;color:#6B7280;">Cancel</button>
+    </div>
+  </div>
+</div>
+<script>
+var _slotTd=null,_slotType=null;
+var KR_NAMES=["K.Bella","Jackie","Lina","Aiden","Sophia","Peter","Seah"];
+var PC={"K.Bella":{bg:"#FCE4EC",text:"#880E4F"},"Jackie":{bg:"#EDE7F6",text:"#4A148C"},"Lina":{bg:"#E8EAF6",text:"#1A237E"},"Aiden":{bg:"#E0F2F1",text:"#004D40"},"Sophia":{bg:"#E1F5FE",text:"#01579B"},"Peter":{bg:"#FFF8E1",text:"#E65100"},"Seah":{bg:"#F3E5F5",text:"#4A148C"},"Suri":{bg:"#FFF3E0",text:"#BF360C"},"Bella":{bg:"#FCE4EC",text:"#880E4F"},"COCO-1":{bg:"#FFFDE7",text:"#F57F17"},"Harry":{bg:"#E3F2FD",text:"#0D47A1"},"Kelly-Adult":{bg:"#E8F5E9",text:"#1B5E20"},"KAREN":{bg:"#E0F7FA",text:"#006064"},"Mollie-Adult & Steven":{bg:"#FFF9C4",text:"#827717"},"Coco-2":{bg:"#FFFDE7",text:"#F57F17"},"Koala":{bg:"#F3E5F5",text:"#4A148C"},"Owen":{bg:"#E8F5E9",text:"#1B5E20"},"Rainy":{bg:"#E3F2FD",text:"#0D47A1"},"Shily":{bg:"#FCE4EC",text:"#880E4F"},"Carl":{bg:"#FFF8E1",text:"#E65100"}};
+function openSlotEditor(td,type){
+  _slotTd=td;_slotType=type;
+  var row=td.closest("tr");
+  var time=row?row.cells[0].textContent.trim():"";
+  var days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  var day=td.cellIndex>=2?days[td.cellIndex-2]:"";
+  // Get student name from cell for student type
+  var cellText = td.textContent.trim();
+  var studentName = type==="student" ? cellText : "";
+  var studentObj = studentName ? students.find(function(s){ return s.name===studentName || studentName.startsWith(s.name) || s.name.startsWith(studentName); }) : null;
+  if(type==="student"){
+    document.getElementById("slot-info").innerHTML = "<strong>" + studentName + "</strong><br><span style='color:#9CA3AF;'>" + time + " Thailand · " + day + "</span>";
+  } else {
+    document.getElementById("slot-info").textContent = time+" Thailand - "+day+" - Currently: "+(type==="close"?"Closed":"Available");
+  }
+  document.getElementById("slot-avail-btn").style.display=type==="close"||type==="student"?"block":"none";
+  document.getElementById("slot-close-btn").style.display=type==="avail"||type==="student"?"block":"none";
+  document.getElementById("slot-assign-btn").style.display=type==="student"?"none":"block";
+  document.getElementById("slot-assign-label").style.display=type==="student"?"none":"block";
+  document.getElementById("slot-select").style.display=type==="student"?"none":"block";
+  document.getElementById("slot-move-wrap").style.display=type==="student"?"block":"none";
+  document.getElementById("slot-move-btn").style.display=type==="student"?"block":"none";
+  // Show/hide profile button
+  var profileBtn = document.getElementById("slot-profile-btn");
+  if(profileBtn) profileBtn.style.display = studentObj ? "block" : "none";
+  if(profileBtn && studentObj) profileBtn.setAttribute("data-student-id", studentObj.id);
+  var sel=document.getElementById("slot-select");
+  sel.innerHTML="<option value=\"\">-- Select student --</option>"+students.map(function(s){return "<option value=\""+s.name+"\">"+s.name+" "+s.nat.split(" ")[0]+"</option>";}).join("");
+  // Pre-select current student in move dropdown
+  if(type==="student" && studentName){
+    var moveSelect = document.getElementById("slot-move-select");
+    if(moveSelect){ Array.from(moveSelect.options).forEach(function(o){ if(o.value===studentName) o.selected=true; }); }
+  }
+  document.getElementById("slot-editor-overlay").style.display="flex";
+}
+
+function openProfileFromSlot(){
+  var btn = document.getElementById("slot-profile-btn");
+  var id = btn ? parseInt(btn.getAttribute("data-student-id")) : null;
+  if(!id) return;
+  closeSlotEditor();
+  openStudentProfile(id);
+}
+function closeSlotEditor(){
+  document.getElementById("slot-editor-overlay").style.display="none";
+  _slotTd=null;_slotType=null;
+}
+function applySlot(action){
+  if(!_slotTd)return;
+  if(action==="move"){
+    var mTime=document.getElementById("slot-move-time").value;
+    var mDay=document.getElementById("slot-move-day").value;
+    if(!mTime||!mDay){alert("Please select a time and day!");return;}
+    var dIdx=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].indexOf(mDay)+2;
+    var rows=document.querySelectorAll("#sched-body tr");
+    var tTd=null;
+    rows.forEach(function(r){if(r.cells[0]&&r.cells[0].textContent.trim()===mTime&&r.cells[dIdx])tTd=r.cells[dIdx];});
+    if(!tTd){alert("Slot not found!");return;}
+    var tText=tTd.textContent.trim();
+    if(tText!=="Close"&&tText!=="Available"){alert("That slot is already occupied!");return;}
+    var curName=_slotTd.textContent.replace(/[^\w\s\-&]/g,"").trim();
+    var oldKey=_slotTd.closest("tr").cells[0].textContent.trim()+"|"+_slotTd.cellIndex;
+    _slotTd.textContent="Close";_slotTd.style.background="#EF4444";_slotTd.style.color="#fff";_slotTd.style.cursor="pointer";
+    _slotTd.onclick=function(){openSlotEditor(this,"close");};
+    var ss=JSON.parse(localStorage.getItem("ts-slots")||"{}");ss[oldKey]={type:"close"};localStorage.setItem("ts-slots",JSON.stringify(ss));
+    var isKR=KR_NAMES.indexOf(curName)>=0;
+    var meta=PC[curName]||{bg:"#E8EAF6",text:"#1E1B4B"};
+    tTd.innerHTML='<img src="https://flagcdn.com/16x12/'+(isKR?"kr":"cn")+'.png" style="vertical-align:middle;margin-right:3px;">'+curName;
+    tTd.style.background=meta.bg;tTd.style.color=meta.text;tTd.style.cursor="pointer";
+    tTd.onclick=function(){openSlotEditor(this,"student");};
+    var newKey=tTd.closest("tr").cells[0].textContent.trim()+"|"+tTd.cellIndex;
+    ss[newKey]={type:"student",name:curName};localStorage.setItem("ts-slots",JSON.stringify(ss));
+    closeSlotEditor();alert("Moved to "+mTime+" ("+mDay+")!");
+    return;
+  }
+  if(action==="assign"){
+    var name=document.getElementById("slot-select").value;
+    if(!name){alert("Please select a student!");return;}
+    var isKR=KR_NAMES.indexOf(name)>=0;
+    var meta=PC[name]||{bg:"#E8EAF6",text:"#1E1B4B"};
+    var flagImg="<img src=\"https://flagcdn.com/16x12/"+(isKR?"kr":"cn")+".png\" style=\"vertical-align:middle;margin-right:3px;\">";
+    _slotTd.innerHTML=flagImg+name;
+    _slotTd.style.background=meta.bg;
+    _slotTd.style.color=meta.text;
+    _slotTd.style.cursor="pointer";
+    _slotTd.onclick=function(){openSlotEditor(this,"student");};
+    var _k=_slotTd.closest('tr').cells[0].textContent.trim()+'|'+_slotTd.cellIndex;
+    var _ss=JSON.parse(localStorage.getItem('ts-slots')||'{}');_ss[_k]={type:'student',name:name};localStorage.setItem('ts-slots',JSON.stringify(_ss));
+  } else if(action==="avail"){
+    _slotTd.textContent="Available";
+    _slotTd.style.background="#EAB308";
+    _slotTd.style.color="#000";
+    _slotTd.style.cursor="pointer";
+    _slotTd.onclick=function(){openSlotEditor(this,"avail");};
+    var _k2=_slotTd.closest('tr').cells[0].textContent.trim()+'|'+_slotTd.cellIndex;
+    var _ss2=JSON.parse(localStorage.getItem('ts-slots')||'{}');_ss2[_k2]={type:'avail'};localStorage.setItem('ts-slots',JSON.stringify(_ss2));
+  } else if(action==="close"){
+    _slotTd.textContent="Close";
+    _slotTd.style.background="#EF4444";
+    _slotTd.style.color="#fff";
+    _slotTd.style.cursor="pointer";
+    _slotTd.onclick=function(){openSlotEditor(this,"close");};
+    var _k3=_slotTd.closest('tr').cells[0].textContent.trim()+'|'+_slotTd.cellIndex;
+    var _ss3=JSON.parse(localStorage.getItem('ts-slots')||'{}');_ss3[_k3]={type:'close'};localStorage.setItem('ts-slots',JSON.stringify(_ss3));
+  }
+  closeSlotEditor();
+}
+</script>
+
+<!-- SET PACKAGE MODAL -->
+<div id="pkg-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(4px);z-index:300;align-items:center;justify-content:center;" onclick="if(event.target===this)closePkgModal()">
+  <div style="background:white;border-radius:22px;padding:26px;width:340px;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:18px;margin-bottom:6px;">📦 Set Package</div>
+    <div id="pkg-modal-info" style="font-size:12px;color:#6B7280;margin-bottom:16px;"></div>
+    <label style="font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Classes Bought</label>
+    <input id="pkg-classes-input" type="number" min="1" max="100" style="width:100%;padding:10px 14px;border:2px solid #E5E7EB;border-radius:12px;font-family:'Quicksand',sans-serif;font-weight:700;font-size:18px;outline:none;margin-bottom:6px;text-align:center;">
+    <div id="pkg-current-info" style="font-size:11px;color:#6B7280;margin-bottom:16px;text-align:center;"></div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="closePkgModal()" style="flex:1;padding:11px;border-radius:12px;border:2px solid #E5E7EB;background:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;color:#6B7280;">Cancel</button>
+      <button onclick="savePkgModal()" style="flex:2;padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#A855F7,#3B82F6);color:white;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">💾 Save</button>
+    </div>
+  </div>
+</div>
+<script>
+var _pkgStudentId = null;
+function openSetPackage(id, e){
+  if(e) e.stopPropagation();
+  var s = students.find(x=>x.id===id);
+  if(!s) return;
+  _pkgStudentId = id;
+  document.getElementById('pkg-modal-info').textContent = s.name + ' · Currently: ' + s.classes + ' classes left of ' + s.total + ' bought';
+  document.getElementById('pkg-current-info').textContent = 'Currently ' + s.classes + ' remaining / ' + s.total + ' total';
+  document.getElementById('pkg-classes-input').value = s.total;
+  document.getElementById('pkg-modal-overlay').style.display = 'flex';
+  setTimeout(function(){document.getElementById('pkg-classes-input').focus();document.getElementById('pkg-classes-input').select();},100);
+}
+function closePkgModal(){
+  document.getElementById('pkg-modal-overlay').style.display = 'none';
+  _pkgStudentId = null;
+}
+function savePkgModal(){
+  var s = students.find(x=>x.id===_pkgStudentId);
+  if(!s) return;
+  var newTotal = parseInt(document.getElementById('pkg-classes-input').value);
+  if(!newTotal||newTotal<1){alert('Please enter a valid number!');return;}
+  var diff = newTotal - s.total;
+  s.total = newTotal;
+  s.classes = Math.max(0, s.classes + diff);
+  saveData();
+  renderStudents();
+  closePkgModal();
+  alert('✅ Package updated! ' + s.name + ' now has ' + s.classes + ' classes left of ' + s.total + ' bought.');
+}
+function cycleLevel(id, e){
+  if(e) e.stopPropagation();
+  var s = students.find(x=>x.id===id);
+  if(!s) return;
+  var levels = ['Beginner','Intermediate','Advanced'];
+  var idx = levels.indexOf(s.level);
+  s.level = levels[(idx+1)%3];
+  saveData();
+  renderStudents();
+}
+</script>
+
+<!-- Low Package Modal -->
+<div id="lowPkgModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.18);position:relative;">
+    <button onclick="closeLowPkgModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#888;">&times;</button>
+    <h2 style="margin:0 0 6px;font-size:1.2rem;color:#e74c3c;">&#9888; Low Package Students</h2>
+    <p style="margin:0 0 16px;font-size:0.85rem;color:#666;">Students with 3 or fewer classes remaining. Tap a name to copy a WeChat reminder.</p>
+    <div id="lowPkgList" style="max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;"></div>
+    <div id="lowPkgCopyMsg" style="display:none;margin-top:14px;padding:10px 14px;background:#f0fff4;border:1px solid #a8e6b8;border-radius:8px;font-size:0.85rem;color:#2d6a4f;word-break:break-word;"></div>
+  </div>
+</div>
+
+<script>
+function openLowPkgModal() {
+  var allStudents = JSON.parse(localStorage.getItem('ts-students') || '[]');
+  var low = allStudents.filter(function(s) { return (s.classes || 0) <= 3; });
+  var list = document.getElementById('lowPkgList');
+  var copyMsg = document.getElementById('lowPkgCopyMsg');
+  copyMsg.style.display = 'none';
+  list.innerHTML = '';
+
+  if (low.length === 0) {
+    list.innerHTML = '<p style="color:#888;text-align:center;margin:0;">No students are low on packages right now!</p>';
+  } else {
+    low.forEach(function(s) {
+      var card = document.createElement('div');
+      card.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff8f0;border:1px solid #f5cba7;border-radius:10px;cursor:pointer;';
+      card.title = 'Tap to copy WeChat reminder';
+      card.innerHTML = '<span style="font-weight:600;font-size:0.95rem;">' + s.name + '</span><span style="font-size:0.85rem;color:#e67e22;">' + (s.classes || 0) + ' class' + ((s.classes || 0) === 1 ? '' : 'es') + ' left</span>';
+      card.addEventListener('click', function() {
+        var hour = new Date().getHours();
+        var greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+        var msg = greeting + '! Just a friendly reminder that ' + s.name + ' only has ' + (s.classes || 0) + ' class(es) remaining in her package. Please let me know if you wish to continue the package, and I would be happy to prepare the QR code for you.';
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(msg).then(function() {
+            copyMsg.textContent = '✅ Copied! "' + msg + '"';
+            copyMsg.style.display = 'block';
+          });
+        } else {
+          copyMsg.textContent = msg;
+          copyMsg.style.display = 'block';
+        }
+      });
+      list.appendChild(card);
+    });
+  }
+
+  var modal = document.getElementById('lowPkgModal');
+  modal.style.display = 'flex';
+}
+
+function closeLowPkgModal() {
+  document.getElementById('lowPkgModal').style.display = 'none';
+}
+
+document.getElementById('lowPkgModal').addEventListener('click', function(e) {
+  if (e.target === this) closeLowPkgModal();
+});
+</script>
+
+
+<!-- Student Profile Modal -->
+<div id="studentProfileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;padding:0;max-width:480px;width:92%;max-height:85vh;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.2);position:relative;display:flex;flex-direction:column;">
+    <!-- Header -->
+    <div id="profileHeader" style="padding:24px 24px 16px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;position:relative;">
+      <button onclick="closeStudentProfile()" style="position:absolute;top:12px;right:16px;background:rgba(255,255,255,0.2);border:none;font-size:18px;cursor:pointer;color:#fff;width:30px;height:30px;border-radius:50%;">&times;</button>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div id="profileAvatar" style="font-size:2.5rem;background:rgba(255,255,255,0.2);border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;"></div>
+        <div>
+          <div id="profileName" style="font-size:1.3rem;font-weight:800;"></div>
+          <div id="profileNat" style="font-size:0.85rem;opacity:0.85;"></div>
+          <div id="profilePackage" style="font-size:0.85rem;margin-top:4px;background:rgba(255,255,255,0.2);padding:2px 10px;border-radius:20px;display:inline-block;"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Stats Row -->
+    <div id="profileStats" style="display:flex;gap:0;border-bottom:1px solid #f0f0f0;"></div>
+    <!-- Attendance Log -->
+    <div style="padding:16px 24px;overflow-y:auto;flex:1;">
+      <div style="font-weight:700;font-size:0.95rem;color:#374151;margin-bottom:12px;">📋 Attendance History</div>
+      <div id="profileAttendanceLog"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openStudentProfile(id) {
+  var allStudents = JSON.parse(localStorage.getItem('ts-students') || '[]');
+  var s = allStudents.find(function(x){ return x.id === id; });
+  if (!s) return;
+  document.getElementById('profileAvatar').textContent = s.avatar || '👤';
+  document.getElementById('profileName').textContent = s.name;
+  document.getElementById('profileNat').textContent = s.nat || '';
+  document.getElementById('profilePackage').textContent = (s.classes || 0) + ' classes left of ' + (s.total || 0);
+  var log = s.attendanceLog || [];
+  var presentCount = log.filter(function(l){ return l.status === 'present'; }).length;
+  var noshowCount = log.filter(function(l){ return l.status === 'noshow'; }).length;
+  var absentCount = log.filter(function(l){ return l.status === 'absent'; }).length;
+  var attendancePct = log.length > 0 ? Math.round((presentCount / log.length) * 100) : (s.attendance || 100);
+  document.getElementById('profileStats').innerHTML =
+    '<div style="flex:1;text-align:center;padding:12px 0;">' +
+      '<div style="font-size:1.4rem;font-weight:800;color:#22C55E;">' + presentCount + '</div>' +
+      '<div style="font-size:0.75rem;color:#6B7280;">Present</div>' +
+    '</div>' +
+    '<div style="flex:1;text-align:center;padding:12px 0;border-left:1px solid #f0f0f0;border-right:1px solid #f0f0f0;">' +
+      '<div style="font-size:1.4rem;font-weight:800;color:#EF4444;">' + absentCount + '</div>' +
+      '<div style="font-size:0.75rem;color:#6B7280;">Absent</div>' +
+    '</div>' +
+    '<div style="flex:1;text-align:center;padding:12px 0;border-left:1px solid #f0f0f0;border-right:1px solid #f0f0f0;">' +
+      '<div style="font-size:1.4rem;font-weight:800;color:#EF4444;">' + noshowCount + '</div>' +
+      '<div style="font-size:0.75rem;color:#6B7280;">No Show</div>' +
+    '</div>' +
+    '<div style="flex:1;text-align:center;padding:12px 0;">' +
+      '<div style="font-size:1.4rem;font-weight:800;color:#A855F7;">' + attendancePct + '%</div>' +
+      '<div style="font-size:0.75rem;color:#6B7280;">Attendance %</div>' +
+    '</div>';
+  var logDiv = document.getElementById('profileAttendanceLog');
+  if (!logDiv) { document.getElementById('studentProfileModal').style.display = 'flex'; return; }
+  if (log.length === 0) {
+    logDiv.innerHTML = '<p style="color:#9CA3AF;text-align:center;font-size:0.9rem;margin-top:20px;">No attendance records yet.<br>Mark Present or Absent from the dashboard to start tracking.</p>';
+  } else {
+    logDiv.innerHTML = log.map(function(entry) {
+      var bgColor = entry.status==='present' ? '#F0FDF4' : entry.status==='noshow' ? '#FEF2F2' : '#FFF7ED';
+      var borderColor = entry.status==='present' ? '#22C55E' : entry.status==='noshow' ? '#EF4444' : '#F97316';
+      var badgeBg = entry.status==='present' ? '#22C55E' : entry.status==='noshow' ? '#EF4444' : '#F97316';
+      var badgeLabel = entry.status==='present' ? '✅ Present' : entry.status==='noshow' ? '🚫 No Show' : '🔔 Absent';
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;margin-bottom:8px;background:' + bgColor + ';border-radius:10px;border-left:4px solid ' + borderColor + ';">' +
+        '<div>' +
+          '<div style="font-weight:600;font-size:0.9rem;color:#374151;">' + (entry.date || 'No date') + '</div>' +
+          '<div style="font-size:0.78rem;color:#6B7280;">' + (entry.time || '') + '</div>' +
+        '</div>' +
+        '<span style="background:' + badgeBg + ';color:#fff;padding:3px 12px;border-radius:20px;font-size:0.78rem;font-weight:700;">' + badgeLabel + '</span>' +
+      '</div>';
+    }).join('');
+  }
+  document.getElementById('studentProfileModal').style.display = 'flex';
+}
+
+function closeStudentProfile() {
+  document.getElementById('studentProfileModal').style.display = 'none';
+}
+
+document.getElementById('studentProfileModal').addEventListener('click', function(e) {
+  if (e.target === this) closeStudentProfile();
+});
+</script>
+
+
+<script>
+// ─── PROFILE FUNCTIONS ───
+function loadProfile() {
+  var p = JSON.parse(localStorage.getItem('ts-profile') || '{}');
+  var name = p.name || 'Teacher Nica';
+  var role = p.role || 'English Teacher';
+  var location = p.location || 'Bangkok, Thailand';
+  var bio = p.bio || '';
+  var avatar = p.avatar || '👩‍🏫';
+  var photo = p.photo || '';
+
+  // Update profile header
+  var avatarEl = document.getElementById('profile-avatar-display');
+  if (avatarEl) {
+    if (photo) {
+      avatarEl.innerHTML = '<img src="' + photo + '" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">';
+    } else {
+      avatarEl.textContent = avatar;
+    }
+  }
+
+  var nameDisplay = document.getElementById('profile-name-display');
+  var roleDisplay = document.getElementById('profile-role-display');
+  var locDisplay = document.getElementById('profile-location-display');
+  if (nameDisplay) nameDisplay.textContent = name;
+  if (roleDisplay) roleDisplay.textContent = role;
+  if (locDisplay) locDisplay.textContent = location;
+
+  // Fill inputs
+  var nameInput = document.getElementById('profile-name-input');
+  var roleInput = document.getElementById('profile-role-input');
+  var locInput = document.getElementById('profile-location-input');
+  var bioInput = document.getElementById('profile-bio-input');
+  if (nameInput) nameInput.value = name;
+  if (roleInput) roleInput.value = role;
+  if (locInput) locInput.value = location;
+  if (bioInput) bioInput.value = bio;
+
+  // Update sidebar
+  var sidebarName = document.getElementById('sidebar-name');
+  var sidebarLoc = document.getElementById('sidebar-location');
+  var sidebarAv = document.getElementById('sidebar-avatar');
+  if (sidebarName) sidebarName.textContent = name;
+  if (sidebarLoc) sidebarLoc.textContent = location;
+  if (sidebarAv) {
+    if (photo) {
+      sidebarAv.innerHTML = '<img src="' + photo + '" style="width:36px;height:36px;border-radius:10px;object-fit:cover;">';
+    } else {
+      sidebarAv.textContent = avatar;
+    }
+  }
+
+  // Dark mode
+  var dark = localStorage.getItem('ts-dark-mode') === 'true';
+  if (dark) applyDarkMode(true);
+}
+
+function saveProfile() {
+  var nameInput = document.getElementById('profile-name-input');
+  var roleInput = document.getElementById('profile-role-input');
+  var locInput = document.getElementById('profile-location-input');
+  var bioInput = document.getElementById('profile-bio-input');
+  var avatarEl = document.getElementById('profile-avatar-display');
+
+  var existing = JSON.parse(localStorage.getItem('ts-profile') || '{}');
+
+  var p = {
+    name: nameInput ? nameInput.value || 'Teacher Nica' : 'Teacher Nica',
+    role: roleInput ? roleInput.value || 'English Teacher' : 'English Teacher',
+    location: locInput ? locInput.value || 'Bangkok, Thailand' : 'Bangkok, Thailand',
+    bio: bioInput ? bioInput.value || '' : '',
+    avatar: avatarEl ? (avatarEl.textContent || '👩‍🏫') : '👩‍🏫',
+    photo: existing.photo || ''
+  };
+
+  localStorage.setItem('ts-profile', JSON.stringify(p));
+  loadProfile();
+
+  var msg = document.getElementById('profile-save-msg');
+  if (msg) {
+    msg.style.display = 'block';
+    setTimeout(function(){ msg.style.display = 'none'; }, 3000);
+  }
+}
+
+function selectAvatar(emoji) {
+  var avatarEl = document.getElementById('profile-avatar-display');
+  if (avatarEl) avatarEl.textContent = emoji;
+  var picker = document.getElementById('avatar-picker');
+  if (picker) picker.style.display = 'none';
+}
+
+function handlePhotoUpload(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var photo = e.target.result;
+    var existing = JSON.parse(localStorage.getItem('ts-profile') || '{}');
+    existing.photo = photo;
+    localStorage.setItem('ts-profile', JSON.stringify(existing));
+    loadProfile();
+  };
+  reader.readAsDataURL(file);
+}
+
+function toggleDarkMode() {
+  var isDark = localStorage.getItem('ts-dark-mode') === 'true';
+  localStorage.setItem('ts-dark-mode', (!isDark).toString());
+  applyDarkMode(!isDark);
+}
+
+function applyDarkMode(dark) {
+  var toggle = document.getElementById('dark-mode-toggle');
+  var knob = document.getElementById('dark-mode-knob');
+  if (dark) {
+    document.body.style.background = '#1a1a2e';
+    document.body.style.color = '#e2e8f0';
+    if (toggle) toggle.style.background = '#A855F7';
+    if (knob) knob.style.left = '22px';
+  } else {
+    document.body.style.background = '';
+    document.body.style.color = '';
+    if (toggle) toggle.style.background = '#e5e7eb';
+    if (knob) knob.style.left = '2px';
+  }
+}
+
+// Load profile on init
+loadProfile();
+</script>
+
+
+<!-- Add Payment Modal -->
+<div id="addPaymentModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:420px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.18);position:relative;max-height:90vh;overflow-y:auto;">
+    <button onclick="closeAddPaymentModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#888;">&times;</button>
+    <h2 style="margin:0 0 20px;font-size:1.1rem;color:#374151;">+ Add Payment Record</h2>
+
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Student</label>
+      <select id="pay-student-select" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;"></select>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Amount Paid (₱)</label>
+      <input id="pay-amount" type="number" placeholder="e.g. 3000" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Date Paid</label>
+      <input id="pay-date" type="date" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Class Package</label>
+      <select id="pay-package" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+        <option value="10">10 classes</option>
+        <option value="20">20 classes</option>
+        <option value="25">25 classes</option>
+        <option value="27">27 classes</option>
+        <option value="30">30 classes</option>
+        <option value="32">32 classes</option>
+        <option value="50">50 classes</option>
+        <option value="52">52 classes</option>
+      </select>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Classes Used</label>
+      <input id="pay-classes-used" type="number" placeholder="e.g. 4" min="0" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Payment Status</label>
+      <div style="display:flex;gap:10px;">
+        <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;cursor:pointer;">
+          <input type="radio" name="pay-status" value="paid" checked> <span style="font-weight:600;color:#22C55E;">✅ Paid</span>
+        </label>
+        <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;cursor:pointer;">
+          <input type="radio" name="pay-status" value="unpaid"> <span style="font-weight:600;color:#EF4444;">❌ Not Paid</span>
+        </label>
+      </div>
+    </div>
+
+    <button onclick="savePayment()" style="width:100%;padding:12px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;">💾 Save Payment</button>
+  </div>
+</div>
+
+<!-- Payment Detail Modal -->
+<div id="paymentDetailModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;padding:0;max-width:440px;width:92%;max-height:85vh;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.2);display:flex;flex-direction:column;">
+    <div style="padding:20px 24px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;position:relative;">
+      <button onclick="closePaymentDetail()" style="position:absolute;top:12px;right:16px;background:rgba(255,255,255,0.2);border:none;font-size:18px;cursor:pointer;color:#fff;width:30px;height:30px;border-radius:50%;">&times;</button>
+      <div id="pay-detail-name" style="font-size:1.2rem;font-weight:800;"></div>
+      <div id="pay-detail-sub" style="font-size:0.85rem;opacity:0.85;margin-top:4px;"></div>
+    </div>
+    <div style="padding:20px 24px;overflow-y:auto;flex:1;">
+      <div style="font-weight:700;font-size:0.95rem;color:#374151;margin-bottom:12px;">📋 Payment History</div>
+      <div id="pay-detail-history"></div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+function getPayments(){return JSON.parse(localStorage.getItem('ts-payments')||'[]');}
+function savePayments(p){localStorage.setItem('ts-payments',JSON.stringify(p));}
+
+function renderPayments(){
+  var payments=getPayments();
+  var students=JSON.parse(localStorage.getItem('ts-students')||'[]');
+  var sf=document.getElementById('pay-filter-status');
+  var mf=document.getElementById('pay-filter-month');
+  var statusFilter=sf?sf.value:'all';
+  var monthFilter=mf?mf.value:'all';
+  var filtered=payments.slice();
+  if(statusFilter!=='all') filtered=filtered.filter(function(p){return p.status===statusFilter;});
+  if(monthFilter!=='all') filtered=filtered.filter(function(p){
+    if(!p.date) return false;
+    return new Date(p.date).getMonth()===parseInt(monthFilter);
+  });
+  var list=document.getElementById('payment-list');
+  if(!list) return;
+  if(filtered.length===0){
+    list.innerHTML='<div style="text-align:center;color:#9CA3AF;padding:40px 0;font-size:0.9rem;">No payment records yet.<br>Click "+ Add Payment" to get started.</div>';
+    return;
+  }
+
+  // Group by month
+  var groups={};
+  filtered.forEach(function(p){
+    if(!p.date){ var k='No Date'; if(!groups[k]) groups[k]={label:'No Date',payments:[]}; groups[k].payments.push(p); return; }
+    var d=new Date(p.date);
+    var key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    var label=d.toLocaleString('default',{month:'long',year:'numeric'});
+    if(!groups[key]) groups[key]={label:label,payments:[]};
+    groups[key].payments.push(p);
   });
 
-  // Call the right render function
-  if (lastPage === 'dashboard') renderDashboard();
-  else if (lastPage === 'students')  renderStudents();
-  else if (lastPage === 'payments')  renderPayments();
-  else if (lastPage === 'earnings')  renderEarnings();
-  else if (lastPage === 'schedule')  { renderScheduleGrid(); renderClassNotes(); }
-  else if (lastPage === 'reports')   renderReports();
-  else if (lastPage === 'materials') updateFolderCounts();
-  else if (lastPage === 'classroom') renderClassroom();
-  else renderDashboard();
+  // Sort newest first
+  var sortedKeys=Object.keys(groups).sort().reverse();
+  // Sort vouchers within each month by date descending
+  sortedKeys.forEach(function(k){
+    groups[k].payments.sort(function(a,b){ return new Date(b.date)-new Date(a.date); });
+  });
+
+  var html='';
+  sortedKeys.forEach(function(k){
+    var g=groups[k];
+    var monthTotal=g.payments.reduce(function(sum,p){return sum+(parseFloat(p.amount)||0);},0);
+    var voucherCount=g.payments.length;
+
+    // Month header
+    html+='<div style="background:linear-gradient(135deg,#A855F7,#7C3AED);color:white;padding:10px 16px;border-radius:10px;margin:16px 0 6px;display:flex;justify-content:space-between;align-items:center;">'
+      +'<div style="font-weight:800;font-size:0.95rem;">📅 '+g.label+'</div>'
+      +'<div style="font-size:0.8rem;opacity:0.9;">'+voucherCount+' voucher'+(voucherCount!==1?'s':'')+' · <span style="font-weight:800;">₱'+monthTotal.toLocaleString()+'</span></div>'
+    +'</div>';
+
+    // Individual vouchers
+    g.payments.forEach(function(p){
+      var s=students.find(function(x){return x.name===p.studentName;});
+      var isPaid=p.status==='paid';
+      var pkg=p.package||0;
+      html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #f3f4f6;border-left:4px solid '+(isPaid?'#22C55E':'#EF4444')+';gap:10px;flex-wrap:wrap;margin-bottom:2px;">'
+        +'<div style="display:flex;align-items:center;gap:10px;flex:1;">'
+          +'<div style="font-size:1.4rem;">'+(s?s.avatar:'👤')+'</div>'
+          +'<div>'
+            +'<div style="font-weight:700;font-size:0.9rem;">'+p.studentName+'</div>'
+            +'<div style="font-size:0.75rem;color:#9CA3AF;">'+(p.date||'No date')+(p.notes?'  ·  '+p.notes:'')+'</div>'
+          +'</div>'
+        +'</div>'
+        +'<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">'
+          +'<div style="text-align:center;"><div style="font-weight:700;color:#A855F7;font-size:0.9rem;">₱'+parseFloat(p.amount||0).toLocaleString()+'</div><div style="font-size:0.7rem;color:#9CA3AF;">Amount</div></div>'
+          +'<div style="text-align:center;"><div style="font-weight:700;font-size:0.9rem;">'+pkg+' cls</div><div style="font-size:0.7rem;color:#9CA3AF;">Package</div></div>'
+          +'<span style="background:'+(isPaid?'#DCFCE7':'#FEE2E2')+';color:'+(isPaid?'#15803D':'#DC2626')+';padding:4px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;">'+(isPaid?'✅ Paid':'❌ Not Paid')+'</span>'
+          +'<button onclick="editPayment('+p.id+')" style="padding:5px 12px;border-radius:8px;border:none;background:#EFF6FF;color:#1D4ED8;font-weight:700;font-size:11px;cursor:pointer;">✏️ Edit</button>'
+          +'<button onclick="deletePayment('+p.id+')" style="padding:5px 12px;border-radius:8px;border:none;background:#FEE2E2;color:#EF4444;font-weight:700;font-size:11px;cursor:pointer;">🗑️ Delete</button>'
+        +'</div>'
+      +'</div>';
+    });
+  });
+
+  list.innerHTML=html;
+}
+
+function renderEarnings(){
+  var payments=getPayments();
+  var now=new Date();
+
+  // This month paid
+  var thisMonth=payments.filter(function(p){
+    if(!p.date||p.status!=='paid') return false;
+    var d=new Date(p.date);
+    return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+  });
+  var totalEarned=thisMonth.reduce(function(sum,p){return sum+(parseFloat(p.amount)||0);},0);
+
+  // All unpaid
+  var totalUnpaid=payments.filter(function(p){return p.status==='unpaid';})
+    .reduce(function(sum,p){return sum+(parseFloat(p.amount)||0);},0);
+
+  // All time earned
+  var totalAll=payments.filter(function(p){return p.status==='paid';})
+    .reduce(function(sum,p){return sum+(parseFloat(p.amount)||0);},0);
+
+  var em=document.getElementById('earn-this-month');
+  var eu=document.getElementById('earn-unpaid');
+  var ea=document.getElementById('earn-total-all');
+  if(em) em.textContent='₱'+totalEarned.toLocaleString();
+  if(eu) eu.textContent='₱'+totalUnpaid.toLocaleString();
+  if(ea) ea.textContent='₱'+totalAll.toLocaleString();
+
+  // Monthly breakdown
+  var container=document.getElementById('earn-monthly-breakdown');
+  if(!container) return;
+
+  if(payments.length===0){
+    container.innerHTML='<p style="color:#9CA3AF;font-size:0.85rem;text-align:center;padding:20px 0;">No payment records yet.<br>Add payments in the Payments tab to see your monthly earnings here.</p>';
+    return;
+  }
+
+  // Group by month
+  var months={};
+  payments.forEach(function(p){
+    if(!p.date) return;
+    var d=new Date(p.date);
+    var key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    var label=d.toLocaleString('default',{month:'long',year:'numeric'});
+    if(!months[key]) months[key]={label:label,paid:0,unpaid:0,count:0};
+    months[key].count++;
+    if(p.status==='paid') months[key].paid+=parseFloat(p.amount)||0;
+    else months[key].unpaid+=parseFloat(p.amount)||0;
+  });
+
+  // Sort newest first
+  var keys=Object.keys(months).sort().reverse();
+
+  container.innerHTML=keys.map(function(k){
+    var m=months[k];
+    var isCurrentMonth=k===(now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0'));
+    return '<div style="border-radius:12px;margin-bottom:12px;overflow:hidden;border:1px solid '+(isCurrentMonth?'#DDD6FE':'#F3F4F6')+';">'
+      // Month header row
+      +'<div style="background:'+(isCurrentMonth?'linear-gradient(135deg,#A855F7,#7C3AED)':'linear-gradient(135deg,#6B7280,#4B5563)')+';color:white;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;">'
+        +'<div style="font-weight:800;font-size:0.95rem;">📅 '+m.label+(isCurrentMonth?' <span style="font-size:10px;background:rgba(255,255,255,0.25);padding:2px 7px;border-radius:10px;margin-left:6px;">Current</span>':'')+'</div>'
+        +'<div style="font-size:0.8rem;opacity:0.9;">'+m.count+' voucher'+(m.count!==1?'s':'')+'</div>'
+      +'</div>'
+      // Stats row
+      +'<div style="display:flex;gap:0;background:'+(isCurrentMonth?'#F5F3FF':'#F9FAFB')+';padding:12px 16px;justify-content:space-around;align-items:center;">'
+        +'<div style="text-align:center;">'
+          +'<div style="font-size:0.72rem;color:#9CA3AF;margin-bottom:2px;">VOUCHERS</div>'
+          +'<div style="font-weight:800;font-size:1.1rem;color:#374151;">'+m.count+'</div>'
+        +'</div>'
+        +'<div style="width:1px;height:36px;background:#E5E7EB;"></div>'
+        +'<div style="text-align:center;">'
+          +'<div style="font-size:0.72rem;color:#9CA3AF;margin-bottom:2px;">TOTAL EARNED</div>'
+          +'<div style="font-weight:800;font-size:1.1rem;color:'+(isCurrentMonth?'#7C3AED':'#374151')+';">₱'+m.paid.toLocaleString()+'</div>'
+        +'</div>'
+        +(m.unpaid>0
+          ?'<div style="width:1px;height:36px;background:#E5E7EB;"></div>'
+           +'<div style="text-align:center;">'
+             +'<div style="font-size:0.72rem;color:#9CA3AF;margin-bottom:2px;">UNPAID</div>'
+             +'<div style="font-weight:800;font-size:1.1rem;color:#EF4444;">₱'+m.unpaid.toLocaleString()+'</div>'
+           +'</div>'
+          :'')
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+function openAddPaymentModal(){
+  var students=JSON.parse(localStorage.getItem('ts-students')||'[]');
+  var sel=document.getElementById('pay-student-select');
+  if(sel) sel.innerHTML=students.map(function(s){return '<option value="'+s.name+'">'+(s.avatar||'👤')+' '+s.name+'</option>';}).join('');
+  var di=document.getElementById('pay-date');
+  if(di) di.value=new Date().toISOString().split('T')[0];
+  document.getElementById('addPaymentModal').style.display='flex';
+}
+
+function closeAddPaymentModal(){
+  document.getElementById('addPaymentModal').style.display='none';
+}
+
+function savePayment(){
+  var sn=document.getElementById('pay-student-select').value;
+  var amt=document.getElementById('pay-amount').value;
+  var dt=document.getElementById('pay-date').value;
+  var pkg=document.getElementById('pay-package').value;
+  var used=document.getElementById('pay-classes-used').value||0;
+  var status=document.querySelector('input[name="pay-status"]:checked').value;
+  if(!sn||!amt){alert('Please fill in student and amount.');return;}
+  var payments=getPayments();
+  payments.unshift({id:Date.now(),studentName:sn,amount:parseFloat(amt),date:dt,package:parseInt(pkg),classesUsed:parseInt(used),status:status});
+  savePayments(payments);
+  closeAddPaymentModal();
+  renderPayments();
+}
+
+function openPaymentDetail(id){
+  var payments=getPayments();
+  var record=payments.find(function(p){return p.id===id;});
+  if(!record) return;
+  var all=payments.filter(function(p){return p.studentName===record.studentName;});
+  var students=JSON.parse(localStorage.getItem('ts-students')||'[]');
+  var s=students.find(function(x){return x.name===record.studentName;});
+  document.getElementById('pay-detail-name').textContent=(s?s.avatar+' ':'')+record.studentName;
+  document.getElementById('pay-detail-sub').textContent=s?(s.classes+' classes left of '+s.total):'';
+  var hist=document.getElementById('pay-detail-history');
+  hist.innerHTML=all.map(function(p){
+    var isPaid=p.status==='paid';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;margin-bottom:8px;background:'+(isPaid?'#F0FDF4':'#FEF2F2')+';border-radius:10px;border-left:4px solid '+(isPaid?'#22C55E':'#EF4444')+';">'+
+      '<div><div style="font-weight:600;font-size:0.9rem;">'+(p.date||'No date')+'</div><div style="font-size:0.78rem;color:#6B7280;">'+p.package+' classes · '+p.classesUsed+' used</div></div>'+
+      '<div style="text-align:right;"><div style="font-weight:700;color:#A855F7;">₱'+parseFloat(p.amount||0).toLocaleString()+'</div><span style="background:'+(isPaid?'#DCFCE7':'#FEE2E2')+';color:'+(isPaid?'#15803D':'#DC2626')+';padding:2px 8px;border-radius:20px;font-size:0.72rem;font-weight:700;">'+(isPaid?'Paid':'Not Paid')+'</span></div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('paymentDetailModal').style.display='flex';
+}
+
+function closePaymentDetail(){document.getElementById('paymentDetailModal').style.display='none';}
+
+function handlePDFUpload(input){
+  var file=input.files[0];
+  if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    localStorage.setItem('ts-pdf-report',e.target.result);
+    showPDF(e.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+function showPDF(data){
+  var s=document.getElementById('pdf-viewer-section');
+  var f=document.getElementById('pdf-frame');
+  if(s&&f){f.src=data;s.style.display='block';}
+}
+
+function clearPDF(){
+  localStorage.removeItem('ts-pdf-report');
+  document.getElementById('pdf-viewer-section').style.display='none';
+  document.getElementById('pdf-frame').src='';
+}
+
+document.getElementById('addPaymentModal').addEventListener('click',function(e){if(e.target===this)closeAddPaymentModal();});
+document.getElementById('paymentDetailModal').addEventListener('click',function(e){if(e.target===this)closePaymentDetail();});
+</script>
+
+
+<script>
+// ─── PDF REPORTS ───
+function getPDFReports(){
+  return JSON.parse(localStorage.getItem('ts-pdf-reports')||'[]');
+}
+
+function savePDFReports(reports){
+  localStorage.setItem('ts-pdf-reports', JSON.stringify(reports));
+}
+
+// [PDF renderReports removed - duplicate]
+
+function openUploadModal(){
+  document.getElementById('pdf-file-count').textContent = '';
+  document.getElementById('pdf-upload-input').value = '';
+  document.getElementById('upload-progress').style.display = 'none';
+  document.getElementById('uploadPDFModal').style.display = 'flex';
+}
+
+function closeUploadModal(){
+  document.getElementById('uploadPDFModal').style.display = 'none';
+}
+
+document.getElementById('pdf-upload-input').addEventListener('change', function(){
+  var count = this.files.length;
+  document.getElementById('pdf-file-count').textContent = count + ' file'+(count===1?'':' s')+' selected';
 });
+
+function uploadPDFs(){
+  var input = document.getElementById('pdf-upload-input');
+  var month = document.getElementById('pdf-month-select').value;
+  var files = input.files;
+
+  if(!files || files.length === 0){
+    alert('Please select at least one PDF file.');
+    return;
+  }
+
+  var progress = document.getElementById('upload-progress');
+  progress.style.display = 'block';
+
+  var reports = getPDFReports();
+  var loaded = 0;
+
+  Array.from(files).forEach(function(file){
+    var reader = new FileReader();
+    reader.onload = function(e){
+      reports.unshift({
+        id: Date.now() + Math.random(),
+        name: file.name,
+        month: month,
+        data: e.target.result,
+        uploadedAt: new Date().toISOString()
+      });
+      loaded++;
+      if(loaded === files.length){
+        savePDFReports(reports);
+        closeUploadModal();
+        renderReports();
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function viewPDF(id){
+  var reports = getPDFReports();
+  var report = reports.find(function(r){ return String(r.id) === String(id); });
+  if(!report) return;
+  var win = window.open();
+  win.document.write('<iframe src="'+report.data+'" style="width:100%;height:100%;border:none;"></iframe>');
+}
+
+function deletePDF(id){
+  if(!confirm('Delete this file?')) return;
+  var reports = getPDFReports().filter(function(r){ return String(r.id) !== String(id); });
+  savePDFReports(reports);
+  renderReports();
+}
+
+document.getElementById('uploadPDFModal').addEventListener('click', function(e){
+  if(e.target === this) closeUploadModal();
+});
+</script>
+
+<script>
+// ─── PDF RECORDS ───
+function getPDFRecords(){return JSON.parse(localStorage.getItem('ts-pdf-records')||'[]');}
+function savePDFRecordsToDB(r){localStorage.setItem('ts-pdf-records',JSON.stringify(r));}
+
+function savePDFFiles(){
+  var input=document.getElementById('pdf-upload-input');
+  var monthEl=document.getElementById('pdf-month-select');
+  if(!input||!input.files||input.files.length===0){alert('Please select a file first.');return;}
+  var month=monthEl?monthEl.value:'Unknown';
+  var files=Array.from(input.files);
+  var records=getPDFRecords();
+  var loaded=0;
+  files.forEach(function(file){
+    var reader=new FileReader();
+    reader.onload=function(e){
+      records.unshift({id:Date.now()+Math.random(),name:file.name,month:month,data:e.target.result,savedAt:new Date().toLocaleString()});
+      loaded++;
+      if(loaded===files.length){
+        savePDFRecordsToDB(records);
+        closeUploadModal();
+        renderPDFRecords();
+        alert('✅ '+loaded+' file(s) saved!');
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+
+function deletePDFRecord(id){
+  if(!confirm('Delete this file?'))return;
+  var records=getPDFRecords().filter(function(r){return String(r.id)!==String(id);});
+  savePDFRecordsToDB(records);
+  renderPDFRecords();
+}
+</script>
+
+<!-- Edit Payment Modal -->
+<div id="editPaymentModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:420px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,0.18);position:relative;">
+    <button onclick="closeEditPaymentModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#888;">&times;</button>
+    <h2 style="margin:0 0 20px;font-size:1.1rem;color:#374151;">✏️ Edit Payment</h2>
+    <input type="hidden" id="edit-pay-id">
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Student</label>
+      <input id="edit-pay-student" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;background:#fff;" placeholder="Enter student name">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Amount (₱)</label>
+      <input id="edit-pay-amount" type="number" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Date</label>
+      <input id="edit-pay-date" type="date" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Status</label>
+      <select id="edit-pay-status" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+        <option value="paid">✅ Paid</option>
+        <option value="unpaid">❌ Not Paid</option>
+      </select>
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="font-size:0.82rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px;">Notes</label>
+      <input id="edit-pay-notes" type="text" placeholder="e.g. Package 3, April renewal..." style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;box-sizing:border-box;">
+    </div>
+    <button onclick="saveEditedPayment()" style="width:100%;padding:12px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;">💾 Save Changes</button>
+  </div>
+</div>
+
+<script>
+function editPayment(id){
+  var payments=getPayments();
+  var p=payments.find(function(x){return String(x.id)===String(id);});
+  if(!p) return;
+  document.getElementById('edit-pay-id').value=p.id;
+  document.getElementById('edit-pay-student').value=p.studentName;
+  document.getElementById('edit-pay-amount').value=p.amount||0;
+  document.getElementById('edit-pay-date').value=p.date||''  ;
+  document.getElementById('edit-pay-status').value=p.status||'unpaid';
+  document.getElementById('edit-pay-notes').value=p.notes||'';
+  document.getElementById('editPaymentModal').style.display='flex';
+}
+function closeEditPaymentModal(){
+  document.getElementById('editPaymentModal').style.display='none';
+}
+function saveEditedPayment(){
+  var id=document.getElementById('edit-pay-id').value;
+  var payments=getPayments();
+  var idx=payments.findIndex(function(x){return String(x.id)===String(id);});
+  if(idx===-1){alert('Payment not found.');return;}
+  payments[idx].studentName=document.getElementById('edit-pay-student').value;
+  payments[idx].amount=parseFloat(document.getElementById('edit-pay-amount').value)||0;
+  payments[idx].date=document.getElementById('edit-pay-date').value;
+  payments[idx].status=document.getElementById('edit-pay-status').value;
+  payments[idx].notes=document.getElementById('edit-pay-notes').value;
+  savePayments(payments);
+  closeEditPaymentModal();
+  renderPayments();
+  renderEarnings();
+  alert('✅ Payment updated!');
+}
+function deletePayment(id){
+  if(!confirm('Are you sure you want to delete this payment? This cannot be undone.')) return;
+  var payments=getPayments().filter(function(x){return String(x.id)!==String(id);});
+  savePayments(payments);
+  renderPayments();
+  renderEarnings();
+}
+document.getElementById('editPaymentModal').addEventListener('click',function(e){if(e.target===this)closeEditPaymentModal();});
+</script>
+
+
+<!-- Quick Rename Modal -->
+<div id="quickRenameModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:14px;padding:24px;max-width:340px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+    <div style="font-weight:800;font-size:1rem;color:#374151;margin-bottom:16px;">✏️ Quick Rename Student</div>
+    <input type="hidden" id="quickRenameId">
+    <input id="quickRenameInput" type="text" style="width:100%;padding:10px 14px;border:1.5px solid #A855F7;border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:16px;" placeholder="Enter new name">
+    <div style="display:flex;gap:10px;">
+      <button onclick="saveQuickRename()" style="flex:1;padding:10px;background:linear-gradient(135deg,#A855F7,#6366F1);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;">💾 Save</button>
+      <button onclick="closeQuickRename()" style="flex:1;padding:10px;background:#F3F4F6;color:#374151;border:none;border-radius:10px;font-weight:700;cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+</div>
+<script>
+function openQuickRename(id,e){
+  if(e) e.stopPropagation();
+  var s=students.find(function(x){return x.id===id;});
+  if(!s) return;
+  document.getElementById("quickRenameId").value=id;
+  document.getElementById("quickRenameInput").value=s.name;
+  document.getElementById("quickRenameModal").style.display="flex";
+  setTimeout(function(){document.getElementById("quickRenameInput").focus();},100);
+}
+function closeQuickRename(){
+  document.getElementById("quickRenameModal").style.display="none";
+}
+function saveQuickRename(){
+  var id=parseInt(document.getElementById("quickRenameId").value);
+  var newName=document.getElementById("quickRenameInput").value.trim();
+  if(!newName){alert("Name cannot be empty!");return;}
+  var idx=students.findIndex(function(x){return x.id===id;});
+  if(idx===-1) return;
+  students[idx].name=newName;
+  students[idx].avatar=newName.charAt(0).toUpperCase();
+  saveData();renderStudents();renderDashboard();
+  closeQuickRename();
+}
+document.getElementById("quickRenameModal").addEventListener("click",function(e){if(e.target===this)closeQuickRename();});
+document.getElementById("quickRenameInput").addEventListener("keydown",function(e){if(e.key==="Enter")saveQuickRename();if(e.key==="Escape")closeQuickRename();});
+
+function saveClassNote(){
+  var student = document.getElementById('note-student').value.trim();
+  var date = document.getElementById('note-date').value;
+  var time = document.getElementById('note-time').value;
+  var reason = document.getElementById('note-reason').value.trim();
+  if(!student){alert('Please enter a student name!');return;}
+  if(!date){alert('Please select a date!');return;}
+  if(!time){alert('Please select a time!');return;}
+  var notes = JSON.parse(localStorage.getItem('ts-class-notes')||'[]');
+  var note = {
+    id: Date.now(),
+    student: student,
+    date: date,
+    time: time,
+    reason: reason,
+    done: false,
+    createdAt: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
+  };
+  notes.unshift(note);
+  localStorage.setItem('ts-class-notes', JSON.stringify(notes));
+  // Clear form
+  document.getElementById('note-student').value='';
+  document.getElementById('note-date').value='';
+  document.getElementById('note-time').value='';
+  document.getElementById('note-reason').value='';
+  renderClassNotes();
+  alert('✅ Note saved!');
+}
+
+function markNoteDone(id){
+  var notes = JSON.parse(localStorage.getItem('ts-class-notes')||'[]');
+  var idx = notes.findIndex(function(n){return n.id===id;});
+  if(idx===-1) return;
+  notes[idx].done = true;
+  localStorage.setItem('ts-class-notes', JSON.stringify(notes));
+  renderClassNotes();
+}
+
+function deleteClassNote(id){
+  if(!confirm('Delete this note?')) return;
+  var notes = JSON.parse(localStorage.getItem('ts-class-notes')||'[]');
+  notes = notes.filter(function(n){return n.id!==id;});
+  localStorage.setItem('ts-class-notes', JSON.stringify(notes));
+  renderClassNotes();
+}
+
+function renderClassNotes(){
+  var container = document.getElementById('class-notes-list');
+  if(!container) return;
+  var notes = JSON.parse(localStorage.getItem('ts-class-notes')||'[]');
+  if(notes.length===0){
+    container.innerHTML='<p style="color:#9CA3AF;font-size:0.85rem;text-align:center;padding:20px 0;">No makeup class notes yet.<br>Add one above! 📝</p>';
+    return;
+  }
+  container.innerHTML = notes.map(function(n){
+    var isDone = n.done;
+    var d = new Date(n.date);
+    var dateLabel = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+    var timeLabel = n.time ? new Date('1970-01-01T'+n.time).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) : '';
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:12px;margin-bottom:8px;background:'+(isDone?'#F0FDF4':'#ffffff')+';border:1.5px solid '+(isDone?'#22C55E':'#DDD6FE')+';gap:8px;flex-wrap:wrap;opacity:'+(isDone?'0.7':'1')+'">' +
+      '<div style="flex:1;">' +
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">' +
+          '<span style="font-weight:800;font-size:0.9rem;color:#374151;">'+(isDone?'✅ ':'')+n.student+'</span>' +
+          (isDone?'<span style="background:#DCFCE7;color:#15803D;padding:2px 8px;border-radius:20px;font-size:0.7rem;font-weight:700;">Done</span>':'<span style="background:#EDE9FE;color:#7C3AED;padding:2px 8px;border-radius:20px;font-size:0.7rem;font-weight:700;">Pending</span>') +
+        '</div>' +
+        '<div style="font-size:0.78rem;color:#6B7280;">📅 '+dateLabel+' · ⏰ '+timeLabel+'</div>' +
+        (n.reason?'<div style="font-size:0.78rem;color:#9CA3AF;margin-top:2px;">📝 '+n.reason+'</div>':'') +
+      '</div>' +
+      '<div style="display:flex;gap:6px;">' +
+        (!isDone?'<button onclick="markNoteDone('+n.id+')" style="padding:6px 12px;border-radius:8px;border:none;background:#DCFCE7;color:#15803D;font-weight:700;font-size:11px;cursor:pointer;">✅ Done</button>':'') +
+        '<button onclick="deleteClassNote('+n.id+')" style="padding:6px 12px;border-radius:8px;border:none;background:#FEE2E2;color:#EF4444;font-weight:700;font-size:11px;cursor:pointer;">🗑️</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ─── DAILY RESET ───
+// Clear attendance_today if it's a new day
+(function(){
+  var today = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  var lastReset = localStorage.getItem('ts-last-reset');
+  if(lastReset !== today) {
+    students.forEach(function(s){ s.attendance_today = ''; });
+    localStorage.setItem('ts-last-reset', today);
+    localStorage.setItem('ts-students', JSON.stringify(students));
+  }
+})();
 
 // ─── INIT ───
 (function(){
