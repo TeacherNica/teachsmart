@@ -2853,18 +2853,26 @@ function renderClassNotes(){
 // ─── INIT ───
 (function(){
   var lastPage = localStorage.getItem('ts-last-page') || 'dashboard';
-  var navBtn = document.querySelector('.nav-item[onclick*="nav(''+lastPage+''"]');
+  // Find the matching nav button by looping (avoids querySelector quote issues)
+  var navBtn = null;
+  document.querySelectorAll('.nav-item').forEach(function(el){
+    var oc = el.getAttribute('onclick') || '';
+    if(oc.indexOf("nav('" + lastPage + "'") !== -1) navBtn = el;
+  });
   if(!navBtn) {
     lastPage = 'dashboard';
-    navBtn = document.querySelector('.nav-item[onclick*="nav('dashboard'"]');
+    document.querySelectorAll('.nav-item').forEach(function(el){
+      var oc = el.getAttribute('onclick') || '';
+      if(oc.indexOf("nav('dashboard'") !== -1) navBtn = el;
+    });
   }
-  // activate page + nav
+  // Activate the right page and nav button
   document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
   document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
   var pageEl = document.getElementById('page-' + lastPage);
   if(pageEl) pageEl.classList.add('active');
   if(navBtn) navBtn.classList.add('active');
-  // render the right content
+  // Call the right render function
   if(lastPage==='dashboard')  renderDashboard();
   if(lastPage==='students')   renderStudents();
   if(lastPage==='payments')   renderPayments();
