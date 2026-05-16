@@ -903,7 +903,7 @@ function clearAllStudents(){
     students=[];
     saveData();
     renderStudents();
-    renderDashboard();
+    // renderDashboard() called in init block below
     alert('✅ All students cleared! Go to Students page and add your real students.');
     nav('students', document.querySelectorAll('.nav-item')[1]);
   }
@@ -957,6 +957,7 @@ function nav(page,btn){
 
 // ─── DASHBOARD ───
 function renderDashboard(){
+  students=JSON.parse(localStorage.getItem('ts-students')||'[]');
   const low=students.filter(s=>s.classes<=3).length;
   document.getElementById('dash-total').textContent=students.length;
   document.getElementById('dash-low').textContent=low;
