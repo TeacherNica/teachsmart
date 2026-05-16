@@ -2873,7 +2873,7 @@ function renderClassNotes(){
   if(pageEl) pageEl.classList.add('active');
   if(navBtn) navBtn.classList.add('active');
   // Call the right render function
-  if(lastPage==='dashboard')  renderDashboard();
+  if(lastPage==='dashboard')  { students=JSON.parse(localStorage.getItem('ts-students')||'null')||students; setTimeout(renderDashboard,0); }
   if(lastPage==='students')   renderStudents();
   if(lastPage==='payments')   renderPayments();
   if(lastPage==='earnings')   renderEarnings();
