@@ -2851,31 +2851,28 @@ function renderClassNotes(){
 })();
 
 // ─── INIT ───
-renderDashboard();
-renderStudents();
 (function(){
-  var lastPage = localStorage.getItem('ts-last-page');
-  if(lastPage && lastPage !== 'dashboard'){
-    var navBtn = document.querySelector('[onclick*="nav(''+lastPage+''"]');
-    if(navBtn) nav(lastPage, navBtn);
-    setTimeout(function(){
-      if(lastPage==='earnings') renderEarnings();
-      if(lastPage==='payments') renderPayments();
-      if(lastPage==='schedule'){renderScheduleGrid();renderClassNotes();}
-      if(lastPage==='students') renderStudents();
-      if(lastPage==='reports') renderReports();
-    }, 300);
-  } else {
-    // Default to dashboard — make sure it's active and rendered
-    var dashBtn = document.querySelector('[onclick*="nav('dashboard'"]');
-    if(dashBtn) {
-      document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-      document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
-      document.getElementById('page-dashboard').classList.add('active');
-      dashBtn.classList.add('active');
-    }
-    renderDashboard();
+  var lastPage = localStorage.getItem('ts-last-page') || 'dashboard';
+  var navBtn = document.querySelector('.nav-item[onclick*="nav(''+lastPage+''"]');
+  if(!navBtn) {
+    lastPage = 'dashboard';
+    navBtn = document.querySelector('.nav-item[onclick*="nav('dashboard'"]');
   }
+  // activate page + nav
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  var pageEl = document.getElementById('page-' + lastPage);
+  if(pageEl) pageEl.classList.add('active');
+  if(navBtn) navBtn.classList.add('active');
+  // render the right content
+  if(lastPage==='dashboard')  renderDashboard();
+  if(lastPage==='students')   renderStudents();
+  if(lastPage==='payments')   renderPayments();
+  if(lastPage==='earnings')   renderEarnings();
+  if(lastPage==='schedule')   { renderScheduleGrid(); renderClassNotes(); }
+  if(lastPage==='reports')    renderReports();
+  if(lastPage==='materials')  updateFolderCounts();
+  if(lastPage==='classroom')  renderClassroom();
 })();
 
 var _currentFolder = '';
