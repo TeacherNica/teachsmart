@@ -2856,7 +2856,7 @@ renderStudents();
 (function(){
   var lastPage = localStorage.getItem('ts-last-page');
   if(lastPage && lastPage !== 'dashboard'){
-    var navBtn = document.querySelector('[onclick*="nav(\''+lastPage+'\'"]');
+    var navBtn = document.querySelector('[onclick*="nav(''+lastPage+''"]');
     if(navBtn) nav(lastPage, navBtn);
     setTimeout(function(){
       if(lastPage==='earnings') renderEarnings();
@@ -2865,6 +2865,16 @@ renderStudents();
       if(lastPage==='students') renderStudents();
       if(lastPage==='reports') renderReports();
     }, 300);
+  } else {
+    // Default to dashboard — make sure it's active and rendered
+    var dashBtn = document.querySelector('[onclick*="nav('dashboard'"]');
+    if(dashBtn) {
+      document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+      document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+      document.getElementById('page-dashboard').classList.add('active');
+      dashBtn.classList.add('active');
+    }
+    renderDashboard();
   }
 })();
 
